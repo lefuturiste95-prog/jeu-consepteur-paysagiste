@@ -1,0 +1,20 @@
+{
+    "name": "L'Apprenti Concepteur",
+    "short_name": "Apprenti Paysagiste",
+    "description": "Jeu de composition végétale pour découvrir le métier de concepteur paysagiste.",
+    "lang": "fr",
+    "start_url": "index.html",
+    "scope": "./",
+    "display": "fullscreen",
+    "orientation": "any",
+    "background_color": "#1b3a28",
+    "theme_color": "#1b3a28",
+    "icons": [
+        {
+            "src": "image/icone.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}

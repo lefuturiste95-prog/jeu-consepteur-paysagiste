@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>Administration — L'Apprenti Concepteur</title>
+
+    <meta name="theme-color" content="#1f3d2b">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<!-- ==========================================================
+     EN-TETE ADMIN
+     ========================================================== -->
+
+<header class="admin-entete">
+
+    <div>
+        <p class="sur-titre">L'Apprenti Concepteur</p>
+        <h1>Administration</h1>
+    </div>
+
+    <div class="admin-entete-actions">
+        <button class="bouton bouton-secondaire" id="bouton-deconnexion">
+            Se déconnecter
+        </button>
+
+        <button class="bouton bouton-principal" id="bouton-retour-jeu">
+            Retour au jeu
+        </button>
+    </div>
+
+</header>
+
+
+<!-- ==========================================================
+     TABLEAU DE BORD
+     ========================================================== -->
+
+<main class="admin-contenu">
+
+    <section class="carte-admin carte-intro">
+
+        <div>
+            <p class="sur-titre">Tableau de bord</p>
+            <h2>Réglages du jeu</h2>
+
+            <p>
+                Cette première version de l'espace administrateur permet déjà
+                de gérer le classement. Les outils de création des 3 chantiers,
+                des points d'analyse et des emplacements seront ajoutés ensuite.
+            </p>
+        </div>
+
+        <div class="etat-admin">
+            <span class="pastille-ok"></span>
+            Session administrateur ouverte
+        </div>
+
+    </section>
+
+
+    <div class="grille-admin">
+
+        <!-- ==================================================
+             CHANTIERS
+             ================================================== -->
+
+        <section class="carte-admin">
+
+            <p class="sur-titre">Configuration</p>
+            <h2>Chantiers</h2>
+
+            <p>
+                À la prochaine étape, tu pourras modifier ici les trois chantiers :
+                photo, titre, contraintes et objectifs.
+            </p>
+
+            <div class="liste-preparation">
+                <div><strong>Chantier 1</strong><span>À configurer</span></div>
+                <div><strong>Chantier 2</strong><span>À configurer</span></div>
+                <div><strong>Chantier 3</strong><span>À configurer</span></div>
+            </div>
+
+            <button class="bouton bouton-desactive" disabled>
+                Modifier les chantiers — prochaine étape
+            </button>
+
+        </section>
+
+
+        <!-- ==================================================
+             ANALYSE DU PAYSAGE
+             ================================================== -->
+
+        <section class="carte-admin">
+
+            <p class="sur-titre">Analyse</p>
+            <h2>Points « ? »</h2>
+
+            <p>
+                Cet outil servira à cliquer directement sur la photo pour placer,
+                déplacer ou supprimer les points d'analyse du paysage.
+            </p>
+
+            <button class="bouton bouton-desactive" disabled>
+                Éditer les points — prochaine étape
+            </button>
+
+        </section>
+
+
+        <!-- ==================================================
+             EMPLACEMENTS
+             ================================================== -->
+
+        <section class="carte-admin">
+
+            <p class="sur-titre">Conception</p>
+            <h2>Emplacements de plantation</h2>
+
+            <p>
+                Cet outil servira à placer les emplacements directement sur
+                chaque photo et à définir le type attendu : arbre, arbuste ou vivace.
+            </p>
+
+            <button class="bouton bouton-desactive" disabled>
+                Éditer les emplacements — prochaine étape
+            </button>
+
+        </section>
+
+
+        <!-- ==================================================
+             CLASSEMENT
+             ================================================== -->
+
+        <section class="carte-admin carte-classement">
+
+            <div class="titre-avec-action">
+                <div>
+                    <p class="sur-titre">Données locales</p>
+                    <h2>Classement</h2>
+                </div>
+
+                <button class="bouton bouton-danger" id="effacer-classement">
+                    Effacer tout
+                </button>
+            </div>
+
+            <p class="aide">
+                Les scores affichés ici sont ceux enregistrés sur cet appareil.
+            </p>
+
+            <div id="admin-classement" class="admin-classement"></div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- ==========================================================
+     CONFIRMATION
+     ========================================================== -->
+
+<div class="voile-admin" id="voile-confirmation">
+
+    <div class="fenetre-admin">
+
+        <h2 id="confirmation-titre">Confirmer</h2>
+        <p id="confirmation-texte"></p>
+
+        <div class="actions-confirmation">
+            <button class="bouton bouton-secondaire" id="confirmation-annuler">
+                Annuler
+            </button>
+
+            <button class="bouton bouton-danger" id="confirmation-valider">
+                Supprimer
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="admin.js"></script>
+
+</body>
+</html>

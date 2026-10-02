@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>L'Apprenti Concepteur — jeu du paysagiste</title>
+
+    <meta name="description"
+          content="Composez des ambiances végétales adaptées à chaque site et découvrez le métier de concepteur paysagiste.">
+
+    <!-- Pour l'ajout à l'écran d'accueil sur tablette -->
+    <meta name="theme-color" content="#1f3d2b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Apprenti Paysagiste">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="image/icone.png">
+    <link rel="icon" type="image/png" href="image/icone.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ==========================================================
+     ECRAN 1 — ACCUEIL
+     ========================================================== -->
+
+<section class="ecran ecran-accueil est-actif" id="ecran-accueil">
+
+    <div class="accueil-decor" aria-hidden="true"></div>
+
+    <div class="contenu-accueil">
+
+        <p class="sur-titre">Imagine ton paysage</p>
+
+        <h1>L'Apprenti<br>Concepteur</h1>
+
+        <p class="accroche">
+            Cinq chantiers, un catalogue de 140 végétaux.
+            Saurez-vous choisir les bonnes plantes
+            pour chaque situation&nbsp;?
+        </p>
+
+        <div class="boutons-accueil">
+            <button class="bouton bouton-principal" id="bouton-jouer">
+                Commencer la partie
+            </button>
+
+            <button class="bouton bouton-fantome" id="bouton-regles">
+                Comment jouer&nbsp;?
+            </button>
+        </div>
+
+        <p class="meilleur-score" id="meilleur-score"></p>
+
+    </div>
+
+    <p class="credit-accueil">
+        Projet PIC — Antoine Coquel &amp; Clément Delsupexhe
+    </p>
+
+</section>
+
+
+<!-- ==========================================================
+     ECRAN 2 — LE JEU
+     ========================================================== -->
+
+<section class="ecran ecran-jeu" id="ecran-jeu">
+
+    <header class="barre-haute">
+
+        <div class="barre-haute-gauche">
+            <span class="pastille-mission" id="numero-mission">Chantier 1/5</span>
+            <h2 id="titre-mission">Chargement…</h2>
+        </div>
+
+        <div class="barre-haute-droite">
+            <div class="compteur-score">
+                <span class="compteur-label">Score</span>
+                <strong id="score-courant">0</strong>
+            </div>
+            <button class="bouton-icone" id="bouton-plein-ecran"
+                    title="Plein écran" aria-label="Passer en plein écran">⛶</button>
+        </div>
+
+    </header>
+
+    <div class="jauge-etapes" id="jauge-etapes" aria-hidden="true"></div>
+
+    <main class="plateau">
+
+        <!-- ---------- Colonne de gauche : le site ---------- -->
+        <section class="colonne-site">
+
+            <div class="fiche-chantier">
+
+                <p class="brief" id="brief-mission"></p>
+
+                <div class="conditions" id="conditions-mission"></div>
+
+                <button class="bouton bouton-lien" id="bouton-filtrer-chantier">
+                    ⚙ Filtrer le catalogue selon ce site
+                </button>
+
+            </div>
+
+            <div class="scene" id="scene">
+
+                <!-- Photo réelle du site. Si la photo d'un chantier manque,
+                     le JavaScript revient automatiquement sur jardintest.jpg. -->
+                <img class="scene-photo" id="scene-photo"
+                     src="image/jardintest.jpg"
+                     alt="Photo du site à aménager">
+
+                <!-- Plan/topographie dessiné déjà présent dans le projet -->
+                <div class="scene-svg" id="scene-svg"></div>
+
+                <!-- Sélecteur Photo / Mixte / Plan -->
+                <div class="scene-outils" role="group" aria-label="Mode d'affichage du site">
+                    <button type="button" class="scene-mode" data-mode="photo">Photo</button>
+                    <button type="button" class="scene-mode est-actif" data-mode="mixte">Mixte</button>
+                    <button type="button" class="scene-mode" data-mode="plan">Plan</button>
+                </div>
+
+                <!-- Les emplacements restent au-dessus de la photo et du plan -->
+                <div class="scene-slots" id="scene-slots"></div>
+            </div>
+
+            <div class="barre-actions">
+
+                <p class="progression" id="progression">0 / 5 emplacements plantés</p>
+
+                <div class="actions-droite">
+                    <button class="bouton bouton-fantome" id="bouton-vider">
+                        Tout retirer
+                    </button>
+                    <button class="bouton bouton-principal" id="bouton-valider" disabled>
+                        Valider le chantier
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ---------- Colonne de droite : le catalogue ---------- -->
+        <aside class="catalogue" id="catalogue">
+
+            <div class="catalogue-tete">
+
+                <h3>Catalogue de végétaux</h3>
+
+                <button class="bouton-icone bouton-replier" id="bouton-replier"
+                        aria-label="Replier le catalogue">▾</button>
+
+            </div>
+
+            <div class="catalogue-corps">
+
+                <div class="champ-recherche">
+                    <span class="loupe" aria-hidden="true">⌕</span>
+                    <input type="search"
+                           id="recherche-plante"
+                           placeholder="Rechercher une plante…"
+                           aria-label="Rechercher une plante">
+                </div>
+
+                <details class="bloc-filtres" id="bloc-filtres">
+
+                    <summary>Filtres</summary>
+
+                    <div class="filtre">
+                        <p class="filtre-titre">Exposition</p>
+                        <div class="puces" id="puces-exposition"></div>
+                    </div>
+
+                    <div class="filtre">
+                        <p class="filtre-titre">Humidité du sol</p>
+                        <div class="puces" id="puces-humidite"></div>
+                    </div>
+
+                    <div class="filtre">
+                        <p class="filtre-titre">Type de végétal</p>
+                        <div class="puces" id="puces-groupe"></div>
+                    </div>
+
+                    <button class="bouton bouton-fantome bouton-bloc"
+                            id="reinitialiser-filtres">
+                        Réinitialiser les filtres
+                    </button>
+
+                </details>
+
+                <p class="nombre-resultats" id="nombre-resultats">
+                    Chargement des plantes…
+                </p>
+
+                <div class="liste-plantes" id="liste-plantes"></div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+</section>
+
+
+<!-- ==========================================================
+     ECRAN 3 — BILAN FINAL / SCOREBOARD
+     ========================================================== -->
+
+<section class="ecran ecran-bilan" id="ecran-bilan">
+
+    <div class="bilan-contenu">
+
+        <p class="sur-titre">Fin de la mission</p>
+        <h2 id="bilan-rang">—</h2>
+        <p class="bilan-sous-titre" id="bilan-sous-titre"></p>
+
+        <div class="bilan-chiffres">
+            <div class="chiffre">
+                <strong id="bilan-score">0</strong>
+                <span>points</span>
+            </div>
+            <div class="chiffre">
+                <strong id="bilan-pourcent">0 %</strong>
+                <span>de réussite</span>
+            </div>
+            <div class="chiffre">
+                <strong id="bilan-etoiles">0</strong>
+                <span>étoiles / 15</span>
+            </div>
+        </div>
+
+        <table class="tableau-bilan">
+            <thead>
+                <tr>
+                    <th>Chantier</th>
+                    <th>Score</th>
+                    <th>Étoiles</th>
+                </tr>
+            </thead>
+            <tbody id="bilan-lignes"></tbody>
+        </table>
+
+        <div class="bloc-classement">
+
+            <h3>Tableau des scores</h3>
+
+            <form class="form-classement" id="form-classement">
+                <input type="text" id="nom-joueur" maxlength="14"
+                       placeholder="Votre prénom" aria-label="Votre prénom">
+                <button class="bouton bouton-principal" type="submit">
+                    Enregistrer
+                </button>
+            </form>
+
+            <ol class="classement" id="classement"></ol>
+
+        </div>
+
+        <div class="boutons-bilan">
+            <button class="bouton bouton-fantome" id="bouton-revoir">
+                Revoir le détail des chantiers
+            </button>
+            <button class="bouton bouton-principal" id="bouton-rejouer">
+                Rejouer
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================================
+     FENETRES (résultat de chantier, règles, détail)
+     ========================================================== -->
+
+<div class="voile" id="voile-resultat" role="dialog" aria-modal="true"
+     aria-labelledby="resultat-titre">
+
+    <div class="fenetre fenetre-resultat">
+
+        <p class="sur-titre" id="resultat-etiquette">Chantier terminé</p>
+        <h2 id="resultat-titre">Bravo !</h2>
+
+        <div class="etoiles" id="resultat-etoiles" aria-hidden="true"></div>
+
+        <p class="resultat-points">
+            <strong id="resultat-score">0</strong>
+            <span id="resultat-max">/ 560 points</span>
+        </p>
+
+        <div class="detail-plantes" id="resultat-detail"></div>
+
+        <p class="conseil" id="resultat-conseil"></p>
+
+        <button class="bouton bouton-principal bouton-bloc" id="bouton-suite">
+            Chantier suivant →
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="voile" id="voile-regles" role="dialog" aria-modal="true"
+     aria-labelledby="regles-titre">
+
+    <div class="fenetre">
+
+        <p class="sur-titre">Règles du jeu</p>
+        <h2 id="regles-titre">Le métier en 3 gestes</h2>
+
+        <ol class="liste-regles">
+            <li>
+                <strong>Lire le site.</strong>
+                Observez la photo réelle et, si besoin, passez en vue Mixte ou Plan
+                pour mieux lire la topographie. La fiche rappelle aussi l’exposition
+                et l’humidité du sol.
+            </li>
+            <li>
+                <strong>Choisir les végétaux.</strong>
+                Touchez un emplacement vide sur le plan, puis une plante
+                du catalogue. Les filtres vous aident à trier les 140 espèces.
+            </li>
+            <li>
+                <strong>Valider.</strong>
+                Chaque plante rapporte jusqu'à 100 points&nbsp;:
+                40 pour l'exposition, 40 pour l'humidité, 20 pour le
+                bon type de végétal. Un bonus récompense les floraisons
+                étalées sur l'année.
+            </li>
+        </ol>
+
+        <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-regles">
+            C'est compris
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="voile" id="voile-detail" role="dialog" aria-modal="true">
+
+    <div class="fenetre">
+
+        <p class="sur-titre">Détail de la partie</p>
+        <h2>Vos cinq chantiers</h2>
+
+        <div id="detail-partie"></div>
+
+        <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-detail">
+            Fermer
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="info-bulle" id="info-bulle" role="status" aria-live="polite"></div>
+
+
+<script src="data/plantes-embarquees.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>
