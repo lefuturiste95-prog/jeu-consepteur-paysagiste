@@ -39,6 +39,11 @@
 
     <div class="accueil-decor" aria-hidden="true"></div>
 
+    <!-- Accès administrateur : le code est demandé avant d'ouvrir admin.html -->
+    <button class="bouton-admin-accueil" id="bouton-admin" type="button">
+        Admin
+    </button>
+
     <div class="contenu-accueil">
 
         <p class="sur-titre">Imagine ton paysage</p>
@@ -46,9 +51,8 @@
         <h1>L'Apprenti<br>Concepteur</h1>
 
         <p class="accroche">
-            Cinq chantiers, un catalogue de 140 végétaux.
-            Saurez-vous choisir les bonnes plantes
-            pour chaque situation&nbsp;?
+            Deux chantiers pour découvrir la démarche du concepteur paysagiste.
+            Analysez d’abord le site, puis proposez un aménagement cohérent.
         </p>
 
         <div class="boutons-accueil">
@@ -81,7 +85,10 @@
     <header class="barre-haute">
 
         <div class="barre-haute-gauche">
-            <span class="pastille-mission" id="numero-mission">Chantier 1/5</span>
+            <div class="ligne-pastilles">
+                <span class="pastille-mission" id="numero-mission">Chantier 1/2</span>
+                <span class="pastille-phase" id="phase-mission">Analyse</span>
+            </div>
             <h2 id="titre-mission">Chargement…</h2>
         </div>
 
@@ -109,6 +116,8 @@
 
                 <div class="conditions" id="conditions-mission"></div>
 
+                <p class="instruction-phase" id="instruction-phase"></p>
+
                 <button class="bouton bouton-lien" id="bouton-filtrer-chantier">
                     ⚙ Filtrer le catalogue selon ce site
                 </button>
@@ -117,27 +126,23 @@
 
             <div class="scene" id="scene">
 
-                <!-- Photo réelle du site. Si la photo d'un chantier manque,
-                     le JavaScript revient automatiquement sur jardintest.jpg. -->
+                <!-- Vue réelle du chantier : aucune modification graphique n'est appliquée. -->
                 <img class="scene-photo" id="scene-photo"
                      src="image/jardintest.jpg"
-                     alt="Photo du site à aménager">
+                     alt="Vue réelle du site à aménager">
 
-                <!-- Plan/topographie dessiné déjà présent dans le projet -->
-                <div class="scene-svg" id="scene-svg"></div>
+                <!-- Les boutons sont générés automatiquement selon les vues disponibles
+                     pour chaque chantier : vue aérienne, vue piétonne, etc. -->
+                <div class="scene-outils" id="scene-outils"
+                     role="group" aria-label="Changer le point de vue du chantier"></div>
 
-                <!-- Sélecteur Photo / Mixte / Plan -->
-                <div class="scene-outils" role="group" aria-label="Mode d'affichage du site">
-                    <button type="button" class="scene-mode" data-mode="photo">Photo</button>
-                    <button type="button" class="scene-mode est-actif" data-mode="mixte">Mixte</button>
-                    <button type="button" class="scene-mode" data-mode="plan">Plan</button>
-                </div>
+                <!-- Les emplacements du prototype végétal restent pour l'instant. -->
+                <div class="scene-hotspots" id="scene-hotspots" aria-label="Points d’analyse"></div>
 
-                <!-- Les emplacements restent au-dessus de la photo et du plan -->
                 <div class="scene-slots" id="scene-slots"></div>
             </div>
 
-            <div class="barre-actions">
+            <div class="barre-actions" id="barre-actions-standard">
 
                 <p class="progression" id="progression">0 / 5 emplacements plantés</p>
 
@@ -153,6 +158,63 @@
             </div>
 
         </section>
+
+        <!-- ---------- Colonne de droite : analyse du parking ---------- -->
+        <aside class="panneau-phase panneau-analyse" id="panneau-analyse">
+
+            <div class="panneau-phase-tete">
+                <p class="sur-titre">Chantier 1 — Parking</p>
+                <h3>Analyse du site</h3>
+            </div>
+
+            <p class="panneau-phase-intro">
+                Explorez les trois vues et touchez les yeux placés sur les images.
+                Chaque point révèle une information utile pour préparer l’aménagement.
+            </p>
+
+            <div class="analyse-compteur">
+                <strong id="analyse-compteur">0 / 5</strong>
+                <span>éléments analysés</span>
+            </div>
+
+            <div class="analyse-liste" id="analyse-liste"></div>
+
+            <div class="indice-global">
+                <strong>Indice</strong>
+                <p id="indice-global">Commencez par la vue aérienne pour comprendre l’organisation générale du site.</p>
+            </div>
+
+            <button class="bouton bouton-principal bouton-bloc"
+                    id="bouton-passer-amenagement" disabled>
+                Passer à l’aménagement →
+            </button>
+
+        </aside>
+
+        <!-- ---------- Colonne de droite : aperçu de l'aménagement ---------- -->
+        <aside class="panneau-phase panneau-amenagement" id="panneau-amenagement">
+
+            <div class="panneau-phase-tete">
+                <p class="sur-titre">Chantier 1 — Parking</p>
+                <h3>Aménagement</h3>
+            </div>
+
+            <p class="panneau-phase-intro">
+                Pour l’instant, cette étape affiche uniquement une vue d’aménagement provisoire.
+                Les choix de matériaux, de gestion de l’eau et de végétaux seront ajoutés ensuite.
+            </p>
+
+            <div class="amenagement-resume">
+                <span>✓ Analyse du site terminée</span>
+                <span>◌ Choix d’aménagement à venir</span>
+                <span>◌ Choix des végétaux à venir</span>
+            </div>
+
+            <button class="bouton bouton-principal bouton-bloc" id="bouton-vers-zone6">
+                Continuer vers Zone 6 →
+            </button>
+
+        </aside>
 
         <!-- ---------- Colonne de droite : le catalogue ---------- -->
         <aside class="catalogue" id="catalogue">
@@ -240,7 +302,7 @@
             </div>
             <div class="chiffre">
                 <strong id="bilan-etoiles">0</strong>
-                <span>étoiles / 15</span>
+                <span>étoiles / 6</span>
             </div>
         </div>
 
@@ -275,6 +337,11 @@
             <button class="bouton bouton-fantome" id="bouton-revoir">
                 Revoir le détail des chantiers
             </button>
+
+            <button class="bouton bouton-fantome" id="bouton-retour-accueil">
+                Retour à l'accueil
+            </button>
+
             <button class="bouton bouton-principal" id="bouton-rejouer">
                 Rejouer
             </button>
@@ -327,22 +394,19 @@
 
         <ol class="liste-regles">
             <li>
-                <strong>Lire le site.</strong>
-                Observez la photo réelle et, si besoin, passez en vue Mixte ou Plan
-                pour mieux lire la topographie. La fiche rappelle aussi l’exposition
-                et l’humidité du sol.
+                <strong>Analyser.</strong>
+                Sur le chantier Parking, passez de la vue aérienne aux vues piétonnes
+                et touchez les yeux pour découvrir les contraintes du site.
+            </li>
+            <li>
+                <strong>Aménager.</strong>
+                Une fois l’analyse terminée, le jeu passe à la phase d’aménagement.
+                Pour l’instant, une image provisoire montre le principe du futur parking.
             </li>
             <li>
                 <strong>Choisir les végétaux.</strong>
-                Touchez un emplacement vide sur le plan, puis une plante
-                du catalogue. Les filtres vous aident à trier les 140 espèces.
-            </li>
-            <li>
-                <strong>Valider.</strong>
-                Chaque plante rapporte jusqu'à 100 points&nbsp;:
-                40 pour l'exposition, 40 pour l'humidité, 20 pour le
-                bon type de végétal. Un bonus récompense les floraisons
-                étalées sur l'année.
+                Le catalogue végétal reste utilisé sur Zone 6. Les filtres permettent
+                de comparer les plantes avec les conditions du chantier.
             </li>
         </ol>
 
@@ -360,13 +424,85 @@
     <div class="fenetre">
 
         <p class="sur-titre">Détail de la partie</p>
-        <h2>Vos cinq chantiers</h2>
+        <h2>Vos deux chantiers</h2>
 
         <div id="detail-partie"></div>
 
         <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-detail">
             Fermer
         </button>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================================
+     FENETRE — POINT D'ANALYSE
+     ========================================================== -->
+
+<div class="voile" id="voile-analyse" role="dialog" aria-modal="true"
+     aria-labelledby="analyse-titre">
+
+    <div class="fenetre fenetre-analyse">
+
+        <p class="sur-titre">Observation du site</p>
+        <h2 id="analyse-titre">Point d’analyse</h2>
+
+        <div class="bloc-indice-analyse">
+            <strong>Indice</strong>
+            <p id="analyse-indice"></p>
+        </div>
+
+        <div class="bloc-info-analyse">
+            <strong>Ce que l’on retient</strong>
+            <p id="analyse-texte"></p>
+        </div>
+
+        <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-analyse">
+            Continuer l’analyse
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================================
+     FENETRE — CONNEXION ADMINISTRATEUR
+     ========================================================== -->
+
+<div class="voile" id="voile-admin" role="dialog" aria-modal="true"
+     aria-labelledby="admin-titre">
+
+    <div class="fenetre fenetre-admin">
+
+        <p class="sur-titre">Espace réservé</p>
+        <h2 id="admin-titre">Accès administrateur</h2>
+
+        <p class="texte-admin">
+            Entrez le code administrateur pour ouvrir les réglages du jeu.
+        </p>
+
+        <input
+            class="champ-admin"
+            type="password"
+            id="code-admin"
+            autocomplete="off"
+            placeholder="Code administrateur"
+            aria-label="Code administrateur">
+
+        <p class="erreur-admin" id="erreur-admin" aria-live="polite"></p>
+
+        <div class="actions-admin">
+            <button class="bouton bouton-fantome" id="annuler-admin" type="button">
+                Annuler
+            </button>
+
+            <button class="bouton bouton-principal" id="valider-admin" type="button">
+                Ouvrir l'administration
+            </button>
+        </div>
 
     </div>
 

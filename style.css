@@ -19,6 +19,7 @@
     --papier:        #fdfcf8;
     --encre:         #1d241f;
     --encre-douce:   #5d6b60;
+    --ligne:          rgba(29, 36, 31, .10);
 
     /* Signalétique */
     --soleil:        #e0a731;
@@ -426,7 +427,6 @@ h1, h2, h3 {
 }
 
 .scene-photo,
-.scene-svg,
 .scene-slots {
     position: absolute;
     inset: 0;
@@ -441,31 +441,11 @@ h1, h2, h3 {
     transition: opacity .28s ease;
 }
 
-.scene-svg {
-    z-index: 2;
-    transition: opacity .28s ease;
-    pointer-events: none;
-}
-
-.scene-svg svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
 
 .scene-slots {
     z-index: 4;
 }
 
-/* Trois façons de lire le chantier : photo réelle, combinaison, plan */
-.scene.mode-photo .scene-photo { opacity: 1; }
-.scene.mode-photo .scene-svg   { opacity: 0; }
-
-.scene.mode-mixte .scene-photo { opacity: 1; }
-.scene.mode-mixte .scene-svg   { opacity: .28; }
-
-.scene.mode-plan .scene-photo { opacity: 0; }
-.scene.mode-plan .scene-svg   { opacity: 1; }
 
 .scene-outils {
     position: absolute;
@@ -473,7 +453,9 @@ h1, h2, h3 {
     left: 12px;
     z-index: 6;
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
+    max-width: calc(100% - 24px);
     padding: 4px;
     border-radius: 999px;
     background: rgba(253, 252, 248, .88);
@@ -697,6 +679,7 @@ h1, h2, h3 {
     border: 1.5px solid #e2ded1;
     border-radius: var(--rayon-petit);
     -webkit-appearance: none;
+    appearance: none;
 }
 
 #recherche-plante:focus {
@@ -1118,6 +1101,7 @@ h1, h2, h3 {
     border: 1.5px solid rgba(255, 255, 255, .22);
     border-radius: 999px;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 #nom-joueur::placeholder { color: rgba(255, 255, 255, .45); }
@@ -1337,5 +1321,352 @@ h1, h2, h3 {
     .scene-mode {
         padding: 8px 10px;
         font-size: 11px;
+    }
+}
+
+
+/* ==========================================================
+   AJOUT V1 — ACCES ADMINISTRATEUR
+   ========================================================== */
+
+.bouton-admin-accueil {
+    position: absolute;
+    z-index: 4;
+    top: calc(18px + env(safe-area-inset-top));
+    right: 22px;
+
+    min-height: 42px;
+    padding: 9px 18px;
+
+    border: 1.5px solid rgba(255, 255, 255, .55);
+    border-radius: 999px;
+
+    background: rgba(10, 24, 17, .45);
+    color: #fff;
+
+    font-family: var(--texte);
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    transition: background-color .2s ease,
+                border-color .2s ease,
+                transform .15s ease;
+}
+
+.bouton-admin-accueil:hover {
+    background: rgba(255, 255, 255, .16);
+    border-color: #fff;
+    transform: translateY(-1px);
+}
+
+.fenetre-admin {
+    max-width: 460px;
+}
+
+.texte-admin {
+    margin: 12px 0 18px;
+    color: var(--encre-douce);
+}
+
+.champ-admin {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+
+    border: 1.5px solid #d9dfd8;
+    border-radius: var(--rayon-petit);
+
+    background: #fff;
+    color: var(--encre);
+
+    font-family: var(--texte);
+    font-size: 16px;
+}
+
+.champ-admin:focus {
+    border-color: var(--vert);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(58, 125, 79, .12);
+}
+
+.erreur-admin {
+    min-height: 24px;
+    margin: 8px 0 0;
+    color: var(--echec);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.actions-admin {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+@media (max-width: 620px) {
+    .bouton-admin-accueil {
+        top: calc(12px + env(safe-area-inset-top));
+        right: 12px;
+    }
+
+    .actions-admin {
+        flex-direction: column-reverse;
+    }
+
+    .actions-admin .bouton {
+        width: 100%;
+    }
+}
+
+
+/* ==========================================================
+   CHANTIER 1 — ANALYSE / AMENAGEMENT
+   ========================================================== */
+
+.ligne-pastilles {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pastille-phase {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 4px 9px;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    color: #fff;
+    background: rgba(255,255,255,.10);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.instruction-phase {
+    margin: 10px 0 0;
+    color: var(--encre-douce);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.scene-hotspots {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+}
+
+.point-analyse {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255,255,255,.92);
+    border-radius: 50%;
+    background: rgba(31,61,43,.92);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 5px 16px rgba(0,0,0,.28);
+    touch-action: manipulation;
+    animation: pointAnalysePulse 1.9s ease-in-out infinite;
+}
+
+.point-analyse.est-trouve {
+    background: var(--vert-clair);
+    color: var(--vert-foret);
+    animation: none;
+}
+
+.point-analyse:focus-visible {
+    outline: 4px solid var(--soleil);
+    outline-offset: 3px;
+}
+
+@keyframes pointAnalysePulse {
+    0%, 100% { box-shadow: 0 5px 16px rgba(0,0,0,.28), 0 0 0 0 rgba(255,255,255,.45); }
+    50% { box-shadow: 0 5px 16px rgba(0,0,0,.28), 0 0 0 10px rgba(255,255,255,0); }
+}
+
+.panneau-phase {
+    position: sticky;
+    top: 22px;
+    display: none;
+    min-width: 0;
+    background: var(--papier);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre-douce);
+    overflow: hidden;
+}
+
+.mode-parking-analyse #panneau-analyse,
+.mode-parking-amenagement #panneau-amenagement {
+    display: block;
+}
+
+.mode-parking-analyse #catalogue,
+.mode-parking-amenagement #catalogue,
+.mode-parking-analyse #barre-actions-standard,
+.mode-parking-amenagement #barre-actions-standard,
+.mode-parking-analyse #bouton-filtrer-chantier,
+.mode-parking-amenagement #bouton-filtrer-chantier,
+.mode-parking-analyse #scene-slots,
+.mode-parking-amenagement #scene-slots {
+    display: none !important;
+}
+
+.panneau-phase-tete {
+    padding: 18px 20px 12px;
+    border-bottom: 1px solid var(--ligne);
+}
+
+.panneau-phase-tete h3 {
+    margin: 0;
+    font-family: var(--titre);
+    font-size: 23px;
+}
+
+.panneau-phase-intro {
+    margin: 0;
+    padding: 16px 20px;
+    color: var(--encre-douce);
+    font-size: 14px;
+}
+
+.analyse-compteur {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 20px 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--mousse);
+    color: var(--vert-foret);
+}
+
+.analyse-compteur strong {
+    font-family: var(--titre);
+    font-size: 26px;
+}
+
+.analyse-compteur span { font-size: 13px; }
+
+.analyse-liste {
+    display: grid;
+    gap: 8px;
+    padding: 0 20px;
+}
+
+.analyse-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0,1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 10px 11px;
+    border: 1px solid var(--ligne);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.analyse-item.est-trouve {
+    border-color: rgba(58,125,79,.22);
+    background: #f1f7ef;
+}
+
+.analyse-etat {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #ecefe9;
+    color: var(--encre-douce);
+    font-weight: 800;
+}
+
+.analyse-item.est-trouve .analyse-etat {
+    background: var(--vert-clair);
+    color: var(--vert-foret);
+}
+
+.analyse-item strong,
+.analyse-item small { display: block; }
+.analyse-item strong { font-size: 13.5px; }
+.analyse-item small { margin-top: 2px; color: var(--encre-douce); font-size: 11.5px; }
+
+.indice-global,
+.amenagement-resume {
+    margin: 16px 20px;
+    padding: 13px 14px;
+    border-radius: 12px;
+    background: #f7f2e7;
+}
+
+.indice-global strong { color: #7a5410; }
+.indice-global p { margin: 5px 0 0; color: var(--encre-douce); font-size: 13px; }
+
+.panneau-phase > .bouton-bloc {
+    width: calc(100% - 40px);
+    margin: 0 20px 20px;
+}
+
+.amenagement-resume {
+    display: grid;
+    gap: 9px;
+    color: var(--encre-douce);
+    font-size: 13.5px;
+}
+
+.fenetre-analyse { max-width: 520px; }
+
+.bloc-indice-analyse,
+.bloc-info-analyse {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+}
+
+.bloc-indice-analyse {
+    background: #f7f2e7;
+    border-left: 4px solid var(--soleil);
+}
+
+.bloc-info-analyse {
+    background: var(--mousse);
+    border-left: 4px solid var(--vert);
+}
+
+.bloc-indice-analyse p,
+.bloc-info-analyse p {
+    margin: 6px 0 0;
+    color: var(--encre-douce);
+}
+
+.mode-parking-analyse .scene-photo,
+.mode-parking-amenagement .scene-photo {
+    object-fit: cover;
+}
+
+@media (max-width: 900px) {
+    .panneau-phase {
+        position: static;
+    }
+
+    .point-analyse {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
     }
 }

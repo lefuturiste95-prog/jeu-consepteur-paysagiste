@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
@@ -12,6 +13,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
 
@@ -21,7 +23,7 @@
 <body>
 
 <!-- ==========================================================
-     EN-TETE ADMIN
+     EN-TETE
      ========================================================== -->
 
 <header class="admin-entete">
@@ -29,173 +31,653 @@
     <div>
         <p class="sur-titre">L'Apprenti Concepteur</p>
         <h1>Administration</h1>
+        <p class="sous-titre-admin">
+            Modifie le contenu du jeu sans aller chercher les coordonnées dans le code.
+        </p>
     </div>
 
     <div class="admin-entete-actions">
-        <button class="bouton bouton-secondaire" id="bouton-deconnexion">
+
+        <button class="bouton bouton-secondaire"
+                id="bouton-deconnexion"
+                type="button">
             Se déconnecter
         </button>
 
-        <button class="bouton bouton-principal" id="bouton-retour-jeu">
+        <button class="bouton bouton-principal"
+                id="bouton-retour-jeu"
+                type="button">
             Retour au jeu
         </button>
+
     </div>
 
 </header>
 
 
 <!-- ==========================================================
-     TABLEAU DE BORD
+     NAVIGATION
      ========================================================== -->
+
+<nav class="admin-navigation" aria-label="Sections de l'administration">
+
+    <button class="onglet-admin est-actif"
+            type="button"
+            data-panneau="chantiers">
+        Chantiers
+    </button>
+
+    <button class="onglet-admin"
+            type="button"
+            data-panneau="analyse">
+        Points d'analyse
+    </button>
+
+    <button class="onglet-admin"
+            type="button"
+            data-panneau="classement">
+        Classement
+    </button>
+
+    <button class="onglet-admin"
+            type="button"
+            data-panneau="sauvegarde">
+        Sauvegarde
+    </button>
+
+</nav>
+
 
 <main class="admin-contenu">
 
-    <section class="carte-admin carte-intro">
+    <div class="bandeau-etat">
+        <span class="pastille-ok"></span>
+        <span>
+            Les modifications sont enregistrées sur cet appareil.
+        </span>
+        <strong id="etat-sauvegarde">Prêt</strong>
+    </div>
 
-        <div>
-            <p class="sur-titre">Tableau de bord</p>
-            <h2>Réglages du jeu</h2>
 
-            <p>
-                Cette première version de l'espace administrateur permet déjà
-                de gérer le classement. Les outils de création des 3 chantiers,
-                des points d'analyse et des emplacements seront ajoutés ensuite.
-            </p>
+    <!-- ======================================================
+         PANNEAU — CHANTIERS
+         ====================================================== -->
+
+    <section class="panneau-admin est-actif"
+             id="panneau-chantiers"
+             data-panneau-contenu="chantiers">
+
+        <div class="entete-section">
+            <div>
+                <p class="sur-titre">Configuration</p>
+                <h2>Les deux chantiers</h2>
+                <p>
+                    Modifie les textes, les vues et, pour le parking,
+                    la transition entre l'analyse et l'aménagement.
+                </p>
+            </div>
+
+            <label class="champ-compact">
+                <span>Chantier</span>
+                <select id="select-chantier">
+                    <option value="0">Parking</option>
+                    <option value="1">Zone 6</option>
+                </select>
+            </label>
         </div>
 
-        <div class="etat-admin">
-            <span class="pastille-ok"></span>
-            Session administrateur ouverte
+
+        <div class="grille-formulaire">
+
+            <label class="champ champ-large">
+                <span>Nom du chantier</span>
+                <input type="text"
+                       id="chantier-titre"
+                       maxlength="80">
+            </label>
+
+            <label class="champ champ-large">
+                <span>Présentation / brief</span>
+                <textarea id="chantier-brief"
+                          rows="5"
+                          maxlength="1200"></textarea>
+            </label>
+
+            <label class="champ champ-large">
+                <span>Conseil affiché dans le bilan</span>
+                <textarea id="chantier-conseil"
+                          rows="3"
+                          maxlength="800"></textarea>
+            </label>
+
+        </div>
+
+
+        <!-- Réglages particuliers du parking -->
+        <div id="reglages-parking" class="bloc-reglages">
+
+            <div class="separateur-titre">
+                <span>Phase analyse — parking</span>
+            </div>
+
+            <div class="grille-formulaire">
+
+                <label class="champ">
+                    <span>Titre de la phase</span>
+                    <input type="text"
+                           id="parking-titre-analyse"
+                           maxlength="100">
+                </label>
+
+                <label class="champ">
+                    <span>Consigne</span>
+                    <input type="text"
+                           id="parking-instruction-analyse"
+                           maxlength="220">
+                </label>
+
+                <label class="champ champ-large">
+                    <span>Informations rapides</span>
+                    <input type="text"
+                           id="parking-conditions-analyse"
+                           placeholder="Sépare les informations avec un |">
+                    <small>
+                        Exemple : ≈ 3 270 m² | Cours d'eau au sud | Terrain enherbé
+                    </small>
+                </label>
+
+            </div>
+
+
+            <div class="separateur-titre">
+                <span>Phase aménagement — parking</span>
+            </div>
+
+            <div class="grille-formulaire">
+
+                <label class="champ">
+                    <span>Titre de la phase</span>
+                    <input type="text"
+                           id="parking-titre-amenagement"
+                           maxlength="100">
+                </label>
+
+                <label class="champ">
+                    <span>Image actuelle de l'aménagement</span>
+                    <input type="text"
+                           id="parking-image-amenagement"
+                           list="liste-images-projet">
+                </label>
+
+                <label class="champ champ-large">
+                    <span>Texte d'introduction</span>
+                    <textarea id="parking-brief-amenagement"
+                              rows="3"
+                              maxlength="800"></textarea>
+                </label>
+
+                <label class="champ champ-large">
+                    <span>Consigne d'aménagement</span>
+                    <textarea id="parking-instruction-amenagement"
+                              rows="2"
+                              maxlength="500"></textarea>
+                </label>
+
+                <label class="champ champ-large">
+                    <span>Informations rapides</span>
+                    <input type="text"
+                           id="parking-conditions-amenagement"
+                           placeholder="Sépare les informations avec un |">
+                </label>
+
+                <div class="champ champ-large">
+                    <span>Aperçu de l'image d'aménagement</span>
+
+                    <div class="mini-apercu">
+                        <img id="apercu-amenagement"
+                             alt="Aperçu de l'aménagement">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="actions-section">
+
+            <button class="bouton bouton-principal-vert"
+                    id="enregistrer-chantier"
+                    type="button">
+                Enregistrer le chantier
+            </button>
+
         </div>
 
     </section>
 
 
-    <div class="grille-admin">
+    <!-- ======================================================
+         PANNEAU — POINTS D'ANALYSE
+         ====================================================== -->
 
-        <!-- ==================================================
-             CHANTIERS
-             ================================================== -->
+    <section class="panneau-admin"
+             id="panneau-analyse"
+             data-panneau-contenu="analyse">
 
-        <section class="carte-admin">
+        <div class="entete-section">
 
-            <p class="sur-titre">Configuration</p>
-            <h2>Chantiers</h2>
-
-            <p>
-                À la prochaine étape, tu pourras modifier ici les trois chantiers :
-                photo, titre, contraintes et objectifs.
-            </p>
-
-            <div class="liste-preparation">
-                <div><strong>Chantier 1</strong><span>À configurer</span></div>
-                <div><strong>Chantier 2</strong><span>À configurer</span></div>
-                <div><strong>Chantier 3</strong><span>À configurer</span></div>
+            <div>
+                <p class="sur-titre">Analyse du paysage</p>
+                <h2>Placer les yeux directement sur l'image</h2>
+                <p>
+                    Sélectionne une vue, puis ajoute ou déplace les points
+                    en cliquant directement sur la photo.
+                </p>
             </div>
 
-            <button class="bouton bouton-desactive" disabled>
-                Modifier les chantiers — prochaine étape
-            </button>
+            <div class="selection-analyse">
 
-        </section>
+                <label class="champ-compact">
+                    <span>Chantier</span>
+                    <select id="analyse-chantier">
+                        <option value="0">Parking</option>
+                        <option value="1">Zone 6</option>
+                    </select>
+                </label>
 
+                <label class="champ-compact">
+                    <span>Vue</span>
+                    <select id="analyse-vue"></select>
+                </label>
 
-        <!-- ==================================================
-             ANALYSE DU PAYSAGE
-             ================================================== -->
+            </div>
 
-        <section class="carte-admin">
-
-            <p class="sur-titre">Analyse</p>
-            <h2>Points « ? »</h2>
-
-            <p>
-                Cet outil servira à cliquer directement sur la photo pour placer,
-                déplacer ou supprimer les points d'analyse du paysage.
-            </p>
-
-            <button class="bouton bouton-desactive" disabled>
-                Éditer les points — prochaine étape
-            </button>
-
-        </section>
+        </div>
 
 
-        <!-- ==================================================
-             EMPLACEMENTS
-             ================================================== -->
+        <div class="editeur-analyse">
 
-        <section class="carte-admin">
+            <!-- Colonne image -->
+            <div class="colonne-apercu">
 
-            <p class="sur-titre">Conception</p>
-            <h2>Emplacements de plantation</h2>
+                <div class="barre-outils-apercu">
 
-            <p>
-                Cet outil servira à placer les emplacements directement sur
-                chaque photo et à définir le type attendu : arbre, arbuste ou vivace.
-            </p>
+                    <button class="bouton bouton-principal-vert"
+                            id="ajouter-point"
+                            type="button">
+                        + Ajouter un point
+                    </button>
 
-            <button class="bouton bouton-desactive" disabled>
-                Éditer les emplacements — prochaine étape
-            </button>
+                    <button class="bouton bouton-fantome"
+                            id="deplacer-point"
+                            type="button"
+                            disabled>
+                        Déplacer le point
+                    </button>
 
-        </section>
+                    <span class="mode-placement"
+                          id="mode-placement">
+                        Mode normal
+                    </span>
 
-
-        <!-- ==================================================
-             CLASSEMENT
-             ================================================== -->
-
-        <section class="carte-admin carte-classement">
-
-            <div class="titre-avec-action">
-                <div>
-                    <p class="sur-titre">Données locales</p>
-                    <h2>Classement</h2>
                 </div>
 
-                <button class="bouton bouton-danger" id="effacer-classement">
-                    Effacer tout
-                </button>
+
+                <div class="apercu-site"
+                     id="apercu-site">
+
+                    <img id="apercu-site-image"
+                         alt="Vue à configurer">
+
+                    <div id="apercu-points"
+                         class="apercu-points"></div>
+
+                </div>
+
+                <p class="aide-clic"
+                   id="aide-clic">
+                    Clique sur un œil pour le modifier.
+                </p>
+
+
+                <!-- Réglages de la vue -->
+                <div class="reglages-vue">
+
+                    <div class="separateur-titre">
+                        <span>Réglages de cette vue</span>
+                    </div>
+
+                    <div class="grille-formulaire">
+
+                        <label class="champ">
+                            <span>Nom du bouton</span>
+                            <input type="text"
+                                   id="vue-label"
+                                   maxlength="80">
+                        </label>
+
+                        <label class="champ">
+                            <span>Chemin de l'image</span>
+                            <input type="text"
+                                   id="vue-image"
+                                   list="liste-images-projet">
+                        </label>
+
+                        <label class="champ">
+                            <span>Format de l'image</span>
+                            <select id="vue-ratio">
+                                <option value="16 / 9">16 / 9 — vue aérienne</option>
+                                <option value="4 / 3">4 / 3 — photo classique</option>
+                                <option value="3 / 2">3 / 2</option>
+                                <option value="1 / 1">1 / 1</option>
+                            </select>
+                        </label>
+
+                    </div>
+
+                    <div class="actions-ligne">
+
+                        <button class="bouton bouton-fantome"
+                                id="ajouter-vue"
+                                type="button">
+                            + Ajouter une vue
+                        </button>
+
+                        <button class="bouton bouton-fantome"
+                                id="enregistrer-vue"
+                                type="button">
+                            Enregistrer la vue
+                        </button>
+
+                        <button class="bouton bouton-danger-contour"
+                                id="supprimer-vue"
+                                type="button">
+                            Supprimer la vue
+                        </button>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <p class="aide">
-                Les scores affichés ici sont ceux enregistrés sur cet appareil.
-            </p>
 
-            <div id="admin-classement" class="admin-classement"></div>
+            <!-- Colonne formulaire du point -->
+            <aside class="editeur-point">
 
-        </section>
+                <p class="sur-titre">Point sélectionné</p>
+                <h3 id="titre-editeur-point">Aucun point sélectionné</h3>
 
-    </div>
+                <div id="formulaire-point"
+                     class="formulaire-point est-inactif">
+
+                    <label class="champ">
+                        <span>Identifiant</span>
+                        <input type="text"
+                               id="point-id"
+                               maxlength="60">
+                        <small>
+                            Deux yeux ayant le même identifiant représentent
+                            la même information sur deux vues différentes.
+                        </small>
+                    </label>
+
+                    <label class="champ">
+                        <span>Titre</span>
+                        <input type="text"
+                               id="point-titre"
+                               maxlength="100">
+                    </label>
+
+                    <label class="champ">
+                        <span>Indice donné au joueur</span>
+                        <textarea id="point-indice"
+                                  rows="3"
+                                  maxlength="500"></textarea>
+                    </label>
+
+                    <label class="champ">
+                        <span>Information découverte</span>
+                        <textarea id="point-texte"
+                                  rows="6"
+                                  maxlength="1200"></textarea>
+                    </label>
+
+                    <div class="coordonnees">
+
+                        <label class="champ">
+                            <span>Position X (%)</span>
+                            <input type="number"
+                                   id="point-x"
+                                   min="0"
+                                   max="100"
+                                   step="0.1">
+                        </label>
+
+                        <label class="champ">
+                            <span>Position Y (%)</span>
+                            <input type="number"
+                                   id="point-y"
+                                   min="0"
+                                   max="100"
+                                   step="0.1">
+                        </label>
+
+                    </div>
+
+                    <div class="actions-point">
+
+                        <button class="bouton bouton-principal-vert"
+                                id="enregistrer-point"
+                                type="button">
+                            Enregistrer
+                        </button>
+
+                        <button class="bouton bouton-danger"
+                                id="supprimer-point"
+                                type="button">
+                            Supprimer
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="liste-points-bloc">
+
+                    <div class="separateur-titre">
+                        <span>Points de la vue</span>
+                    </div>
+
+                    <div id="liste-points"
+                         class="liste-points"></div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================================
+         PANNEAU — CLASSEMENT
+         ====================================================== -->
+
+    <section class="panneau-admin"
+             id="panneau-classement"
+             data-panneau-contenu="classement">
+
+        <div class="entete-section">
+
+            <div>
+                <p class="sur-titre">Données locales</p>
+                <h2>Classement</h2>
+                <p>
+                    Tu peux supprimer une entrée précise ou remettre le classement à zéro.
+                </p>
+            </div>
+
+            <button class="bouton bouton-danger"
+                    id="effacer-classement"
+                    type="button">
+                Effacer tout le classement
+            </button>
+
+        </div>
+
+        <div id="admin-classement"
+             class="admin-classement"></div>
+
+    </section>
+
+
+    <!-- ======================================================
+         PANNEAU — SAUVEGARDE
+         ====================================================== -->
+
+    <section class="panneau-admin"
+             id="panneau-sauvegarde"
+             data-panneau-contenu="sauvegarde">
+
+        <div class="entete-section">
+
+            <div>
+                <p class="sur-titre">Sauvegarde</p>
+                <h2>Exporter ou restaurer les réglages</h2>
+                <p>
+                    Les réglages de l'administration sont enregistrés dans le navigateur.
+                    L'export JSON permet de conserver une copie ou de transférer la configuration.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="grille-sauvegarde">
+
+            <article class="carte-action">
+
+                <h3>Exporter la configuration</h3>
+
+                <p>
+                    Crée un fichier JSON contenant les textes, les vues
+                    et les positions des points d'analyse.
+                </p>
+
+                <button class="bouton bouton-principal-vert"
+                        id="exporter-config"
+                        type="button">
+                    Exporter le fichier JSON
+                </button>
+
+            </article>
+
+
+            <article class="carte-action">
+
+                <h3>Importer une configuration</h3>
+
+                <p>
+                    Recharge une sauvegarde créée depuis cette interface.
+                </p>
+
+                <label class="bouton bouton-fantome bouton-fichier">
+                    Choisir un fichier JSON
+                    <input type="file"
+                           id="importer-config"
+                           accept=".json,application/json">
+                </label>
+
+            </article>
+
+
+            <article class="carte-action carte-danger">
+
+                <h3>Réinitialiser les réglages</h3>
+
+                <p>
+                    Efface les modifications de l'admin et remet les réglages
+                    fournis dans cette version du jeu.
+                </p>
+
+                <button class="bouton bouton-danger"
+                        id="reinitialiser-config"
+                        type="button">
+                    Réinitialiser la configuration
+                </button>
+
+            </article>
+
+        </div>
+
+    </section>
 
 </main>
+
+
+<!-- ==========================================================
+     DATALIST DES IMAGES DEJA PRESENTES
+     ========================================================== -->
+
+<datalist id="liste-images-projet">
+    <option value="image/parking/vue-aerienne.png">
+    <option value="image/parking/vue-pieton-acces.jpeg">
+    <option value="image/parking/vue-pieton-terrain.jpeg">
+    <option value="image/parking/vue-amenagement-provisoire.png">
+    <option value="image/chantier-2.jpg">
+    <option value="image/jardintest.jpg">
+</datalist>
 
 
 <!-- ==========================================================
      CONFIRMATION
      ========================================================== -->
 
-<div class="voile-admin" id="voile-confirmation">
+<div class="voile-admin"
+     id="voile-confirmation"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="confirmation-titre">
 
     <div class="fenetre-admin">
 
         <h2 id="confirmation-titre">Confirmer</h2>
+
         <p id="confirmation-texte"></p>
 
         <div class="actions-confirmation">
-            <button class="bouton bouton-secondaire" id="confirmation-annuler">
+
+            <button class="bouton bouton-fantome"
+                    id="confirmation-annuler"
+                    type="button">
                 Annuler
             </button>
 
-            <button class="bouton bouton-danger" id="confirmation-valider">
-                Supprimer
+            <button class="bouton bouton-danger"
+                    id="confirmation-valider"
+                    type="button">
+                Confirmer
             </button>
+
         </div>
 
     </div>
 
 </div>
+
+
+<!-- ==========================================================
+     MESSAGE
+     ========================================================== -->
+
+<div class="message-admin"
+     id="message-admin"
+     role="status"
+     aria-live="polite"></div>
 
 
 <script src="admin.js"></script>

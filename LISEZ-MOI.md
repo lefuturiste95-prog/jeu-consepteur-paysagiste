@@ -1,7 +1,7 @@
 # L'Apprenti Concepteur
 
 Jeu web pour découvrir le métier de concepteur paysagiste.
-Cinq chantiers à végétaliser, un catalogue de 140 végétaux,
+Deux chantiers, un catalogue de 140 végétaux,
 un score et un tableau des scores.
 
 ## Lancer le jeu
@@ -68,7 +68,36 @@ PY
 
 ## Modifier les chantiers
 
-Tout est dans la constante `MISSIONS` en haut de `script.js` :
-titre, texte du brief, conditions du site (`expositions`, `humidites`),
-décor dessiné en SVG et liste des emplacements de plantation
-(position en % et type de végétal attendu).
+Tout est dans la constante `MISSIONS` en haut de `script.js`.
+Le chantier Parking contient trois vues réelles : vue aérienne, vue piétonne depuis l’accès et vue piétonne depuis le terrain.
+Le chantier Zone 6 conserve pour l’instant l’ancien contenu du chantier 2.
+Les anciens modes Photo / Mixte / Plan ont été supprimés.
+
+
+## Espace administrateur — version 1
+
+- Bouton **Admin** en haut à droite de la page d'accueil.
+- Code : `etudessuperieures`
+- La page `admin.html` est protégée contre les accès accidentels par `sessionStorage`.
+- L'administrateur peut déjà supprimer un score précis ou effacer tout le classement.
+- Les outils visuels pour modifier les 3 chantiers, placer les points « ? » et les emplacements seront ajoutés dans la prochaine étape.
+- Le bilan final contient maintenant un bouton **Retour à l'accueil** en plus de **Rejouer** et **Revoir le détail des chantiers**.
+
+> Important : le code administrateur est côté navigateur. Il convient pour un forum et pour éviter les accès accidentels, mais ce n'est pas une sécurité serveur.
+
+
+## Version Parking — Analyse / Aménagement
+
+Le chantier 1 est maintenant séparé en deux phases :
+
+1. **Analyse** : vue aérienne + deux vues piétonnes avec 5 points « œil » à découvrir.
+2. **Aménagement** : affichage provisoire de la dernière vue générée du parking.
+
+Les images utilisées sont dans `image/parking/` :
+
+- `vue-aerienne.png`
+- `vue-pieton-acces.jpeg`
+- `vue-pieton-terrain.jpeg`
+- `vue-amenagement-provisoire.png`
+
+Les positions et textes des points d’analyse sont modifiables directement dans la première mission de `script.js`.

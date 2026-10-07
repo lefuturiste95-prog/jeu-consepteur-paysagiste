@@ -18,6 +18,14 @@ const ecrans = {
 
 
 // ===============================
+// ACCES ADMINISTRATEUR
+// ===============================
+
+// Code demandé par Clément : "études supérieures", écrit tout collé.
+const CODE_ADMIN = "etudessuperieures";
+
+
+// ===============================
 // VOCABULAIRE NORMALISE
 // ===============================
 
@@ -46,43 +54,125 @@ const MOIS = [
 
 
 // ===============================
-// LES CINQ CHANTIERS
+// LES DEUX CHANTIERS
 // ===============================
 
-const MISSIONS = [
+let MISSIONS = [
+
+    // ==========================================================
+    // CHANTIER 1 — PARKING (CHANTIER REEL)
+    // ==========================================================
 
     {
-        titre: "La cour de l'école",
-        photo: "image/chantier-1.jpg",
-        brief: "Une cour orientée au nord, à l'ombre du préau et de deux grands " +
-               "tilleuls. Le sol reste frais toute l'année. L'équipe pédagogique " +
-               "veut un coin de nature qui tienne sans arrosage l'été.",
-        expositions: ["ombre", "mi-ombre"],
-        humidites: ["frais"],
-        conseil: "En situation d'ombre, on cherche des végétaux de sous-bois : " +
-                 "feuillage ample, floraison précoce avant la feuillaison des arbres.",
-        decor: {
-            ciel: ["#b9cfd8", "#e4ecec"],
-            sols: ["#6d8f5c", "#587a4b"],
-            soleil: false,
-            batiment: "prau",
-            grandsArbres: [
-                { x: 120, y: 330, echelle: 1.35 },
-                { x: 880, y: 320, echelle: 1.2 }
-            ]
-        },
-        emplacements: [
-            { groupe: "Arbre",   x: 50, y: 66, taille: 19 },
-            { groupe: "Arbuste", x: 24, y: 76, taille: 13 },
-            { groupe: "Arbuste", x: 76, y: 76, taille: 13 },
-            { groupe: "Vivace",  x: 38, y: 89, taille: 9 },
-            { groupe: "Vivace",  x: 62, y: 89, taille: 9 }
-        ]
+        titre: "Création du parking",
+
+        vues: [
+            {
+                id: "aerienne",
+                label: "Vue aérienne",
+                image: "image/parking/vue-aerienne.png",
+                ratio: "16 / 9",
+                points: [
+                    {
+                        id: "surface", x: 52, y: 48,
+                        titre: "Emprise du projet",
+                        indice: "Regardez la surface indiquée au centre de la vue aérienne.",
+                        texte: "La zone de projet représente environ 3 270 m². Cette surface devra accueillir le stationnement, les circulations et les espaces paysagers."
+                    },
+                    {
+                        id: "cours-eau", x: 64, y: 88,
+                        titre: "Cours d’eau au sud",
+                        indice: "Observez la limite sud de la parcelle.",
+                        texte: "Un petit cours d’eau passe au sud du site et rejoint le Noir Riez. La gestion des eaux pluviales devra donc être prise en compte dans l’aménagement."
+                    },
+                    {
+                        id: "acces", x: 20, y: 38,
+                        titre: "Accès existant",
+                        indice: "Repérez les surfaces déjà circulées à proximité du terrain.",
+                        texte: "Le site est directement voisin d’une voirie existante. Cet accès constitue un point important pour organiser l’entrée et la circulation du futur parking."
+                    },
+                    {
+                        id: "lisiere", x: 86, y: 54,
+                        titre: "Lisière végétale",
+                        indice: "Regardez la bordure droite de la parcelle.",
+                        texte: "Une végétation arborée borde une partie du site. Elle participe au paysage existant et doit être prise en compte dans la conception."
+                    }
+                ]
+            },
+            {
+                id: "pieton-acces",
+                label: "Vue piétonne — accès",
+                image: "image/parking/vue-pieton-acces.jpeg",
+                ratio: "4 / 3",
+                points: [
+                    {
+                        id: "acces", x: 56, y: 70,
+                        titre: "Accès existant",
+                        indice: "Regardez la voie au premier plan.",
+                        texte: "La voie existante permet de comprendre comment le futur parking pourra être raccordé aux circulations déjà présentes."
+                    },
+                    {
+                        id: "terrain", x: 43, y: 49,
+                        titre: "Terrain actuel",
+                        indice: "Observez la parcelle derrière la voie.",
+                        texte: "Le terrain est aujourd’hui non aménagé et majoritairement enherbé. Le projet va donc transformer une surface actuellement perméable."
+                    }
+                ]
+            },
+            {
+                id: "pieton-terrain",
+                label: "Vue piétonne — terrain",
+                image: "image/parking/vue-pieton-terrain.jpeg",
+                ratio: "4 / 3",
+                points: [
+                    {
+                        id: "terrain", x: 50, y: 66,
+                        titre: "Terrain actuel",
+                        indice: "Regardez la couverture du sol sur l’ensemble de la parcelle.",
+                        texte: "La parcelle est actuellement couverte d’une végétation herbacée. Cette situation sert de point de départ pour réfléchir à l’imperméabilisation et à la végétalisation du futur parking."
+                    },
+                    {
+                        id: "lisiere", x: 86, y: 50,
+                        titre: "Lisière végétale",
+                        indice: "Observez les arbres sur les côtés et au fond de l’image.",
+                        texte: "Les arbres et la végétation périphérique donnent déjà une structure paysagère au site. Le futur aménagement devra dialoguer avec cet environnement."
+                    }
+                ]
+            }
+        ],
+
+        imageAmenagement: "image/parking/vue-amenagement-provisoire.png",
+
+        brief: "Une zone actuellement enherbée doit être transformée en parking pour augmenter le nombre de places disponibles pour le personnel et les étudiants. Avant de concevoir, commencez par analyser le site.",
+
+        analyseTotal: 5,
+
+        // Ces valeurs sont conservées pour les futures étapes du chantier.
+        expositions: ["mi-ombre", "soleil"],
+        humidites: ["humide", "frais"],
+
+        conseil: "L’analyse du site doit guider les futurs choix de matériaux, de gestion de l’eau et de végétation.",
+
+        // Conservé uniquement pour compatibilité avec le reste du prototype.
+        emplacements: []
     },
 
+    // ==========================================================
+    // CHANTIER 2 — ZONE 6
+    // ==========================================================
+    // On conserve volontairement presque tout l'ancien chantier 2.
+
     {
-        titre: "La berge du ruisseau",
-        photo: "image/chantier-2.jpg",
+        titre: "Zone 6",
+
+        vues: [
+            {
+                id: "principale",
+                label: "Vue principale",
+                image: "image/chantier-2.jpg"
+            }
+        ],
+
         brief: "Le long d'un ruisseau, la terre est gorgée d'eau une bonne partie " +
                "de l'année et la berge s'érode. La commune demande une végétation " +
                "qui tienne le talus et supporte les pieds dans l'eau.",
@@ -91,105 +181,129 @@ const MISSIONS = [
         conseil: "Les sols très humides réclament des espèces de ripisylve " +
                  "(aulne, saule, viorne obier, cornouiller) : leurs racines " +
                  "fixent la berge.",
-        decor: {
-            ciel: ["#8fc0d8", "#dcecec"],
-            sols: ["#5f8f56", "#4b7a48"],
-            soleil: "doux",
-            eau: true,
-            grandsArbres: [
-                { x: 930, y: 300, echelle: 1.1 }
-            ]
-        },
+
         emplacements: [
             { groupe: "Arbre",   x: 22, y: 60, taille: 19 },
             { groupe: "Arbuste", x: 48, y: 66, taille: 13 },
             { groupe: "Arbuste", x: 70, y: 70, taille: 13 },
             { groupe: "Vivace",  x: 36, y: 78, taille: 9 }
         ]
-    },
-
-    {
-        titre: "Le talus plein sud",
-        photo: "image/chantier-3.jpg",
-        brief: "Un remblai en pente exposé plein sud, caillouteux et très drainant. " +
-               "L'eau ne s'y arrête jamais et la roche affleure. Objectif : zéro " +
-               "arrosage après la reprise.",
-        expositions: ["soleil", "plein soleil"],
-        humidites: ["sec", "très sec"],
-        conseil: "En terrain sec et chaud, la palette méditerranéenne s'impose : " +
-                 "feuillage gris, petites feuilles, végétaux aromatiques.",
-        decor: {
-            ciel: ["#8ec4de", "#f4e7c9"],
-            sols: ["#c2a266", "#a98a52"],
-            soleil: "fort",
-            rochers: true
-        },
-        emplacements: [
-            { groupe: "Arbre",   x: 74, y: 58, taille: 18 },
-            { groupe: "Arbuste", x: 30, y: 66, taille: 12 },
-            { groupe: "Arbuste", x: 52, y: 72, taille: 12 },
-            { groupe: "Vivace",  x: 18, y: 84, taille: 9 },
-            { groupe: "Vivace",  x: 44, y: 90, taille: 9 }
-        ]
-    },
-
-    {
-        titre: "La place du village",
-        photo: "image/chantier-4.jpg",
-        brief: "Une place minérale à réaménager. Le soleil tape du matin au soir " +
-               "sur les pavés, mais la terre des fosses de plantation reste fraîche. " +
-               "On attend de l'ombre portée sur les bancs.",
-        expositions: ["plein soleil"],
-        humidites: ["frais"],
-        conseil: "Sur une place, l'arbre fait le projet : c'est lui qui apporte " +
-                 "l'ombre et rafraîchit l'air. On le choisit pour son port et " +
-                 "sa tenue en milieu urbain.",
-        decor: {
-            ciel: ["#79b9dd", "#eef0e2"],
-            sols: ["#cdc4b2", "#b8ae9a"],
-            soleil: "fort",
-            batiment: "village",
-            pave: true
-        },
-        emplacements: [
-            { groupe: "Arbre",   x: 27, y: 64, taille: 20 },
-            { groupe: "Arbre",   x: 68, y: 62, taille: 20 },
-            { groupe: "Arbuste", x: 46, y: 80, taille: 12 },
-            { groupe: "Vivace",  x: 16, y: 88, taille: 9 },
-            { groupe: "Vivace",  x: 84, y: 86, taille: 9 }
-        ]
-    },
-
-    {
-        titre: "Le jardin de la médiathèque",
-        photo: "image/chantier-5.jpg",
-        brief: "Au pied d'une façade vitrée orientée est : soleil du matin, ombre " +
-               "l'après-midi. Le sol, enrichi lors du chantier, reste humide et " +
-               "frais. Le public traverse ce jardin tous les jours.",
-        expositions: ["ombre", "mi-ombre"],
-        humidites: ["humide", "frais"],
-        conseil: "Un jardin très regardé demande de l'intérêt en toutes saisons : " +
-                 "on étale les floraisons et on mise sur les feuillages persistants.",
-        decor: {
-            ciel: ["#a8cadb", "#eaf0e6"],
-            sols: ["#6b9159", "#557c4a"],
-            soleil: "doux",
-            batiment: "mediatheque",
-            grandsArbres: [
-                { x: 60, y: 340, echelle: 1.1 }
-            ]
-        },
-        emplacements: [
-            { groupe: "Arbre",   x: 82, y: 62, taille: 18 },
-            { groupe: "Arbuste", x: 32, y: 70, taille: 12 },
-            { groupe: "Arbuste", x: 56, y: 72, taille: 12 },
-            { groupe: "Vivace",  x: 16, y: 84, taille: 9 },
-            { groupe: "Vivace",  x: 42, y: 88, taille: 9 },
-            { groupe: "Vivace",  x: 68, y: 90, taille: 9 }
-        ]
     }
 
-];
+]
+
+
+// ===============================
+// CONFIGURATION PERSONNALISEE PAR L'ADMIN
+// ===============================
+
+const CLE_CONFIG_ADMIN = "apprenti-concepteur-config";
+
+
+function appliquerConfigurationAdmin() {
+
+    try {
+
+        const sauvegarde =
+            JSON.parse(localStorage.getItem(CLE_CONFIG_ADMIN));
+
+        if (
+            !sauvegarde ||
+            !Array.isArray(sauvegarde.chantiers)
+        ) {
+            return;
+        }
+
+        sauvegarde.chantiers.forEach((modifications, index) => {
+
+            if (!MISSIONS[index] || !modifications) {
+                return;
+            }
+
+            const missionOriginale = MISSIONS[index];
+
+            MISSIONS[index] = {
+                ...missionOriginale,
+                ...modifications,
+
+                // Si l'admin a enregistré des vues, on les utilise.
+                // Sinon on conserve celles présentes dans le code.
+                vues:
+                    Array.isArray(modifications.vues) &&
+                    modifications.vues.length > 0
+                        ? modifications.vues
+                        : missionOriginale.vues,
+
+                // Les emplacements de plantation de Zone 6 ne sont pas
+                // gérés dans l'admin pour le moment : on les conserve.
+                emplacements:
+                    Array.isArray(modifications.emplacements)
+                        ? modifications.emplacements
+                        : missionOriginale.emplacements,
+
+                expositions:
+                    Array.isArray(modifications.expositions)
+                        ? modifications.expositions
+                        : missionOriginale.expositions,
+
+                humidites:
+                    Array.isArray(modifications.humidites)
+                        ? modifications.humidites
+                        : missionOriginale.humidites
+            };
+        });
+
+    } catch (erreur) {
+
+        console.warn(
+            "Impossible de lire la configuration administrateur :",
+            erreur
+        );
+    }
+}
+
+
+function echapperConfigHTML(valeur) {
+
+    return String(valeur ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function conditionsDepuisAdmin(liste, secours) {
+
+    const conditions =
+        Array.isArray(liste) && liste.length > 0
+            ? liste
+            : secours;
+
+    return conditions
+        .map((condition, index) => {
+
+            let classe = "condition";
+
+            if (index === 1) {
+                classe += " est-hum";
+            }
+
+            if (index === 2) {
+                classe += " est-expo";
+            }
+
+            return `
+                <span class="${classe}">
+                    ${echapperConfigHTML(condition)}
+                </span>`;
+        })
+        .join("");
+}
+
+
+appliquerConfigurationAdmin();
 
 const POINTS_EXPOSITION = 40;
 const POINTS_HUMIDITE   = 40;
@@ -210,7 +324,9 @@ const partie = {
     resultats: [],          // un objet par chantier terminé
     choix: [],              // index de plante par emplacement
     emplacementVise: 0,
-    modeScene: "mixte"
+    vueScene: 0,
+    phaseParking: "analyse",
+    analyseTrouvee: new Set()
 };
 
 const filtres = {
@@ -494,46 +610,82 @@ function silhouetteVivace(graine, variation, fleurit, fleur) {
 
 
 // ===============================
-// PHOTO + PLAN / TOPOGRAPHIE
+// VUES REELLES DU CHANTIER
 // ===============================
 
 const PHOTO_SECOURS = "image/jardintest.jpg";
 
 function chargerScene(mission) {
 
-    const photo = $("#scene-photo");
-
-    // On tente la photo propre au chantier. Si elle n'existe pas encore,
-    // le projet reste jouable avec l'image de secours actuelle.
-    photo.onerror = () => {
-        if (!photo.src.endsWith("jardintest.jpg")) {
-            photo.src = PHOTO_SECOURS;
-        }
-    };
-
-    photo.src = mission.photo || PHOTO_SECOURS;
-    photo.alt = "Photo du site — " + mission.titre;
-
-    $("#scene-svg").innerHTML = dessinerScene(mission);
-
-    definirModeScene(partie.modeScene);
+    partie.vueScene = 0;
+    creerBoutonsVues(mission);
+    afficherVueChantier(0);
 }
 
-function definirModeScene(mode) {
 
-    const modes = ["photo", "mixte", "plan"];
-    partie.modeScene = modes.includes(mode) ? mode : "mixte";
+function creerBoutonsVues(mission) {
+
+    const conteneur = $("#scene-outils");
+    conteneur.innerHTML = "";
+
+    const vues = mission.vues && mission.vues.length
+        ? mission.vues
+        : [{ id: "principale", label: "Vue principale", image: PHOTO_SECOURS }];
+
+    vues.forEach((vue, index) => {
+
+        const bouton = document.createElement("button");
+        bouton.type = "button";
+        bouton.className = "scene-mode";
+        bouton.textContent = vue.label;
+        bouton.dataset.vueIndex = index;
+
+        bouton.addEventListener("click", () => {
+            afficherVueChantier(index);
+        });
+
+        conteneur.appendChild(bouton);
+    });
+}
+
+
+function afficherVueChantier(index) {
+
+    const mission = MISSIONS[partie.missionCourante];
+    const vues = mission.vues && mission.vues.length
+        ? mission.vues
+        : [{ id: "principale", label: "Vue principale", image: PHOTO_SECOURS }];
+
+    const indexValide = Math.max(0, Math.min(index, vues.length - 1));
+    const vue = vues[indexValide];
+    const photo = $("#scene-photo");
+
+    partie.vueScene = indexValide;
+
+    photo.onerror = () => {
+        photo.onerror = null;
+        photo.src = PHOTO_SECOURS;
+    };
+
+    photo.src = vue.image || PHOTO_SECOURS;
+    photo.alt = vue.label + " — " + mission.titre;
 
     const scene = $("#scene");
-    scene.classList.remove("mode-photo", "mode-mixte", "mode-plan");
-    scene.classList.add("mode-" + partie.modeScene);
+    scene.style.aspectRatio = vue.ratio || "16 / 9";
 
-    document.querySelectorAll(".scene-mode").forEach(bouton => {
-        const actif = bouton.dataset.mode === partie.modeScene;
+    document.querySelectorAll(".scene-mode").forEach((bouton, i) => {
+        const actif = i === indexValide;
         bouton.classList.toggle("est-actif", actif);
         bouton.setAttribute("aria-pressed", actif ? "true" : "false");
     });
+
+    if (partie.missionCourante === 0 && partie.phaseParking === "analyse") {
+        dessinerPointsAnalyse(vue);
+    } else {
+        $("#scene-hotspots").innerHTML = "";
+    }
 }
+
 
 // ===============================
 // DESSINS : LES SITES
@@ -942,6 +1094,235 @@ function afficherPlantes() {
 
 function lancerMission(numero) {
 
+    if (numero === 0) {
+        lancerParkingAnalyse();
+        return;
+    }
+
+    lancerMissionVegetal(numero);
+}
+
+
+function lancerParkingAnalyse() {
+
+    partie.missionCourante = 0;
+    partie.phaseParking = "analyse";
+    partie.analyseTrouvee = new Set();
+    partie.vueScene = 0;
+
+    const mission = MISSIONS[0];
+    const ecranJeu = $("#ecran-jeu");
+
+    ecranJeu.classList.add("mode-parking-analyse");
+    ecranJeu.classList.remove("mode-parking-amenagement");
+
+    $("#numero-mission").textContent = "Chantier 1 / 2";
+    $("#phase-mission").textContent = "Analyse";
+    $("#titre-mission").textContent = mission.titreAnalyse || "Parking — Analyse du site";
+    $("#brief-mission").textContent = mission.brief;
+    $("#instruction-phase").textContent =
+        mission.instructionAnalyse ||
+        "Touchez les yeux sur les différentes vues pour découvrir les informations utiles au projet.";
+
+    $("#conditions-mission").innerHTML =
+        conditionsDepuisAdmin(
+            mission.conditionsAnalyse,
+            [
+                "≈ 3 270 m² de zone de projet",
+                "≈ cours d’eau au sud",
+                "Terrain actuellement enherbé"
+            ]
+        );
+
+    $("#scene-slots").innerHTML = "";
+
+    chargerScene(mission);
+    majAnalyseParking();
+    majJauge();
+    afficherEcran("jeu");
+
+    setTimeout(() => message(
+        "Commencez par la vue aérienne puis explorez les vues piétonnes."), 600);
+}
+
+
+function listePointsAnalyseParking() {
+
+    const uniques = new Map();
+
+    MISSIONS[0].vues.forEach(vue => {
+        (vue.points || []).forEach(point => {
+            if (!uniques.has(point.id)) uniques.set(point.id, point);
+        });
+    });
+
+    return [...uniques.values()];
+}
+
+
+function dessinerPointsAnalyse(vue) {
+
+    const conteneur = $("#scene-hotspots");
+    conteneur.innerHTML = "";
+
+    (vue.points || []).forEach(point => {
+
+        const bouton = document.createElement("button");
+        const trouve = partie.analyseTrouvee.has(point.id);
+
+        bouton.type = "button";
+        bouton.className = "point-analyse" + (trouve ? " est-trouve" : "");
+        bouton.style.left = point.x + "%";
+        bouton.style.top = point.y + "%";
+        bouton.setAttribute("aria-label", "Analyser : " + point.titre);
+        bouton.title = trouve ? point.titre + " — déjà analysé" : "Observer cette zone";
+        bouton.innerHTML = trouve ? "✓" : "👁";
+
+        bouton.addEventListener("click", () => ouvrirPointAnalyse(point));
+
+        conteneur.appendChild(bouton);
+    });
+}
+
+
+function ouvrirPointAnalyse(point) {
+
+    partie.analyseTrouvee.add(point.id);
+
+    $("#analyse-titre").textContent = point.titre;
+    $("#analyse-indice").textContent = point.indice;
+    $("#analyse-texte").textContent = point.texte;
+
+    majAnalyseParking();
+
+    const mission = MISSIONS[0];
+    const vue = mission.vues[partie.vueScene];
+    dessinerPointsAnalyse(vue);
+
+    ouvrirFenetre("#voile-analyse");
+}
+
+
+function majAnalyseParking() {
+
+    const points = listePointsAnalyseParking();
+    const trouves = partie.analyseTrouvee.size;
+    const total = points.length;
+
+    $("#analyse-compteur").textContent = trouves + " / " + total;
+
+    $("#analyse-liste").innerHTML = points.map(point => {
+
+        const trouve = partie.analyseTrouvee.has(point.id);
+
+        return `
+            <div class="analyse-item ${trouve ? "est-trouve" : ""}">
+                <span class="analyse-etat">${trouve ? "✓" : "?"}</span>
+                <span>
+                    <strong>${trouve ? point.titre : "Élément à découvrir"}</strong>
+                    <small>${trouve ? "Information trouvée" : "Explorez les vues"}</small>
+                </span>
+            </div>`;
+    }).join("");
+
+    $("#bouton-passer-amenagement").disabled = trouves < total;
+
+    if (trouves === total) {
+        $("#indice-global").textContent =
+            "Analyse terminée : vous pouvez maintenant passer à l’aménagement.";
+    } else if (trouves >= 3) {
+        $("#indice-global").textContent =
+            "Pensez à changer de point de vue : certains éléments ne sont visibles que sur une autre image.";
+    }
+}
+
+
+function enregistrerResultatAnalyseParking() {
+
+    if (partie.resultats.some(resultat => resultat.type === "analyse-parking")) {
+        return;
+    }
+
+    const elements = listePointsAnalyseParking();
+
+    const resultat = {
+        type: "analyse-parking",
+        titre: "Parking — Analyse",
+        conseil: "Une bonne conception commence par une lecture attentive du site.",
+        lignes: [],
+        elements,
+        score: 100,
+        maximum: 100,
+        ratio: 1,
+        etoiles: 3
+    };
+
+    partie.resultats.push(resultat);
+    partie.score += resultat.score;
+    $("#score-courant").textContent = partie.score;
+}
+
+
+function passerAmenagementParking() {
+
+    enregistrerResultatAnalyseParking();
+
+    partie.phaseParking = "amenagement";
+
+    const ecranJeu = $("#ecran-jeu");
+    ecranJeu.classList.remove("mode-parking-analyse");
+    ecranJeu.classList.add("mode-parking-amenagement");
+
+    $("#phase-mission").textContent = "Aménagement";
+
+    const mission = MISSIONS[0];
+
+    $("#titre-mission").textContent =
+        mission.titreAmenagement || "Parking — Aménagement";
+
+    $("#brief-mission").textContent =
+        mission.briefAmenagement ||
+        "L’analyse est terminée. Cette vue montre pour l’instant une proposition d’aménagement provisoire du futur parking.";
+
+    $("#instruction-phase").textContent =
+        mission.instructionAmenagement ||
+        "Les choix de matériaux, de gestion de l’eau et de végétaux seront ajoutés dans une prochaine étape.";
+
+    $("#conditions-mission").innerHTML =
+        conditionsDepuisAdmin(
+            mission.conditionsAmenagement,
+            [
+                "Analyse terminée",
+                "Gestion de l’eau à intégrer",
+                "Aménagement provisoire"
+            ]
+        );
+
+    const photo = $("#scene-photo");
+    photo.onerror = () => {
+        photo.onerror = null;
+        photo.src = PHOTO_SECOURS;
+    };
+    photo.src = mission.imageAmenagement || PHOTO_SECOURS;
+    photo.alt = "Vue aérienne de l’aménagement provisoire du parking";
+
+    $("#scene").style.aspectRatio = "16 / 9";
+    $("#scene-hotspots").innerHTML = "";
+    $("#scene-slots").innerHTML = "";
+
+    $("#scene-outils").innerHTML = `
+        <button type="button" class="scene-mode est-actif" aria-pressed="true">
+            Vue d’aménagement
+        </button>`;
+}
+
+
+function lancerMissionVegetal(numero) {
+
+    $("#ecran-jeu").classList.remove("mode-parking-analyse", "mode-parking-amenagement");
+    $("#phase-mission").textContent = "Aménagement";
+    $("#instruction-phase").textContent = "Choisissez les végétaux adaptés au site puis validez votre composition.";
+
     partie.missionCourante = numero;
     partie.choix = new Array(MISSIONS[numero].emplacements.length).fill(null);
     partie.emplacementVise = 0;
@@ -965,7 +1346,7 @@ function lancerMission(numero) {
             ⚑ ${resumerComposition(mission)}
         </span>`;
 
-    partie.modeScene = "mixte";
+    partie.vueScene = 0;
     chargerScene(mission);
 
     dessinerEmplacements();
@@ -1464,6 +1845,7 @@ $("#bouton-jouer").addEventListener("click", () => {
 
     partie.score = 0;
     partie.resultats = [];
+    partie.analyseTrouvee = new Set();
 
     $("#score-courant").textContent = "0";
 
@@ -1474,6 +1856,67 @@ $("#bouton-regles").addEventListener("click", () => ouvrirFenetre("#voile-regles
 
 $("#bouton-fermer-regles").addEventListener("click",
     () => fermerFenetre("#voile-regles"));
+
+
+// --- Accès administrateur ---
+
+$("#bouton-admin").addEventListener("click", () => {
+
+    $("#code-admin").value = "";
+    $("#erreur-admin").textContent = "";
+
+    ouvrirFenetre("#voile-admin");
+
+    setTimeout(() => $("#code-admin").focus(), 80);
+});
+
+
+$("#annuler-admin").addEventListener("click", () => {
+    fermerFenetre("#voile-admin");
+});
+
+
+function verifierCodeAdmin() {
+
+    const codeSaisi = $("#code-admin").value.trim().toLowerCase();
+
+    if (codeSaisi === CODE_ADMIN) {
+
+        // Autorisation valable uniquement pendant cette session du navigateur.
+        sessionStorage.setItem("adminAutorise", "oui");
+
+        window.location.href = "admin.html";
+        return;
+    }
+
+    $("#erreur-admin").textContent = "Code incorrect.";
+    $("#code-admin").select();
+}
+
+
+$("#valider-admin").addEventListener("click", verifierCodeAdmin);
+
+
+$("#code-admin").addEventListener("keydown", (evenement) => {
+
+    if (evenement.key === "Enter") {
+        verifierCodeAdmin();
+    }
+});
+
+
+// --- Analyse du parking ---
+
+$("#bouton-fermer-analyse").addEventListener("click",
+    () => fermerFenetre("#voile-analyse"));
+
+$("#bouton-passer-amenagement").addEventListener("click", () => {
+    passerAmenagementParking();
+});
+
+$("#bouton-vers-zone6").addEventListener("click", () => {
+    lancerMission(1);
+});
 
 
 // --- Recherche et filtres ---
@@ -1539,16 +1982,6 @@ $(".catalogue-tete").addEventListener("click", () => {
     if (window.matchMedia("(max-width: 900px)").matches) {
         $("#catalogue").classList.toggle("est-repliee");
     }
-});
-
-
-// --- Photo / Mixte / Plan ---
-
-document.querySelectorAll(".scene-mode").forEach(bouton => {
-
-    bouton.addEventListener("click", () => {
-        definirModeScene(bouton.dataset.mode);
-    });
 });
 
 
@@ -1633,28 +2066,58 @@ $("#bouton-rejouer").addEventListener("click", () => {
 });
 
 
+$("#bouton-retour-accueil").addEventListener("click", () => {
+
+    // On remet la partie en attente sans effacer le classement enregistré.
+    partie.score = 0;
+    partie.resultats = [];
+    partie.analyseTrouvee = new Set();
+    partie.choix = [];
+    partie.emplacementVise = 0;
+
+    $("#score-courant").textContent = "0";
+    $("#nom-joueur").value = "";
+    $("#form-classement").style.display = "flex";
+
+    afficherMeilleurScore();
+    afficherEcran("accueil");
+});
+
+
 $("#bouton-revoir").addEventListener("click", () => {
 
-    $("#detail-partie").innerHTML = partie.resultats.map((resultat, index) => `
-        <div class="detail-chantier">
-            <h3>${index + 1}. ${resultat.titre}</h3>
-            <p class="detail-sous">
-                ${resultat.score} / ${resultat.maximum} points ·
-                ${"★".repeat(resultat.etoiles) || "aucune étoile"}
-            </p>
-            <div class="detail-plantes">
-                ${resultat.lignes.map(ligne => `
-                    <div class="ligne-detail">
-                        <span class="ligne-detail-nom">
-                            ${ligne.plante.nomVernaculaire}
-                            <small>${ligne.plante.groupe} ·
-                                ${ligne.plante.expositions.join(", ")} ·
-                                ${ligne.plante.humidites.join(", ")}</small>
-                        </span>
-                        <span class="ligne-detail-points">${ligne.points}</span>
-                    </div>`).join("")}
-            </div>
-        </div>`).join("");
+    $("#detail-partie").innerHTML = partie.resultats.map((resultat, index) => {
+
+        const contenu = resultat.type === "analyse-parking"
+            ? resultat.elements.map(element => `
+                <div class="ligne-detail">
+                    <span class="ligne-detail-nom">
+                        ${element.titre}
+                        <small>Élément identifié pendant l’analyse du site</small>
+                    </span>
+                    <span class="ligne-detail-points">✓</span>
+                </div>`).join("")
+            : resultat.lignes.map(ligne => `
+                <div class="ligne-detail">
+                    <span class="ligne-detail-nom">
+                        ${ligne.plante.nomVernaculaire}
+                        <small>${ligne.plante.groupe} ·
+                            ${ligne.plante.expositions.join(", ")} ·
+                            ${ligne.plante.humidites.join(", ")}</small>
+                    </span>
+                    <span class="ligne-detail-points">${ligne.points}</span>
+                </div>`).join("");
+
+        return `
+            <div class="detail-chantier">
+                <h3>${index + 1}. ${resultat.titre}</h3>
+                <p class="detail-sous">
+                    ${resultat.score} / ${resultat.maximum} points ·
+                    ${"★".repeat(resultat.etoiles) || "aucune étoile"}
+                </p>
+                <div class="detail-plantes">${contenu}</div>
+            </div>`;
+    }).join("");
 
     ouvrirFenetre("#voile-detail");
 });
@@ -1683,6 +2146,8 @@ document.addEventListener("keydown", (evenement) => {
     if (evenement.key === "Escape") {
         fermerFenetre("#voile-regles");
         fermerFenetre("#voile-detail");
+        fermerFenetre("#voile-admin");
+        fermerFenetre("#voile-analyse");
     }
 });
 
