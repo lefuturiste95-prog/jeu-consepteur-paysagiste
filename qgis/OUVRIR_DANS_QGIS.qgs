@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qgis projectname="Genech - Référence terrain" version="3.34.0-Prizren">
+  <homePath path=""/>
+  <title>Genech - Référence terrain</title>
+
+  <projectCrs>
+    <spatialrefsys>
+      <wkt>PROJCRS["RGF93 v1 / Lambert-93",BASEGEOGCRS["RGF93 v1",DATUM["Reseau Geodesique Francais 1993 v1",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4171]],CONVERSION["Lambert-93",METHOD["Lambert Conic Conformal (2SP)",ID["EPSG",9802]],PARAMETER["Latitude of false origin",46.5,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8821]],PARAMETER["Longitude of false origin",3,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8822]],PARAMETER["Latitude of 1st standard parallel",49,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8823]],PARAMETER["Latitude of 2nd standard parallel",44,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8824]],PARAMETER["Easting at false origin",700000,LENGTHUNIT["metre",1],ID["EPSG",8826]],PARAMETER["Northing at false origin",6600000,LENGTHUNIT["metre",1],ID["EPSG",8827]]],CS[Cartesian,2],AXIS["easting (X)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,ORDER[2],LENGTHUNIT["metre",1]],ID["EPSG",2154]]</wkt>
+      <authid>EPSG:2154</authid>
+      <description>RGF93 / Lambert-93</description>
+      <projectionacronym>lcc</projectionacronym>
+      <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+      <geographicflag>false</geographicflag>
+    </spatialrefsys>
+  </projectCrs>
+
+  <layer-tree-group checked="Qt::Checked" expanded="1" name="">
+    <layer-tree-group checked="Qt::Checked" expanded="1" name="Références Genech">
+      <layer-tree-layer checked="Qt::Checked" expanded="1"
+        id="batiments_genech"
+        name="Bâtiments Genech"
+        source="./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=batiments_genech"
+        providerKey="ogr"/>
+      <layer-tree-layer checked="Qt::Checked" expanded="1"
+        id="traces_swmap"
+        name="Traces SW Maps"
+        source="./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=traces_swmap"
+        providerKey="ogr"/>
+      <layer-tree-layer checked="Qt::Checked" expanded="1"
+        id="points_gnss_swmap"
+        name="Points GNSS SW Maps"
+        source="./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=points_gnss_swmap"
+        providerKey="ogr"/>
+      <layer-tree-layer checked="Qt::Checked" expanded="1"
+        id="arbres_swmap"
+        name="Arbres SW Maps"
+        source="./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=arbres_swmap"
+        providerKey="ogr"/>
+    </layer-tree-group>
+  </layer-tree-group>
+
+  <projectlayers>
+    <maplayer type="vector" geometry="Polygon">
+      <id>batiments_genech</id>
+      <layername>Bâtiments Genech</layername>
+      <datasource>./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=batiments_genech</datasource>
+      <provider encoding="UTF-8">ogr</provider>
+    </maplayer>
+    <maplayer type="vector" geometry="Line">
+      <id>traces_swmap</id>
+      <layername>Traces SW Maps</layername>
+      <datasource>./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=traces_swmap</datasource>
+      <provider encoding="UTF-8">ogr</provider>
+    </maplayer>
+    <maplayer type="vector" geometry="Point">
+      <id>points_gnss_swmap</id>
+      <layername>Points GNSS SW Maps</layername>
+      <datasource>./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=points_gnss_swmap</datasource>
+      <provider encoding="UTF-8">ogr</provider>
+    </maplayer>
+    <maplayer type="vector" geometry="Point">
+      <id>arbres_swmap</id>
+      <layername>Arbres SW Maps</layername>
+      <datasource>./reference_genech_lambert93/Genech_reference_SWMaps_batiments.gpkg|layername=arbres_swmap</datasource>
+      <provider encoding="UTF-8">ogr</provider>
+    </maplayer>
+  </projectlayers>
+</qgis>

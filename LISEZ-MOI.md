@@ -101,3 +101,64 @@ Les images utilisées sont dans `image/parking/` :
 - `vue-amenagement-provisoire.png`
 
 Les positions et textes des points d’analyse sont modifiables directement dans la première mission de `script.js`.
+
+
+## Administration — version complète
+
+L'accès se fait depuis le bouton **Admin** de la page d'accueil.
+
+Code :
+`etudessuperieures`
+
+L'interface permet maintenant :
+- de modifier le nom et les textes des deux chantiers ;
+- de modifier les textes de la phase Analyse et Aménagement du parking ;
+- de changer les chemins des images ;
+- d'ajouter ou supprimer des vues ;
+- de placer les points d'analyse directement en cliquant sur l'image ;
+- de déplacer, modifier ou supprimer chaque point ;
+- de supprimer des personnes du classement ou de vider le classement ;
+- d'exporter et d'importer la configuration au format JSON ;
+- de remettre les réglages d'origine.
+
+Les réglages sont enregistrés dans `localStorage`.
+Ils restent donc liés au navigateur et à l'appareil utilisés.
+
+
+## Prototype QGIS intégré
+
+Une nouvelle démonstration est disponible dans :
+
+- `demo-qgis.html` : aperçu direct du principe sans lancer toute la partie.
+- `qgis/parking-qgis.js` : couches vectorielles affichées dans le jeu.
+- `qgis/fond_vue_aerienne_calage_local.tif` : vue aérienne calibrée en mètres.
+- `qgis/parking_projet.gpkg` : couches vectorielles pour QGIS.
+- `qgis/README_QGIS.md` : notice technique.
+
+Dans le chantier Parking, après la phase Analyse, trois modes sont proposés :
+
+1. **Vue actuelle** : photo aérienne d'origine, sans modification.
+2. **Projet QGIS** : la même photo + le plan vectoriel.
+3. **Plan seul** : uniquement le dessin du projet.
+
+Le prototype utilise des places de 2,50 × 5,00 m, des places PMR de
+3,30 × 5,00 m et des voies de circulation de 6,00 m.
+
+### Limite du prototype
+
+La capture est calibrée grâce à la barre d'échelle visible de 20 m.
+Le dessin est donc cohérent en dimensions relatives mais n'est pas encore
+géoréférencé aux vraies coordonnées IGN. Pour le rendu définitif, il faudra
+ouvrir une vraie orthophoto géoréférencée dans QGIS et y replacer les couches.
+
+
+## Mise à jour QGIS v2
+
+Le plan parking a été agrandi pour utiliser presque toute l'emprise disponible.
+
+Capacité du prototype actuel :
+- 0 places standard ;
+- 0 places PMR ;
+- 0 places au total.
+
+Le fond satellite reste inchangé. Le projet est dessiné par-dessus en couches vectorielles.

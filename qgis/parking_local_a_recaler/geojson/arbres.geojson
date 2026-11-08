@@ -1,0 +1,27 @@
+{
+"type": "FeatureCollection",
+"name": "arbres",
+"features": [
+{ "type": "Feature", "properties": { "nom": "Arbre 1" }, "geometry": { "type": "Point", "coordinates": [ 69.641025641025635, 56.65 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 2" }, "geometry": { "type": "Point", "coordinates": [ 89.102564102564088, 62.6 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 3" }, "geometry": { "type": "Point", "coordinates": [ 66.067948717948724, 44.055128205128199 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 4" }, "geometry": { "type": "Point", "coordinates": [ 85.528205128205116, 50.005128205128202 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 5" }, "geometry": { "type": "Point", "coordinates": [ 67.529487179487177, 39.273076923076914 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 6" }, "geometry": { "type": "Point", "coordinates": [ 86.989743589743583, 45.223076923076917 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 7" }, "geometry": { "type": "Point", "coordinates": [ 70.746153846153845, 28.753846153846148 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 8" }, "geometry": { "type": "Point", "coordinates": [ 90.206410256410251, 34.70384615384615 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 9" }, "geometry": { "type": "Point", "coordinates": [ 96.25, 64.784615384615378 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 10" }, "geometry": { "type": "Point", "coordinates": [ 46.033333333333331, 37.929487179487182 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 11" }, "geometry": { "type": "Point", "coordinates": [ 99.465384615384608, 54.265384615384612 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 12" }, "geometry": { "type": "Point", "coordinates": [ 47.494871794871791, 33.147435897435898 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 13" }, "geometry": { "type": "Point", "coordinates": [ 100.928205128205121, 49.484615384615381 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 14" }, "geometry": { "type": "Point", "coordinates": [ 50.71153846153846, 22.628205128205128 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 15" }, "geometry": { "type": "Point", "coordinates": [ 104.143589743589743, 38.965384615384615 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 16" }, "geometry": { "type": "Point", "coordinates": [ 56.612820512820505, 14.320512820512825 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 17" }, "geometry": { "type": "Point", "coordinates": [ 67.120512820512815, 17.533333333333331 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 18" }, "geometry": { "type": "Point", "coordinates": [ 77.628205128205124, 20.746153846153842 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 19" }, "geometry": { "type": "Point", "coordinates": [ 88.135897435897434, 23.958974358974356 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 20" }, "geometry": { "type": "Point", "coordinates": [ 98.643589743589729, 27.171794871794869 ] } },
+{ "type": "Feature", "properties": { "nom": "Arbre 21" }, "geometry": { "type": "Point", "coordinates": [ 107.180769230769215, 29.782051282051281 ] } }
+]
+}

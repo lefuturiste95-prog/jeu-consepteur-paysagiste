@@ -131,6 +131,12 @@
                      src="image/jardintest.jpg"
                      alt="Vue réelle du site à aménager">
 
+                <!-- Couche vectorielle du projet parking.
+                     Le fond satellite reste inchangé : seules les formes sont dessinées par-dessus. -->
+                <div class="scene-qgis"
+                     id="scene-qgis"
+                     aria-hidden="true"></div>
+
                 <!-- Les boutons sont générés automatiquement selon les vues disponibles
                      pour chaque chantier : vue aérienne, vue piétonne, etc. -->
                 <div class="scene-outils" id="scene-outils"
@@ -200,18 +206,86 @@
             </div>
 
             <p class="panneau-phase-intro">
-                Pour l’instant, cette étape affiche uniquement une vue d’aménagement provisoire.
-                Les choix de matériaux, de gestion de l’eau et de végétaux seront ajoutés ensuite.
+                Ici, le fond satellite reste exactement le même.
+                Le projet est dessiné par-dessus avec des couches vectorielles métriques,
+                comme dans QGIS : aucune génération d’image n’est nécessaire.
             </p>
 
-            <div class="amenagement-resume">
-                <span>✓ Analyse du site terminée</span>
-                <span>◌ Choix d’aménagement à venir</span>
-                <span>◌ Choix des végétaux à venir</span>
+            <div class="amenagement-resume amenagement-qgis-resume">
+                <span>✓ Fond satellite conservé</span>
+                <span>✓ Places standard : 2,50 × 5,00 m</span>
+                <span>✓ Places PMR : 3,30 × 5,00 m</span>
+                <span>✓ Voies de circulation : 6,00 m</span>
+                <span>✓ Noue végétalisée au sud</span>
+                <span>◌ Implantation à ajuster avec le vrai fond géoréférencé QGIS</span>
+            </div>
+
+            <div class="legende-qgis" aria-label="Légende du plan">
+                <span><i class="legende-symbole legende-voie"></i> Circulation</span>
+                <span><i class="legende-symbole legende-place"></i> Place perméable</span>
+                <span><i class="legende-symbole legende-pmr"></i> Place PMR</span>
+                <span><i class="legende-symbole legende-plantation"></i> Plantation</span>
+                <span><i class="legende-symbole legende-noue"></i> Noue</span>
             </div>
 
             <button class="bouton bouton-principal bouton-bloc" id="bouton-vers-zone6">
-                Continuer vers Zone 6 →
+                Configurer les sols →
+            </button>
+
+        </aside>
+
+        <!-- ---------- Colonne de droite : sols et minéraux ---------- -->
+        <aside class="panneau-phase panneau-materiaux" id="panneau-materiaux">
+
+            <div class="panneau-phase-tete">
+                <p class="sur-titre">Aménagement du site — Étape 1</p>
+                <h3>Sols & minéraux</h3>
+            </div>
+
+            <p class="panneau-phase-intro">
+                Commencez par définir les revêtements du parking.
+                Faites un choix pour chaque zone avant de passer aux végétaux.
+            </p>
+
+            <div class="materiaux-groupes">
+
+                <div class="materiau-groupe" data-categorie="circulation">
+                    <strong>Voies de circulation</strong>
+                    <div class="materiau-choix">
+                        <button type="button" data-materiau="Enrobé">Enrobé</button>
+                        <button type="button" data-materiau="Grave stabilisée">Grave stabilisée</button>
+                        <button type="button" data-materiau="Pavés drainants">Pavés drainants</button>
+                    </div>
+                </div>
+
+                <div class="materiau-groupe" data-categorie="places">
+                    <strong>Places de stationnement</strong>
+                    <div class="materiau-choix">
+                        <button type="button" data-materiau="Pavés engazonnés">Pavés engazonnés</button>
+                        <button type="button" data-materiau="Gravier stabilisé">Gravier stabilisé</button>
+                        <button type="button" data-materiau="Enrobé">Enrobé</button>
+                    </div>
+                </div>
+
+                <div class="materiau-groupe" data-categorie="pieton">
+                    <strong>Accès piéton</strong>
+                    <div class="materiau-choix">
+                        <button type="button" data-materiau="Stabilisé">Stabilisé</button>
+                        <button type="button" data-materiau="Pavés">Pavés</button>
+                        <button type="button" data-materiau="Béton désactivé">Béton désactivé</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="materiaux-etat" id="materiaux-etat">
+                0 / 3 choix effectués
+            </div>
+
+            <button class="bouton bouton-principal bouton-bloc"
+                    id="bouton-vers-vegetaux"
+                    disabled>
+                Passer aux végétaux →
             </button>
 
         </aside>
@@ -401,12 +475,11 @@
             <li>
                 <strong>Aménager.</strong>
                 Une fois l’analyse terminée, le jeu passe à la phase d’aménagement.
-                Pour l’instant, une image provisoire montre le principe du futur parking.
+                Le projet QGIS permet de visualiser les circulations, les places, les îlots plantés et la gestion de l’eau sans modifier la photo d’origine.
             </li>
             <li>
                 <strong>Choisir les végétaux.</strong>
-                Le catalogue végétal reste utilisé sur Zone 6. Les filtres permettent
-                de comparer les plantes avec les conditions du chantier.
+                Le catalogue végétal sert maintenant à aménager le même parking. Les filtres permettent de comparer les plantes avec les conditions du site.
             </li>
         </ol>
 
@@ -449,14 +522,9 @@
         <p class="sur-titre">Observation du site</p>
         <h2 id="analyse-titre">Point d’analyse</h2>
 
-        <div class="bloc-indice-analyse">
+        <div class="bloc-indice-analyse bloc-indice-unique">
             <strong>Indice</strong>
             <p id="analyse-indice"></p>
-        </div>
-
-        <div class="bloc-info-analyse">
-            <strong>Ce que l’on retient</strong>
-            <p id="analyse-texte"></p>
         </div>
 
         <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-analyse">
@@ -513,6 +581,7 @@
 
 
 <script src="data/plantes-embarquees.js"></script>
+<script src="qgis/parking_local_a_recaler/parking-qgis.js"></script>
 <script src="script.js"></script>
 
 </body>

@@ -679,7 +679,6 @@ h1, h2, h3 {
     border: 1.5px solid #e2ded1;
     border-radius: var(--rayon-petit);
     -webkit-appearance: none;
-    appearance: none;
 }
 
 #recherche-plante:focus {
@@ -1101,7 +1100,6 @@ h1, h2, h3 {
     border: 1.5px solid rgba(255, 255, 255, .22);
     border-radius: 999px;
     -webkit-appearance: none;
-    appearance: none;
 }
 
 #nom-joueur::placeholder { color: rgba(255, 255, 255, .45); }
@@ -1669,4 +1667,316 @@ h1, h2, h3 {
         height: 44px;
         font-size: 20px;
     }
+}
+
+
+/* ==========================================================
+   MODE QGIS — PARKING
+   Le fond satellite reste fixe et le projet est dessiné
+   en vectoriel, à partir d'une calibration métrique.
+   ========================================================== */
+
+.scene-qgis {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: none;
+    pointer-events: none;
+}
+
+.scene-qgis.est-visible {
+    display: block;
+}
+
+.qgis-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.qgis-emprise-polygone {
+    fill: rgba(61, 125, 79, .08);
+    stroke: rgba(0, 77, 130, .95);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-circulation {
+    fill: rgba(167, 151, 124, .66);
+    stroke: rgba(59, 62, 55, .85);
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-place-standard {
+    fill: rgba(113, 177, 101, .67);
+    stroke: rgba(255, 255, 255, .96);
+    stroke-width: 1.1;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-place-pmr {
+    fill: rgba(58, 126, 189, .76);
+    stroke: rgba(255, 255, 255, .98);
+    stroke-width: 1.3;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-ile-plantee {
+    fill: rgba(59, 126, 54, .88);
+    stroke: rgba(28, 81, 35, .95);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-arbre {
+    fill: rgba(30, 98, 46, .86);
+    stroke: rgba(255, 255, 255, .74);
+    stroke-width: 1.1;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-noue-polygone {
+    fill: rgba(68, 156, 174, .52);
+    stroke: rgba(26, 109, 130, .95);
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-pieton-polygone {
+    fill: rgba(231, 222, 190, .84);
+    stroke: rgba(90, 84, 67, .78);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-echelle rect {
+    fill: rgba(22, 28, 24, .78);
+}
+
+.qgis-echelle line {
+    stroke: #fff;
+    stroke-width: 4;
+    vector-effect: non-scaling-stroke;
+}
+
+.qgis-echelle text {
+    fill: #fff;
+    font-family: var(--texte);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.mode-qgis-plan .scene-photo {
+    opacity: 0;
+}
+
+.mode-qgis-plan .scene {
+    background:
+        linear-gradient(rgba(245, 241, 230, .98), rgba(245, 241, 230, .98));
+}
+
+.mode-qgis-actuel .scene-qgis {
+    display: none !important;
+}
+
+.mode-qgis-projet .scene-qgis,
+.mode-qgis-plan .scene-qgis {
+    display: block;
+}
+
+.legende-qgis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+
+    margin: 0 20px 16px;
+    padding: 13px 14px;
+
+    border: 1px solid var(--ligne);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.legende-qgis > span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--encre-douce);
+    font-size: 12.5px;
+}
+
+.legende-symbole {
+    width: 18px;
+    height: 18px;
+
+    display: inline-block;
+    flex: 0 0 auto;
+
+    border: 1px solid rgba(0,0,0,.22);
+    border-radius: 4px;
+}
+
+.legende-voie { background: rgba(167, 151, 124, .82); }
+.legende-place { background: rgba(113, 177, 101, .82); }
+.legende-pmr { background: rgba(58, 126, 189, .86); }
+.legende-plantation { background: rgba(59, 126, 54, .92); border-radius: 50%; }
+.legende-noue { background: rgba(68, 156, 174, .68); }
+
+.amenagement-qgis-resume {
+    background: #eef5ea;
+}
+
+@media (max-width: 700px) {
+    .legende-qgis {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ==========================================================
+   AMENAGEMENT — SOLS & MINERAUX
+   ========================================================== */
+
+.panneau-materiaux {
+    display: none;
+}
+
+.mode-amenagement-materiaux #panneau-materiaux {
+    display: block;
+}
+
+.mode-amenagement-materiaux #panneau-analyse,
+.mode-amenagement-materiaux #panneau-amenagement,
+.mode-amenagement-materiaux #catalogue,
+.mode-amenagement-materiaux #barre-actions-standard,
+.mode-amenagement-materiaux #bouton-filtrer-chantier {
+    display: none;
+}
+
+.materiaux-groupes {
+    display: grid;
+    gap: 14px;
+}
+
+.materiau-groupe {
+    padding: 14px;
+    border: 1px solid rgba(29, 36, 31, .12);
+    border-radius: 14px;
+    background: #f7f8f4;
+}
+
+.materiau-groupe > strong {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--vert-foret);
+}
+
+.materiau-choix {
+    display: grid;
+    gap: 7px;
+}
+
+.materiau-choix button {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid rgba(38, 82, 58, .22);
+    border-radius: 10px;
+    background: white;
+    color: var(--vert-foret);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.materiau-choix button:hover {
+    border-color: var(--vert);
+    background: var(--mousse);
+}
+
+.materiau-choix button.est-selectionne {
+    border-color: var(--vert-profond);
+    background: var(--vert-profond);
+    color: white;
+}
+
+.materiaux-etat {
+    margin: 14px 0;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: var(--mousse);
+    color: var(--vert-foret);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   VEGETAUX — REPERES PLUS PRECIS
+   ========================================================== */
+
+.mode-amenagement-vegetaux .emplacement {
+    transform: translate(-50%, -50%);
+}
+
+.mode-amenagement-vegetaux .emplacement:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+}
+
+.mode-amenagement-vegetaux .emplacement-trou {
+    border-width: 2px;
+    background: rgba(27, 58, 40, .48);
+    font-size: clamp(7px, .75vw, 9px);
+}
+
+.mode-amenagement-vegetaux .etiquette-plante {
+    max-width: 105px;
+    font-size: 9px;
+}
+
+.mode-amenagement-vegetaux .emplacement .retirer {
+    width: 21px;
+    height: 21px;
+    font-size: 11px;
+}
+
+.bloc-indice-unique p {
+    white-space: pre-line;
+}
+
+/* Retour visuel des choix de matériaux sur le plan vectoriel */
+#ecran-jeu[data-materiau-circulation="enrobe"] .qgis-circulation {
+    fill: rgba(82, 86, 84, .82);
+}
+#ecran-jeu[data-materiau-circulation="grave-stabilisee"] .qgis-circulation {
+    fill: rgba(177, 157, 123, .78);
+}
+#ecran-jeu[data-materiau-circulation="paves-drainants"] .qgis-circulation {
+    fill: rgba(158, 151, 136, .82);
+    stroke-dasharray: 3 2;
+}
+
+#ecran-jeu[data-materiau-places="paves-engazonnes"] .qgis-place-standard {
+    fill: rgba(103, 166, 91, .76);
+}
+#ecran-jeu[data-materiau-places="gravier-stabilise"] .qgis-place-standard {
+    fill: rgba(188, 174, 143, .78);
+}
+#ecran-jeu[data-materiau-places="enrobe"] .qgis-place-standard {
+    fill: rgba(92, 96, 94, .80);
+}
+
+#ecran-jeu[data-materiau-pieton="stabilise"] .qgis-pieton-polygone {
+    fill: rgba(214, 193, 143, .90);
+}
+#ecran-jeu[data-materiau-pieton="paves"] .qgis-pieton-polygone {
+    fill: rgba(171, 164, 151, .92);
+}
+#ecran-jeu[data-materiau-pieton="beton-desactive"] .qgis-pieton-polygone {
+    fill: rgba(190, 184, 171, .92);
 }

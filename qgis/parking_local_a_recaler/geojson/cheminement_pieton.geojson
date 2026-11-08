@@ -1,0 +1,7 @@
+{
+"type": "FeatureCollection",
+"name": "cheminement_pieton",
+"features": [
+{ "type": "Feature", "properties": { "nom": "cheminement_pieton" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 98.076923076923066, 70.256410256410248 ], [ 115.384615384615373, 32.179487179487175 ], [ 113.633333333333326, 31.383333333333333 ], [ 96.325641025641019, 69.460256410256406 ], [ 98.076923076923066, 70.256410256410248 ] ] ] } }
+]
+}

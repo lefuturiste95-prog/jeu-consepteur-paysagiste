@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démo QGIS — Parking</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { min-height: 100vh; background: #f5f1e6; padding: 24px; }
+        .demo-qgis { width: min(1180px, 100%); margin: 0 auto; }
+        .demo-qgis h1 { color: #1b3a28; margin-bottom: 8px; }
+        .demo-qgis > p { color: #5d6b60; max-width: 75ch; }
+        .demo-commandes { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 12px; }
+        .demo-scene {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1183 / 668;
+            border-radius: 18px;
+            overflow: hidden;
+            background:#f5f1e6;
+            box-shadow: 0 12px 28px rgba(29,36,31,.14);
+        }
+        .demo-scene img, .demo-scene .scene-qgis {
+            position:absolute; inset:0; width:100%; height:100%;
+        }
+        .demo-scene img { object-fit:cover; }
+        .demo-scene.plan-seul img { opacity:0; }
+        .demo-legende {
+            display:flex; flex-wrap:wrap; gap:12px 18px; margin-top:14px;
+            color:#5d6b60; font-size:14px;
+        }
+        .demo-legende span { display:flex; align-items:center; gap:7px; }
+        .legende-symbole { width:18px; height:18px; display:inline-block; border-radius:4px; border:1px solid rgba(0,0,0,.2); }
+        .legende-voie { background:rgba(167,151,124,.82); }
+        .legende-place { background:rgba(113,177,101,.82); }
+        .legende-pmr { background:rgba(58,126,189,.86); }
+        .legende-plantation { background:rgba(59,126,54,.92); border-radius:50%; }
+        .legende-noue { background:rgba(68,156,174,.68); }
+    </style>
+</head>
+<body>
+<main class="demo-qgis">
+    <p class="sur-titre">Prototype sans génération d’image</p>
+    <h1>Parking — démonstrateur QGIS</h1>
+    <p>
+        Le fond satellite reste strictement identique. Le parking est constitué
+        de couches vectorielles calibrées en mètres à partir de la barre de 20 m.
+    </p>
+
+    <div class="demo-commandes">
+        <button class="bouton bouton-fantome" data-mode="actuel">Vue actuelle</button>
+        <button class="bouton bouton-principal" data-mode="projet">Projet QGIS</button>
+        <button class="bouton bouton-fantome" data-mode="plan">Plan seul</button>
+    </div>
+
+    <div class="demo-scene" id="demo-scene">
+        <img src="image/parking/vue-aerienne.png" alt="Vue aérienne actuelle">
+        <div class="scene-qgis est-visible" id="scene-qgis"></div>
+    </div>
+
+    <div class="demo-legende">
+        <span><i class="legende-symbole legende-voie"></i> Circulation 6 m</span>
+        <span><i class="legende-symbole legende-place"></i> Place 2,50 × 5 m</span>
+        <span><i class="legende-symbole legende-pmr"></i> PMR 3,30 × 5 m</span>
+        <span><i class="legende-symbole legende-plantation"></i> Plantation</span>
+        <span><i class="legende-symbole legende-noue"></i> Noue au sud</span>
+    </div>
+</main>
+
+<script src="qgis/parking-qgis.js"></script>
+<script>
+    const scene = document.getElementById("demo-scene");
+    const couche = document.getElementById("scene-qgis");
+    QGISParking.afficher("scene-qgis");
+
+    function afficher(mode) {
+        scene.classList.toggle("plan-seul", mode === "plan");
+        couche.style.display = mode === "actuel" ? "none" : "block";
+
+        document.querySelectorAll("[data-mode]").forEach(b => {
+            const actif = b.dataset.mode === mode;
+            b.classList.toggle("bouton-principal", actif);
+            b.classList.toggle("bouton-fantome", !actif);
+        });
+    }
+
+    document.querySelectorAll("[data-mode]").forEach(b => {
+        b.addEventListener("click", () => afficher(b.dataset.mode));
+    });
+
+    afficher("projet");
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+QGIS — Référence Genech
+
+Fichier principal :
+Genech_reference_SWMaps_batiments.gpkg
+
+Système :
+RGF93 / Lambert-93 — EPSG:2154
+
+Contenu :
+- batiments_genech : 1799 bâtiments
+- batiments_proches_releve : 35 bâtiments proches du relevé
+- points_gnss_swmap : 1306 points GNSS
+- traces_swmap : 20 traces
+- objets_swmap : 163 objets
+- arbres_swmap : 163 arbres
+
+Emprise du relevé SW Maps :
+X = 714777.483 à 714936.923
+Y = 7047850.103 à 7048020.616
+
+Ouverture dans QGIS :
+1. Ouvrir QGIS.
+2. Glisser-déposer Genech_reference_SWMaps_batiments.gpkg dans la carte.
+3. Sélectionner les couches souhaitées.
+
+Important :
+Le GeoPackage est maintenant dans un vrai repère géographique métrique EPSG:2154.
+Le parking créé auparavant reste encore dans un repère local et devra être recalé
+sur cette nouvelle référence avant d'être considéré comme correctement positionné.

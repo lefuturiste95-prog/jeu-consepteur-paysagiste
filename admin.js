@@ -52,21 +52,21 @@ const CONFIG_PAR_DEFAUT = {
             titreAmenagement: "Parking — Aménagement",
 
             briefAmenagement:
-                "L’analyse est terminée. Cette vue montre pour l’instant " +
-                "une proposition d’aménagement provisoire du futur parking.",
+                "L’analyse est terminée. Le fond satellite reste inchangé : " +
+                "le projet est dessiné par-dessus avec des couches vectorielles métriques.",
 
             instructionAmenagement:
-                "Les choix de matériaux, de gestion de l’eau et de végétaux " +
-                "seront ajoutés dans une prochaine étape.",
+                "Comparez la vue actuelle, le projet QGIS superposé et le plan seul. " +
+                "Les futurs choix d’aménagement pourront ensuite modifier ces couches.",
 
             conditionsAmenagement: [
                 "Analyse terminée",
-                "Gestion de l’eau à intégrer",
-                "Aménagement provisoire"
+                "Gestion de l’eau intégrée",
+                "Plan vectoriel à l’échelle"
             ],
 
             imageAmenagement:
-                "image/parking/vue-amenagement-provisoire.png",
+                "image/parking/vue-amenagement-qgis.png",
 
             vues: [
                 {
@@ -198,22 +198,30 @@ const CONFIG_PAR_DEFAUT = {
         },
 
         {
-            titre: "Zone 6",
+            titre: "Aménagement végétal du parking",
 
             brief:
-                "Le long d'un ruisseau, la terre est gorgée d'eau une bonne partie " +
-                "de l'année et la berge s'érode. La commune demande une végétation " +
-                "qui tienne le talus et supporte les pieds dans l'eau.",
+                "Le fonctionnement général du parking est défini. " +
+                "Il faut maintenant choisir des végétaux adaptés pour les îlots plantés, " +
+                "les abords et les zones participant à la gestion de l’eau.",
 
             conseil:
-                "Les sols très humides réclament des espèces adaptées à la ripisylve.",
+                "Répartissez les strates végétales : arbres pour l’ombrage, arbustes " +
+                "pour structurer les îlots et vivaces pour couvrir le sol.",
 
             vues: [
                 {
-                    id: "principale",
-                    label: "Vue principale",
-                    image: "image/chantier-2.jpg",
+                    id: "plan-parking",
+                    label: "Plan du parking",
+                    image: "image/parking/vue-amenagement-qgis-v2.png",
                     ratio: "16 / 9",
+                    points: []
+                },
+                {
+                    id: "terrain",
+                    label: "Vue du terrain",
+                    image: "image/parking/vue-pieton-terrain.jpeg",
+                    ratio: "4 / 3",
                     points: []
                 }
             ]
@@ -283,6 +291,21 @@ function lireConfig() {
             Array.isArray(donnee.chantiers) &&
             donnee.chantiers.length >= 2
         ) {
+            // Migration de l'ancien chantier "Zone 6".
+            if (
+                String(donnee.chantiers[1]?.titre || "")
+                    .trim()
+                    .toLowerCase() === "zone 6"
+            ) {
+                donnee.chantiers[1] =
+                    copie(CONFIG_PAR_DEFAUT.chantiers[1]);
+
+                localStorage.setItem(
+                    CLE_CONFIG,
+                    JSON.stringify(donnee)
+                );
+            }
+
             return donnee;
         }
 

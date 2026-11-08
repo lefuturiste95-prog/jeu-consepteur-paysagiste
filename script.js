@@ -158,36 +158,50 @@ let MISSIONS = [
     },
 
     // ==========================================================
-    // CHANTIER 2 — ZONE 6
+    // CHANTIER 2 — AMENAGEMENT VEGETAL DU PARKING
     // ==========================================================
-    // On conserve volontairement presque tout l'ancien chantier 2.
 
     {
-        titre: "Zone 6",
+        titre: "Aménagement végétal du parking",
 
         vues: [
             {
-                id: "principale",
-                label: "Vue principale",
-                image: "image/chantier-2.jpg"
+                id: "plan-parking",
+                label: "Plan du parking",
+                image: "image/parking/vue-amenagement-qgis-v2.png",
+                ratio: "16 / 9"
+            },
+            {
+                id: "terrain",
+                label: "Vue du terrain",
+                image: "image/parking/vue-pieton-terrain.jpeg",
+                ratio: "4 / 3"
             }
         ],
 
-        brief: "Le long d'un ruisseau, la terre est gorgée d'eau une bonne partie " +
-               "de l'année et la berge s'érode. La commune demande une végétation " +
-               "qui tienne le talus et supporte les pieds dans l'eau.",
+        brief:
+            "Le fonctionnement général du parking est défini. " +
+            "Il faut maintenant choisir des végétaux adaptés pour les îlots plantés, " +
+            "les abords et les zones participant à la gestion de l’eau.",
+
         expositions: ["mi-ombre", "soleil"],
-        humidites: ["très humide", "humide"],
-        conseil: "Les sols très humides réclament des espèces de ripisylve " +
-                 "(aulne, saule, viorne obier, cornouiller) : leurs racines " +
-                 "fixent la berge.",
+
+        humidites: ["humide", "frais"],
+
+        conseil:
+            "Choisissez des végétaux capables de supporter les conditions du site " +
+            "et répartissez les strates : arbres pour l’ombrage, arbustes pour structurer " +
+            "les îlots et vivaces pour couvrir le sol et accompagner la gestion de l’eau.",
 
         emplacements: [
-            { groupe: "Arbre",   x: 22, y: 60, taille: 19 },
-            { groupe: "Arbuste", x: 48, y: 66, taille: 13 },
-            { groupe: "Arbuste", x: 70, y: 70, taille: 13 },
-            { groupe: "Vivace",  x: 36, y: 78, taille: 9 }
+            { groupe: "Arbre",   x: 46.5, y: 34.5, taille: 7.0 },
+            { groupe: "Arbre",   x: 61.5, y: 46.0, taille: 7.0 },
+            { groupe: "Arbuste", x: 45.0, y: 51.5, taille: 5.2 },
+            { groupe: "Arbuste", x: 61.0, y: 57.0, taille: 5.2 },
+            { groupe: "Vivace",  x: 48.0, y: 68.5, taille: 4.2 },
+            { groupe: "Vivace",  x: 70.5, y: 72.0, taille: 4.2 }
         ]
+
     }
 
 ]
@@ -220,6 +234,16 @@ function appliquerConfigurationAdmin() {
                 return;
             }
 
+            // Migration automatique des anciennes versions :
+            // l'ancien chantier "Zone 6" a été remplacé par l'aménagement
+            // végétal du parking. On ignore donc ses anciens réglages.
+            if (
+                index === 1 &&
+                String(modifications.titre || "").trim().toLowerCase() === "zone 6"
+            ) {
+                return;
+            }
+
             const missionOriginale = MISSIONS[index];
 
             MISSIONS[index] = {
@@ -234,7 +258,7 @@ function appliquerConfigurationAdmin() {
                         ? modifications.vues
                         : missionOriginale.vues,
 
-                // Les emplacements de plantation de Zone 6 ne sont pas
+                // Les emplacements de plantation du second chantier ne sont pas
                 // gérés dans l'admin pour le moment : on les conserve.
                 emplacements:
                     Array.isArray(modifications.emplacements)
@@ -326,7 +350,13 @@ const partie = {
     emplacementVise: 0,
     vueScene: 0,
     phaseParking: "analyse",
-    analyseTrouvee: new Set()
+    analyseTrouvee: new Set(),
+    phaseAmenagement: "qgis",
+    materiaux: {
+        circulation: null,
+        places: null,
+        pieton: null
+    }
 };
 
 const filtres = {
@@ -683,6 +713,75 @@ function afficherVueChantier(index) {
         dessinerPointsAnalyse(vue);
     } else {
         $("#scene-hotspots").innerHTML = "";
+    }
+}
+
+
+// ===============================
+// PARKING — AFFICHAGE VECTORIEL TYPE QGIS
+// ===============================
+
+function afficherModeQGIS(mode) {
+
+    const ecranJeu = $("#ecran-jeu");
+    const couche = $("#scene-qgis");
+    const photo = $("#scene-photo");
+
+    const modes = ["actuel", "projet", "plan"];
+    const modeValide = modes.includes(mode) ? mode : "projet";
+
+    ecranJeu.classList.remove(
+        "mode-qgis-actuel",
+        "mode-qgis-projet",
+        "mode-qgis-plan"
+    );
+
+    ecranJeu.classList.add("mode-qgis-" + modeValide);
+
+    if (modeValide === "actuel") {
+        couche.classList.remove("est-visible");
+    } else {
+        couche.classList.add("est-visible");
+
+        if (window.QGISParking) {
+            window.QGISParking.afficher("scene-qgis");
+        }
+    }
+
+    document.querySelectorAll("#scene-outils .scene-mode").forEach(bouton => {
+
+        const actif =
+            bouton.dataset.modeQgis === modeValide;
+
+        bouton.classList.toggle("est-actif", actif);
+        bouton.setAttribute(
+            "aria-pressed",
+            actif ? "true" : "false"
+        );
+    });
+
+    photo.alt =
+        modeValide === "actuel"
+            ? "Vue aérienne actuelle du site"
+            : "Vue aérienne du site avec le plan vectoriel du parking";
+}
+
+
+function masquerModeQGIS() {
+
+    const ecranJeu = $("#ecran-jeu");
+
+    ecranJeu.classList.remove(
+        "mode-qgis-actuel",
+        "mode-qgis-projet",
+        "mode-qgis-plan"
+    );
+
+    const couche = $("#scene-qgis");
+
+    if (couche) {
+        couche.classList.remove("est-visible");
+        couche.innerHTML = "";
     }
 }
 
@@ -1099,7 +1198,7 @@ function lancerMission(numero) {
         return;
     }
 
-    lancerMissionVegetal(numero);
+    lancerAmenagementMateriaux(numero);
 }
 
 
@@ -1112,6 +1211,8 @@ function lancerParkingAnalyse() {
 
     const mission = MISSIONS[0];
     const ecranJeu = $("#ecran-jeu");
+
+    masquerModeQGIS();
 
     ecranJeu.classList.add("mode-parking-analyse");
     ecranJeu.classList.remove("mode-parking-amenagement");
@@ -1190,8 +1291,15 @@ function ouvrirPointAnalyse(point) {
     partie.analyseTrouvee.add(point.id);
 
     $("#analyse-titre").textContent = point.titre;
-    $("#analyse-indice").textContent = point.indice;
-    $("#analyse-texte").textContent = point.texte;
+
+    const indiceComplet = [
+        point.indice,
+        point.texte
+    ]
+        .filter(Boolean)
+        .join("\n\n");
+
+    $("#analyse-indice").textContent = indiceComplet;
 
     majAnalyseParking();
 
@@ -1282,11 +1390,11 @@ function passerAmenagementParking() {
 
     $("#brief-mission").textContent =
         mission.briefAmenagement ||
-        "L’analyse est terminée. Cette vue montre pour l’instant une proposition d’aménagement provisoire du futur parking.";
+        "L’analyse est terminée. Le fond satellite reste inchangé et le projet est superposé sous forme de couches vectorielles à l’échelle.";
 
     $("#instruction-phase").textContent =
         mission.instructionAmenagement ||
-        "Les choix de matériaux, de gestion de l’eau et de végétaux seront ajoutés dans une prochaine étape.";
+        "Comparez la vue actuelle, le projet vectoriel superposé et le plan seul. Les choix d’aménagement pourront ensuite faire varier ces couches.";
 
     $("#conditions-mission").innerHTML =
         conditionsDepuisAdmin(
@@ -1294,7 +1402,7 @@ function passerAmenagementParking() {
             [
                 "Analyse terminée",
                 "Gestion de l’eau à intégrer",
-                "Aménagement provisoire"
+                "Plan vectoriel à l’échelle"
             ]
         );
 
@@ -1303,25 +1411,200 @@ function passerAmenagementParking() {
         photo.onerror = null;
         photo.src = PHOTO_SECOURS;
     };
-    photo.src = mission.imageAmenagement || PHOTO_SECOURS;
-    photo.alt = "Vue aérienne de l’aménagement provisoire du parking";
 
-    $("#scene").style.aspectRatio = "16 / 9";
+    // IMPORTANT :
+    // le fond reste la vraie vue aérienne d'origine.
+    // Le projet QGIS est un calque SVG vectoriel indépendant.
+    const vueAerienne =
+        (mission.vues || []).find(vue => vue.id === "aerienne")
+        || (mission.vues || [])[0];
+
+    photo.src =
+        vueAerienne?.image || PHOTO_SECOURS;
+
+    photo.alt =
+        "Vue aérienne actuelle du site";
+
+    $("#scene").style.aspectRatio =
+        vueAerienne?.ratio || "16 / 9";
+
     $("#scene-hotspots").innerHTML = "";
     $("#scene-slots").innerHTML = "";
 
     $("#scene-outils").innerHTML = `
-        <button type="button" class="scene-mode est-actif" aria-pressed="true">
-            Vue d’aménagement
+        <button type="button"
+                class="scene-mode"
+                data-mode-qgis="actuel">
+            Vue actuelle
+        </button>
+
+        <button type="button"
+                class="scene-mode est-actif"
+                data-mode-qgis="projet">
+            Projet QGIS
+        </button>
+
+        <button type="button"
+                class="scene-mode"
+                data-mode-qgis="plan">
+            Plan seul
         </button>`;
+
+    document.querySelectorAll("#scene-outils [data-mode-qgis]")
+        .forEach(bouton => {
+
+            bouton.addEventListener("click", () => {
+                afficherModeQGIS(bouton.dataset.modeQgis);
+            });
+        });
+
+    afficherModeQGIS("projet");
+}
+
+
+
+function lancerAmenagementMateriaux(numero) {
+
+    masquerModeQGIS();
+
+    partie.missionCourante = numero;
+    partie.phaseAmenagement = "materiaux";
+    partie.materiaux = {
+        circulation: null,
+        places: null,
+        pieton: null
+    };
+
+    const ecranJeu = $("#ecran-jeu");
+    const mission = MISSIONS[numero];
+
+    ecranJeu.classList.remove(
+        "mode-parking-analyse",
+        "mode-parking-amenagement",
+        "mode-amenagement-vegetaux"
+    );
+
+    ecranJeu.classList.add("mode-amenagement-materiaux");
+
+    $("#numero-mission").textContent = "Aménagement du site";
+    $("#phase-mission").textContent = "Étape 1 — Sols & minéraux";
+    $("#titre-mission").textContent = "Définir les surfaces du parking";
+
+    $("#brief-mission").textContent =
+        "Avant de choisir les végétaux, définissez les revêtements des voies, " +
+        "des places de stationnement et de l’accès piéton.";
+
+    $("#instruction-phase").textContent =
+        "Sélectionnez un matériau dans chacune des trois catégories.";
+
+    $("#conditions-mission").innerHTML = `
+        <span class="condition">1. Sols & minéraux</span>
+        <span class="condition est-expo">2. Végétaux</span>
+        <span class="condition est-hum">Même site, même plan</span>`;
+
+    const vueAerienne =
+        (MISSIONS[0].vues || []).find(vue => vue.id === "aerienne")
+        || (MISSIONS[0].vues || [])[0];
+
+    $("#scene-photo").src =
+        vueAerienne?.image || "image/parking/vue-aerienne.png";
+
+    $("#scene-photo").alt =
+        "Vue aérienne du parking pendant le choix des matériaux";
+
+    $("#scene").style.aspectRatio =
+        vueAerienne?.ratio || "16 / 9";
+
+    $("#scene-hotspots").innerHTML = "";
+    $("#scene-slots").innerHTML = "";
+    $("#scene-outils").innerHTML = "";
+
+    // Le plan vectoriel reste visible pendant le choix des matériaux.
+    afficherModeQGIS("projet");
+
+    document.querySelectorAll(".materiau-choix button")
+        .forEach(bouton => bouton.classList.remove("est-selectionne"));
+
+    majMateriaux();
+    afficherEcran("jeu");
+}
+
+
+function choisirMateriau(categorie, valeur, bouton) {
+
+    partie.materiaux[categorie] = valeur;
+
+    const ecranJeu = $("#ecran-jeu");
+    const cle = categorie === "circulation"
+        ? "materiauCirculation"
+        : categorie === "places"
+            ? "materiauPlaces"
+            : "materiauPieton";
+
+    const slug = valeur
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+
+    ecranJeu.dataset[cle] = slug;
+
+    const groupe = bouton.closest(".materiau-groupe");
+
+    groupe.querySelectorAll(".materiau-choix button")
+        .forEach(element => {
+            element.classList.toggle("est-selectionne", element === bouton);
+        });
+
+    majMateriaux();
+}
+
+
+function majMateriaux() {
+
+    const faits =
+        Object.values(partie.materiaux)
+            .filter(Boolean)
+            .length;
+
+    $("#materiaux-etat").textContent =
+        faits + " / 3 choix effectués";
+
+    $("#bouton-vers-vegetaux").disabled =
+        faits < 3;
+}
+
+
+function passerAuxVegetaux() {
+
+    if (Object.values(partie.materiaux).some(valeur => !valeur)) {
+        message("Choisissez d’abord un matériau pour chaque zone.");
+        return;
+    }
+
+    partie.phaseAmenagement = "vegetaux";
+
+    lancerMissionVegetal(partie.missionCourante);
 }
 
 
 function lancerMissionVegetal(numero) {
 
-    $("#ecran-jeu").classList.remove("mode-parking-analyse", "mode-parking-amenagement");
-    $("#phase-mission").textContent = "Aménagement";
-    $("#instruction-phase").textContent = "Choisissez les végétaux adaptés au site puis validez votre composition.";
+    masquerModeQGIS();
+
+    $("#ecran-jeu").classList.remove(
+        "mode-parking-analyse",
+        "mode-parking-amenagement",
+        "mode-amenagement-materiaux"
+    );
+
+    $("#ecran-jeu").classList.add("mode-amenagement-vegetaux");
+
+    $("#phase-mission").textContent = "Étape 2 — Végétaux";
+
+    $("#instruction-phase").textContent =
+        "Touchez un petit repère planté sur le plan, puis choisissez un végétal adapté.";
 
     partie.missionCourante = numero;
     partie.choix = new Array(MISSIONS[numero].emplacements.length).fill(null);
@@ -1356,11 +1639,9 @@ function lancerMissionVegetal(numero) {
 
     afficherEcran("jeu");
 
-    if (numero === 0) {
-        setTimeout(() => message(
-            "Touchez un emplacement sur le plan, puis une plante du catalogue."),
-            700);
-    }
+    setTimeout(() => message(
+        "Touchez un petit emplacement sur le plan, puis une plante du catalogue."),
+        650);
 }
 
 
@@ -1915,8 +2196,30 @@ $("#bouton-passer-amenagement").addEventListener("click", () => {
 });
 
 $("#bouton-vers-zone6").addEventListener("click", () => {
-    lancerMission(1);
+    lancerAmenagementMateriaux(1);
 });
+
+
+document.querySelectorAll(".materiau-choix button")
+    .forEach(bouton => {
+
+        bouton.addEventListener("click", () => {
+
+            const groupe = bouton.closest(".materiau-groupe");
+
+            choisirMateriau(
+                groupe.dataset.categorie,
+                bouton.dataset.materiau,
+                bouton
+            );
+        });
+    });
+
+
+$("#bouton-vers-vegetaux").addEventListener(
+    "click",
+    passerAuxVegetaux
+);
 
 
 // --- Recherche et filtres ---
