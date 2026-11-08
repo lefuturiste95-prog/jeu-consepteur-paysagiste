@@ -162,3 +162,24 @@ Capacité du prototype actuel :
 - 0 places au total.
 
 Le fond satellite reste inchangé. Le projet est dessiné par-dessus en couches vectorielles.
+
+## Rendu du parking (vue aérienne et vue piétonne)
+
+Depuis le plan QGIS, cliquez sur **Essayer le rendu interactif** pour composer le résultat sur de vraies images du site :
+
+- `rendu-parking.js` : le **plan** (`PLAN_PARKING`, en mètres), le catalogue des revêtements, les essences, la vue aérienne ;
+- `rendu-pieton.js` : la caméra calée sur la photo depuis l'accès (`CAMERA_PIETON`) et la vue piétonne ;
+- `parking-amenagement.js` : les choix du joueur, la notation et le résultat.
+
+**Pour corriger le plan**, modifiez `PLAN_PARKING` dans `rendu-parking.js` : les deux vues suivent.
+
+Les images de `image/parking/rendu/` sont déjà prêtes. Il ne faut les regénérer que pour changer le cadrage ou les sujets, avec les scripts de `outils/rendu-parking/` (Python, `pip install pillow numpy scipy ultralytics`) :
+
+| Script | Rôle |
+|--------|------|
+| `base.py` | photo aérienne IGN (BD ORTHO, Licence Ouverte 2.0) |
+| `textures.py` | revêtements vue aérienne (textures CC0 ambientCG) |
+| `detecter_houppiers.py` | détoure les arbres de l'orthophoto (SAM 2) |
+| `exporter_sprites.py` | exporte les arbres retenus dans `selection.json` |
+| `voitures.py` | voitures prélevées dans l'orthophoto |
+| `pieton.py` | arbres vus de côté et sols de la vue piétonne |

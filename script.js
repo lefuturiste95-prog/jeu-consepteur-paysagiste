@@ -356,7 +356,8 @@ const partie = {
         circulation: null,
         places: null,
         pieton: null
-    }
+    },
+    parking: null            // choix de la phase Aménagement (parking-amenagement.js)
 };
 
 const filtres = {
@@ -1207,6 +1208,7 @@ function lancerParkingAnalyse() {
     partie.missionCourante = 0;
     partie.phaseParking = "analyse";
     partie.analyseTrouvee = new Set();
+    partie.parking = null;
     partie.vueScene = 0;
 
     const mission = MISSIONS[0];
@@ -1216,6 +1218,7 @@ function lancerParkingAnalyse() {
 
     ecranJeu.classList.add("mode-parking-analyse");
     ecranJeu.classList.remove("mode-parking-amenagement");
+    fermerAmenagementParking();
 
     $("#numero-mission").textContent = "Chantier 1 / 2";
     $("#phase-mission").textContent = "Analyse";
@@ -1374,6 +1377,7 @@ function enregistrerResultatAnalyseParking() {
 function passerAmenagementParking() {
 
     enregistrerResultatAnalyseParking();
+    fermerAmenagementParking();
 
     partie.phaseParking = "amenagement";
 
@@ -1463,8 +1467,28 @@ function passerAmenagementParking() {
 
 
 
+function passerRenduParking() {
+    masquerModeQGIS();
+
+    $("#brief-mission").textContent =
+        "Le plan du parking est arrêté. À vous de choisir les revêtements et les arbres : les deux vues montrent le résultat en direct.";
+
+    $("#instruction-phase").textContent =
+        "Pensez à l’eau de pluie et au milieu de chaque arbre : sol sec entre les places, humide dans la noue.";
+
+    $("#conditions-mission").innerHTML = conditionsDepuisAdmin([], [
+        "Analyse terminée",
+        "≈ Infiltrer l’eau de pluie",
+        "☀ Ombrager les places"
+    ]);
+
+    ouvrirAmenagementParking();
+}
+
+
 function lancerAmenagementMateriaux(numero) {
 
+    fermerAmenagementParking();
     masquerModeQGIS();
 
     partie.missionCourante = numero;
@@ -1902,6 +1926,31 @@ function afficherResultat(resultat) {
     $("#resultat-score").textContent = resultat.score;
     $("#resultat-max").textContent   = "/ " + resultat.maximum + " points";
 
+    const rendu = $("#resultat-rendu");
+    const renduPieton = $("#resultat-rendu-pieton");
+    rendu.classList.toggle("est-visible", resultat.type === "amenagement-parking");
+    renduPieton.classList.toggle("est-visible", resultat.type === "amenagement-parking");
+
+    if (resultat.type === "amenagement-parking") {
+        copierRenduParking(rendu, renduPieton, resultat.choix);
+        $("#resultat-detail").innerHTML = detailParkingHTML(resultat);
+    } else {
+        afficherDetailVegetal(resultat);
+    }
+
+    $("#resultat-conseil").textContent = resultat.conseil;
+
+    $("#bouton-suite").textContent =
+        partie.missionCourante === MISSIONS.length - 1
+            ? "Voir mon bilan →"
+            : "Chantier suivant →";
+
+    ouvrirFenetre("#voile-resultat");
+}
+
+
+function afficherDetailVegetal(resultat) {
+
     $("#resultat-detail").innerHTML =
         resultat.lignes.map(ligne => `
             <div class="ligne-detail">
@@ -1926,15 +1975,6 @@ function afficherResultat(resultat) {
                 </span>
                 <span class="ligne-detail-points">${resultat.bonus}</span>
            </div>`;
-
-    $("#resultat-conseil").textContent = resultat.conseil;
-
-    $("#bouton-suite").textContent =
-        partie.missionCourante === MISSIONS.length - 1
-            ? "Voir mon bilan →"
-            : "Chantier suivant →";
-
-    ouvrirFenetre("#voile-resultat");
 }
 
 
@@ -1985,6 +2025,13 @@ function afficherBilan() {
             <td>${resultat.score} / ${resultat.maximum}</td>
             <td>${"★".repeat(resultat.etoiles) || "—"}</td>
         </tr>`).join("");
+
+    const parking = partie.resultats.find(resultat => resultat.type === "amenagement-parking");
+    $("#bilan-rendu").classList.toggle("est-visible", Boolean(parking));
+
+    if (parking) {
+        copierRenduParking($("#bilan-rendu-canvas"), $("#bilan-rendu-pieton"), parking.choix);
+    }
 
     $("#nom-joueur").value = "";
     $("#form-classement").style.display = "flex";
@@ -2199,6 +2246,8 @@ $("#bouton-vers-zone6").addEventListener("click", () => {
     lancerAmenagementMateriaux(1);
 });
 
+$("#bouton-rendu-parking").addEventListener("click", passerRenduParking);
+$("#bouton-retour-qgis").addEventListener("click", passerAmenagementParking);
 
 document.querySelectorAll(".materiau-choix button")
     .forEach(bouton => {
@@ -2400,6 +2449,8 @@ $("#bouton-revoir").addEventListener("click", () => {
                     </span>
                     <span class="ligne-detail-points">✓</span>
                 </div>`).join("")
+            : resultat.type === "amenagement-parking"
+            ? detailParkingHTML(resultat)
             : resultat.lignes.map(ligne => `
                 <div class="ligne-detail">
                     <span class="ligne-detail-nom">

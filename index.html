@@ -146,6 +146,12 @@
                 <div class="scene-hotspots" id="scene-hotspots" aria-label="Points d’analyse"></div>
 
                 <div class="scene-slots" id="scene-slots"></div>
+
+                <!-- Chantier Parking, phase Aménagement : rendu composé sur
+                     l'orthophoto (voir rendu-parking.js) et emplacements d'arbres. -->
+                <canvas class="scene-rendu" id="scene-rendu"
+                        aria-label="Vue aérienne de votre aménagement"></canvas>
+                <div class="scene-arbres" id="scene-arbres"></div>
             </div>
 
             <div class="barre-actions" id="barre-actions-standard">
@@ -232,6 +238,10 @@
                 Configurer les sols →
             </button>
 
+            <button class="bouton bouton-fantome bouton-bloc" id="bouton-rendu-parking">
+                Essayer le rendu interactif
+            </button>
+
         </aside>
 
         <!-- ---------- Colonne de droite : sols et minéraux ---------- -->
@@ -286,6 +296,53 @@
                     id="bouton-vers-vegetaux"
                     disabled>
                 Passer aux végétaux →
+            </button>
+
+        </aside>
+
+        <aside class="panneau-phase" id="panneau-rendu-parking">
+
+            <div class="panneau-phase-tete">
+                <p class="sur-titre">Chantier 1 — Parking</p>
+                <h3>Rendu interactif</h3>
+            </div>
+
+            <button class="bouton bouton-fantome bouton-bloc" id="bouton-retour-qgis">
+                Retour au plan QGIS
+            </button>
+
+            <p class="panneau-phase-intro">
+                Le plan est fixé : choisissez les revêtements, puis touchez chaque
+                emplacement sur la vue pour y planter un arbre. La vue se met à jour
+                à chaque choix.
+            </p>
+
+            <div class="choix-bloc">
+                <p class="filtre-titre">Revêtement des voies</p>
+                <div class="puces" id="choix-voie"></div>
+            </div>
+
+            <div class="choix-bloc">
+                <p class="filtre-titre">Revêtement des places</p>
+                <div class="puces" id="choix-places"></div>
+            </div>
+
+            <div class="choix-bloc">
+                <p class="filtre-titre">
+                    Arbres <span class="compteur-arbres" id="compteur-arbres">0 / 0</span>
+                </p>
+                <p class="emplacement-courant" id="emplacement-courant"></p>
+                <div class="champ-recherche">
+                    <span class="loupe" aria-hidden="true">⌕</span>
+                    <input type="search" id="recherche-arbre"
+                           placeholder="Rechercher un arbre…"
+                           aria-label="Rechercher un arbre">
+                </div>
+                <div class="liste-arbres" id="liste-arbres"></div>
+            </div>
+
+            <button class="bouton bouton-principal bouton-bloc" id="bouton-valider-parking" disabled>
+                Valider l’aménagement
             </button>
 
         </aside>
@@ -380,6 +437,14 @@
             </div>
         </div>
 
+        <figure class="bilan-rendu" id="bilan-rendu">
+            <canvas id="bilan-rendu-canvas"
+                    aria-label="Vue aérienne de votre parking"></canvas>
+            <canvas id="bilan-rendu-pieton"
+                    aria-label="Votre parking vu depuis l’accès"></canvas>
+            <figcaption>Votre parking, vu du ciel et depuis l’accès</figcaption>
+        </figure>
+
         <table class="tableau-bilan">
             <thead>
                 <tr>
@@ -439,6 +504,11 @@
         <h2 id="resultat-titre">Bravo !</h2>
 
         <div class="etoiles" id="resultat-etoiles" aria-hidden="true"></div>
+
+        <canvas class="rendu-resultat" id="resultat-rendu"
+                aria-label="Vue aérienne de votre parking"></canvas>
+        <canvas class="rendu-resultat" id="resultat-rendu-pieton"
+                aria-label="Votre parking vu depuis l’accès"></canvas>
 
         <p class="resultat-points">
             <strong id="resultat-score">0</strong>
@@ -582,7 +652,12 @@
 
 <script src="data/plantes-embarquees.js"></script>
 <script src="qgis/parking_local_a_recaler/parking-qgis.js"></script>
+<script src="image/parking/rendu/sprites.js"></script>
+<script src="image/parking/rendu/sprites-pieton.js"></script>
+<script src="rendu-parking.js"></script>
+<script src="rendu-pieton.js"></script>
 <script src="script.js"></script>
+<script src="parking-amenagement.js"></script>
 
 </body>
 

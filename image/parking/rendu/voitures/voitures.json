@@ -1,0 +1,50 @@
+[
+ {
+  "fichier": "voitures/voiture-01.png",
+  "longueurPx": 43.7
+ },
+ {
+  "fichier": "voitures/voiture-02.png",
+  "longueurPx": 42.6
+ },
+ {
+  "fichier": "voitures/voiture-03.png",
+  "longueurPx": 43.5
+ },
+ {
+  "fichier": "voitures/voiture-04.png",
+  "longueurPx": 46.4
+ },
+ {
+  "fichier": "voitures/voiture-05.png",
+  "longueurPx": 46.3
+ },
+ {
+  "fichier": "voitures/voiture-06.png",
+  "longueurPx": 42.6
+ },
+ {
+  "fichier": "voitures/voiture-07.png",
+  "longueurPx": 43.3
+ },
+ {
+  "fichier": "voitures/voiture-08.png",
+  "longueurPx": 42.3
+ },
+ {
+  "fichier": "voitures/voiture-09.png",
+  "longueurPx": 40.9
+ },
+ {
+  "fichier": "voitures/voiture-10.png",
+  "longueurPx": 40.9
+ },
+ {
+  "fichier": "voitures/voiture-11.png",
+  "longueurPx": 39.0
+ },
+ {
+  "fichier": "voitures/voiture-12.png",
+  "longueurPx": 38.2
+ }
+]
