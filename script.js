@@ -326,7 +326,8 @@ const partie = {
     emplacementVise: 0,
     vueScene: 0,
     phaseParking: "analyse",
-    analyseTrouvee: new Set()
+    analyseTrouvee: new Set(),
+    parking: null            // choix de la phase Aménagement (parking-amenagement.js)
 };
 
 const filtres = {
@@ -1115,6 +1116,7 @@ function lancerParkingAnalyse() {
 
     ecranJeu.classList.add("mode-parking-analyse");
     ecranJeu.classList.remove("mode-parking-amenagement");
+    fermerAmenagementParking();
 
     $("#numero-mission").textContent = "Chantier 1 / 2";
     $("#phase-mission").textContent = "Analyse";
@@ -1282,44 +1284,33 @@ function passerAmenagementParking() {
 
     $("#brief-mission").textContent =
         mission.briefAmenagement ||
-        "L’analyse est terminée. Cette vue montre pour l’instant une proposition d’aménagement provisoire du futur parking.";
+        "Le plan du parking est arrêté. À vous de choisir les revêtements et les arbres : les deux vues montrent le résultat en direct.";
 
     $("#instruction-phase").textContent =
         mission.instructionAmenagement ||
-        "Les choix de matériaux, de gestion de l’eau et de végétaux seront ajoutés dans une prochaine étape.";
+        "Pensez à l’eau de pluie et au milieu de chaque arbre : sol sec entre les places, humide dans la noue.";
 
     $("#conditions-mission").innerHTML =
         conditionsDepuisAdmin(
             mission.conditionsAmenagement,
             [
                 "Analyse terminée",
-                "Gestion de l’eau à intégrer",
-                "Aménagement provisoire"
+                "≈ Infiltrer l’eau de pluie",
+                "☀ Ombrager les places"
             ]
         );
 
-    const photo = $("#scene-photo");
-    photo.onerror = () => {
-        photo.onerror = null;
-        photo.src = PHOTO_SECOURS;
-    };
-    photo.src = mission.imageAmenagement || PHOTO_SECOURS;
-    photo.alt = "Vue aérienne de l’aménagement provisoire du parking";
-
-    $("#scene").style.aspectRatio = "16 / 9";
     $("#scene-hotspots").innerHTML = "";
     $("#scene-slots").innerHTML = "";
 
-    $("#scene-outils").innerHTML = `
-        <button type="button" class="scene-mode est-actif" aria-pressed="true">
-            Vue d’aménagement
-        </button>`;
+    ouvrirAmenagementParking();
 }
 
 
 function lancerMissionVegetal(numero) {
 
     $("#ecran-jeu").classList.remove("mode-parking-analyse", "mode-parking-amenagement");
+    fermerAmenagementParking();
     $("#phase-mission").textContent = "Aménagement";
     $("#instruction-phase").textContent = "Choisissez les végétaux adaptés au site puis validez votre composition.";
 
@@ -1621,6 +1612,31 @@ function afficherResultat(resultat) {
     $("#resultat-score").textContent = resultat.score;
     $("#resultat-max").textContent   = "/ " + resultat.maximum + " points";
 
+    const rendu = $("#resultat-rendu");
+    const renduPieton = $("#resultat-rendu-pieton");
+    rendu.classList.toggle("est-visible", resultat.type === "amenagement-parking");
+    renduPieton.classList.toggle("est-visible", resultat.type === "amenagement-parking");
+
+    if (resultat.type === "amenagement-parking") {
+        copierRenduParking(rendu, renduPieton, resultat.choix);
+        $("#resultat-detail").innerHTML = detailParkingHTML(resultat);
+    } else {
+        afficherDetailVegetal(resultat);
+    }
+
+    $("#resultat-conseil").textContent = resultat.conseil;
+
+    $("#bouton-suite").textContent =
+        partie.missionCourante === MISSIONS.length - 1
+            ? "Voir mon bilan →"
+            : "Chantier suivant →";
+
+    ouvrirFenetre("#voile-resultat");
+}
+
+
+function afficherDetailVegetal(resultat) {
+
     $("#resultat-detail").innerHTML =
         resultat.lignes.map(ligne => `
             <div class="ligne-detail">
@@ -1645,15 +1661,6 @@ function afficherResultat(resultat) {
                 </span>
                 <span class="ligne-detail-points">${resultat.bonus}</span>
            </div>`;
-
-    $("#resultat-conseil").textContent = resultat.conseil;
-
-    $("#bouton-suite").textContent =
-        partie.missionCourante === MISSIONS.length - 1
-            ? "Voir mon bilan →"
-            : "Chantier suivant →";
-
-    ouvrirFenetre("#voile-resultat");
 }
 
 
@@ -1704,6 +1711,13 @@ function afficherBilan() {
             <td>${resultat.score} / ${resultat.maximum}</td>
             <td>${"★".repeat(resultat.etoiles) || "—"}</td>
         </tr>`).join("");
+
+    const parking = partie.resultats.find(resultat => resultat.type === "amenagement-parking");
+    $("#bilan-rendu").classList.toggle("est-visible", Boolean(parking));
+
+    if (parking) {
+        copierRenduParking($("#bilan-rendu-canvas"), $("#bilan-rendu-pieton"), parking.choix);
+    }
 
     $("#nom-joueur").value = "";
     $("#form-classement").style.display = "flex";
@@ -1914,10 +1928,6 @@ $("#bouton-passer-amenagement").addEventListener("click", () => {
     passerAmenagementParking();
 });
 
-$("#bouton-vers-zone6").addEventListener("click", () => {
-    lancerMission(1);
-});
-
 
 // --- Recherche et filtres ---
 
@@ -2097,6 +2107,8 @@ $("#bouton-revoir").addEventListener("click", () => {
                     </span>
                     <span class="ligne-detail-points">✓</span>
                 </div>`).join("")
+            : resultat.type === "amenagement-parking"
+            ? detailParkingHTML(resultat)
             : resultat.lignes.map(ligne => `
                 <div class="ligne-detail">
                     <span class="ligne-detail-nom">

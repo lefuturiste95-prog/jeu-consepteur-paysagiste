@@ -1670,3 +1670,236 @@ h1, h2, h3 {
         font-size: 20px;
     }
 }
+
+
+/* ==========================================================
+   CHANTIER PARKING — AMENAGEMENT ET RENDU AERIEN
+   ========================================================== */
+
+.scene-rendu,
+.scene-arbres {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.scene-rendu { z-index: 2; background: #5b6a58; }
+.scene-arbres { z-index: 5; pointer-events: none; }
+
+.rendu-parking-actif .scene-rendu,
+.rendu-parking-actif .scene-arbres { display: block; }
+
+.rendu-parking-actif .scene-photo { visibility: hidden; }
+
+
+/* Repères d'emplacements d'arbres posés sur la vue */
+
+.repere-arbre {
+    position: absolute;
+    width: clamp(24px, 2.6vw, 32px);
+    aspect-ratio: 1 / 1;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 255, 255, .9);
+    background: rgba(27, 58, 40, .5);
+    color: #fff;
+    font-family: var(--texte);
+    font-size: 12px;
+    font-weight: 800;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: manipulation;
+    transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.repere-arbre:hover { transform: translate(-50%, -50%) scale(1.12); }
+
+/* Un arbre planté reste visible : le repère s'efface presque */
+.repere-arbre.est-plante {
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, .35);
+}
+
+.repere-arbre.est-vise {
+    border: 3px solid var(--soleil);
+    background: rgba(224, 167, 49, .28);
+    animation: repere-vise 1.6s ease-in-out infinite;
+}
+
+@keyframes repere-vise {
+    50% { box-shadow: 0 0 0 7px rgba(224, 167, 49, 0); transform: translate(-50%, -50%) scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .repere-arbre.est-vise { animation: none; }
+}
+
+.repere-arbre:focus-visible {
+    outline: 3px solid rgba(224, 167, 49, .9);
+    outline-offset: 2px;
+}
+
+
+/* Panneau de choix */
+
+.choix-bloc {
+    padding: 0 20px 16px;
+}
+
+.choix-bloc .puce {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+}
+
+.compteur-arbres {
+    float: right;
+    letter-spacing: 0;
+    color: var(--vert-profond);
+}
+
+.emplacement-courant {
+    display: grid;
+    gap: 2px;
+    margin: 0 0 10px;
+    padding: 10px 12px;
+    border-left: 4px solid var(--soleil);
+    border-radius: 10px;
+    background: #f7f2e7;
+    font-size: 12.5px;
+    color: var(--encre-douce);
+}
+
+.emplacement-courant strong { color: var(--encre); font-size: 13px; }
+
+.arbre-plante {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    color: var(--vert-profond);
+    font-weight: 700;
+}
+
+.bouton-retirer-arbre {
+    border: 0;
+    background: none;
+    color: var(--echec);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.liste-arbres {
+    display: grid;
+    gap: 6px;
+    max-height: 280px;
+    margin-top: 10px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.arbre-choix {
+    display: grid;
+    gap: 1px;
+    padding: 8px 12px;
+    border: 1.5px solid transparent;
+    border-radius: var(--rayon-petit);
+    background: var(--sable);
+    text-align: left;
+    font-family: var(--texte);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background .18s ease, border-color .18s ease;
+}
+
+.arbre-choix:hover {
+    background: #fff;
+    border-color: var(--vert-clair);
+}
+
+.arbre-choix strong { font-size: 13.5px; color: var(--encre); }
+.arbre-choix small { font-size: 11.5px; font-style: italic; color: var(--encre-douce); }
+
+
+/* Rendu dans la fenêtre de résultat et dans le bilan */
+
+.rendu-resultat,
+.bilan-rendu {
+    display: none;
+}
+
+.rendu-resultat.est-visible {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 4px 0 14px;
+    border-radius: var(--rayon-petit);
+    box-shadow: var(--ombre-douce);
+}
+
+.bilan-rendu.est-visible {
+    display: block;
+    margin: 0 0 26px;
+}
+
+.bilan-rendu canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre-forte);
+}
+
+.bilan-rendu figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--encre-douce);
+}
+
+/* La fenêtre de résultat s'élargit pour montrer le parking */
+.fenetre-resultat:has(.rendu-resultat.est-visible) { max-width: 780px; }
+
+/* La vue reste à l'écran pendant les choix : seul le panneau défile */
+@media (min-width: 901px) {
+    .rendu-parking-actif .colonne-site {
+        position: sticky;
+        top: 22px;
+        align-self: start;
+    }
+
+    .rendu-parking-actif #panneau-amenagement {
+        max-height: calc(100vh - 44px);
+        overflow-y: auto;
+    }
+}
+
+#panneau-amenagement .champ-recherche { position: relative; }
+
+#panneau-amenagement .champ-recherche .loupe {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--encre-douce);
+    pointer-events: none;
+}
+
+#panneau-amenagement .champ-recherche input {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 12px 8px 32px;
+    border: 1.5px solid #ddd8c9;
+    border-radius: var(--rayon-petit);
+    background: #fff;
+    font: inherit;
+    font-size: 13.5px;
+}
+
+.bilan-rendu canvas + canvas { margin-top: 12px; }
