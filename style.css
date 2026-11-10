@@ -1515,17 +1515,6 @@ h1, h2, h3 {
     display: block;
 }
 
-.mode-parking-analyse #catalogue,
-.mode-parking-amenagement #catalogue,
-.mode-parking-analyse #barre-actions-standard,
-.mode-parking-amenagement #barre-actions-standard,
-.mode-parking-analyse #bouton-filtrer-chantier,
-.mode-parking-amenagement #bouton-filtrer-chantier,
-.mode-parking-analyse #scene-slots,
-.mode-parking-amenagement #scene-slots {
-    display: none !important;
-}
-
 .panneau-phase-tete {
     padding: 18px 20px 12px;
     border-bottom: 1px solid var(--ligne);
@@ -1836,152 +1825,9 @@ h1, h2, h3 {
 }
 
 
-/* ==========================================================
-   AMENAGEMENT — SOLS & MINERAUX
-   ========================================================== */
-
-.panneau-materiaux {
-    display: none;
-}
-
-.mode-amenagement-materiaux #panneau-materiaux {
-    display: block;
-}
-
-.mode-amenagement-materiaux #panneau-analyse,
-.mode-amenagement-materiaux #panneau-amenagement,
-.mode-amenagement-materiaux #catalogue,
-.mode-amenagement-materiaux #barre-actions-standard,
-.mode-amenagement-materiaux #bouton-filtrer-chantier {
-    display: none;
-}
-
-.materiaux-groupes {
-    display: grid;
-    gap: 14px;
-}
-
-.materiau-groupe {
-    padding: 14px;
-    border: 1px solid rgba(29, 36, 31, .12);
-    border-radius: 14px;
-    background: #f7f8f4;
-}
-
-.materiau-groupe > strong {
-    display: block;
-    margin-bottom: 9px;
-    color: var(--vert-foret);
-}
-
-.materiau-choix {
-    display: grid;
-    gap: 7px;
-}
-
-.materiau-choix button {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 100%;
-    padding: 9px 11px;
-    border: 1px solid rgba(38, 82, 58, .22);
-    border-radius: 10px;
-    background: white;
-    color: var(--vert-foret);
-    cursor: pointer;
-    text-align: left;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 650;
-}
-
-.materiau-choix button:hover {
-    border-color: var(--vert);
-    background: var(--mousse);
-}
-
-.materiau-choix button.est-selectionne {
-    border-color: var(--vert-profond);
-    background: var(--vert-profond);
-    color: white;
-}
-
-.materiaux-etat {
-    margin: 14px 0;
-    padding: 9px 12px;
-    border-radius: 10px;
-    background: var(--mousse);
-    color: var(--vert-foret);
-    font-size: 13px;
-    font-weight: 700;
-}
-
-
-/* ==========================================================
-   VEGETAUX — REPERES PLUS PRECIS
-   ========================================================== */
-
-.mode-amenagement-vegetaux .emplacement {
-    transform: translate(-50%, -50%);
-}
-
-.mode-amenagement-vegetaux .emplacement:hover {
-    transform: translate(-50%, -50%) scale(1.08);
-}
-
-.mode-amenagement-vegetaux .emplacement-trou {
-    border-width: 2px;
-    background: rgba(27, 58, 40, .48);
-    font-size: clamp(7px, .75vw, 9px);
-}
-
-.mode-amenagement-vegetaux .etiquette-plante {
-    max-width: 105px;
-    font-size: 9px;
-}
-
-.mode-amenagement-vegetaux .emplacement .retirer {
-    width: 21px;
-    height: 21px;
-    font-size: 11px;
-}
-
 .bloc-indice-unique p {
     white-space: pre-line;
 }
-
-/* Retour visuel des choix de matériaux sur le plan vectoriel */
-#ecran-jeu[data-materiau-circulation="enrobe"] .qgis-circulation {
-    fill: rgba(82, 86, 84, .82);
-}
-#ecran-jeu[data-materiau-circulation="grave-stabilisee"] .qgis-circulation {
-    fill: rgba(177, 157, 123, .78);
-}
-#ecran-jeu[data-materiau-circulation="paves-drainants"] .qgis-circulation {
-    fill: rgba(158, 151, 136, .82);
-    stroke-dasharray: 3 2;
-}
-
-#ecran-jeu[data-materiau-places="paves-engazonnes"] .qgis-place-standard {
-    fill: rgba(103, 166, 91, .76);
-}
-#ecran-jeu[data-materiau-places="gravier-stabilise"] .qgis-place-standard {
-    fill: rgba(188, 174, 143, .78);
-}
-#ecran-jeu[data-materiau-places="enrobe"] .qgis-place-standard {
-    fill: rgba(92, 96, 94, .80);
-}
-
-#ecran-jeu[data-materiau-pieton="stabilise"] .qgis-pieton-polygone {
-    fill: rgba(214, 193, 143, .90);
-}
-#ecran-jeu[data-materiau-pieton="paves"] .qgis-pieton-polygone {
-    fill: rgba(171, 164, 151, .92);
-}
-#ecran-jeu[data-materiau-pieton="beton-desactive"] .qgis-pieton-polygone {
-    fill: rgba(190, 184, 171, .92);
-}
-
 
 /* ==========================================================
    CHANTIER PARKING — AMENAGEMENT ET RENDU AERIEN
@@ -2007,7 +1853,7 @@ h1, h2, h3 {
 
 /* Repères d'emplacements d'arbres posés sur la vue */
 
-.repere-arbre {
+.repere-plantation {
     position: absolute;
     width: clamp(24px, 2.6vw, 32px);
     aspect-ratio: 1 / 1;
@@ -2027,15 +1873,15 @@ h1, h2, h3 {
     transition: transform .18s ease, background .18s ease, border-color .18s ease;
 }
 
-.repere-arbre:hover { transform: translate(-50%, -50%) scale(1.12); }
+.repere-plantation:hover { transform: translate(-50%, -50%) scale(1.12); }
 
 /* Un arbre planté reste visible : le repère s'efface presque */
-.repere-arbre.est-plante {
+.repere-plantation.est-plante {
     background: transparent;
     border: 1.5px solid rgba(255, 255, 255, .35);
 }
 
-.repere-arbre.est-vise {
+.repere-plantation.est-vise {
     border: 3px solid var(--soleil);
     background: rgba(224, 167, 49, .28);
     animation: repere-vise 1.6s ease-in-out infinite;
@@ -2046,10 +1892,10 @@ h1, h2, h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .repere-arbre.est-vise { animation: none; }
+    .repere-plantation.est-vise { animation: none; }
 }
 
-.repere-arbre:focus-visible {
+.repere-plantation:focus-visible {
     outline: 3px solid rgba(224, 167, 49, .9);
     outline-offset: 2px;
 }
@@ -2061,16 +1907,110 @@ h1, h2, h3 {
     padding: 0 20px 16px;
 }
 
-.choix-bloc .puce {
-    min-height: 36px;
-    padding: 6px 12px;
-    font-size: 12.5px;
+.choix-bloc > label {
+    display: block;
 }
 
-.compteur-arbres {
-    float: right;
-    letter-spacing: 0;
+.choix-menu {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1.5px solid #ddd8c9;
+    border-radius: var(--rayon-petit);
+    background: #fff;
+    color: var(--encre);
+    font: inherit;
+    font-size: 13.5px;
+}
+
+#bouton-indices-parking {
+    display: none;
+}
+
+.mode-parking-amenagement #bouton-indices-parking {
+    display: inline-block;
+}
+
+.liste-indices-parking {
+    display: grid;
+    gap: 8px;
+}
+
+.liste-indices-parking details {
+    padding: 10px 12px;
+    border: 1px solid #ddd8c9;
+    border-radius: var(--rayon-petit);
+}
+
+.liste-indices-parking summary {
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.liste-indices-parking p {
+    margin: 8px 0 0;
+    color: var(--encre-douce);
+    font-size: 14px;
+}
+
+.fiche-plantation {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: var(--rayon-petit);
+    background: #eef5ea;
+    font-size: 13px;
+}
+
+.fiche-plantation em {
+    display: block;
+    color: var(--encre-douce);
+}
+
+.fiche-plantation dl {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px 8px;
+    margin: 8px 0;
+}
+
+.fiche-plantation dt {
+    font-weight: 700;
+}
+
+.fiche-plantation dd,
+.fiche-plantation p {
+    margin: 0;
+}
+
+.fiche-plantation small {
+    display: block;
+    color: var(--encre-douce);
+}
+
+#bouton-planter {
+    margin-top: 8px;
+}
+
+
+#choix-plantation {
+    margin-top: 8px;
+}
+
+.compteur-plantations {
+    margin: 0 0 8px;
     color: var(--vert-profond);
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.repere-plantation.repere-vivace {
+    border-radius: 7px;
+    background: rgba(63, 64, 139, .78);
+}
+
+.repere-plantation.repere-vivace.est-plante {
+    background: rgba(63, 64, 139, .52);
 }
 
 .emplacement-courant {
@@ -2106,38 +2046,6 @@ h1, h2, h3 {
     cursor: pointer;
     text-decoration: underline;
 }
-
-.liste-arbres {
-    display: grid;
-    gap: 6px;
-    max-height: 280px;
-    margin-top: 10px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-}
-
-.arbre-choix {
-    display: grid;
-    gap: 1px;
-    padding: 8px 12px;
-    border: 1.5px solid transparent;
-    border-radius: var(--rayon-petit);
-    background: var(--sable);
-    text-align: left;
-    font-family: var(--texte);
-    cursor: pointer;
-    touch-action: manipulation;
-    transition: background .18s ease, border-color .18s ease;
-}
-
-.arbre-choix:hover {
-    background: #fff;
-    border-color: var(--vert-clair);
-}
-
-.arbre-choix strong { font-size: 13.5px; color: var(--encre); }
-.arbre-choix small { font-size: 11.5px; font-style: italic; color: var(--encre-douce); }
-
 
 /* Rendu dans la fenêtre de résultat et dans le bilan */
 

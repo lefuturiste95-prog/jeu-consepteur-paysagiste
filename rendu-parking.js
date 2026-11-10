@@ -53,6 +53,11 @@ function rectangle(u0, v0, u1, v1) {
 // Coordonnées en mètres dans le repère ci-dessus. Pour corriger le plan,
 // il suffit de modifier ces valeurs.
 
+function secteurVivaces(id, milieu, u0, v0, u1, v1) {
+    return { id, milieu, u: (u0 + u1) / 2, v: (v0 + v1) / 2, u0, v0, u1, v1 };
+}
+
+
 const PLAN_PARKING = {
 
     // Limite de la parcelle, en pixels de base.jpg
@@ -96,12 +101,17 @@ const PLAN_PARKING = {
         { id: "m3", milieu: "bande", u: 24.75, v: 19.25 },
         { id: "m4", milieu: "bande", u: 32.25, v: 19.25 },
         { id: "m5", milieu: "bande", u: 39.75, v: 19.25 },
-        { id: "n1", milieu: "noue", u: 2,     v: 41 },
-        { id: "n2", milieu: "noue", u: 11,    v: 41.5 },
-        { id: "n3", milieu: "noue", u: 20,    v: 41 },
-        { id: "n4", milieu: "noue", u: 29,    v: 41.5 },
-        { id: "n5", milieu: "noue", u: 38,    v: 41 },
-        { id: "n6", milieu: "noue", u: 47,    v: 41.5 }
+        { id: "n1", milieu: "noue", u: 16, v: 41.5 },
+        { id: "n2", milieu: "noue", u: 32, v: 41.5 }
+    ],
+    emplacementsVivaces: [
+        secteurVivaces("v1", "lisiere", 6, 0, 18, 2),
+        secteurVivaces("v2", "lisiere", 18, 0, 31, 2),
+        secteurVivaces("v3", "lisiere", 31, 0, 44, 2),
+        secteurVivaces("v4", "lisiere", 44, 0, 50, 7),
+        secteurVivaces("v5", "noue", 0, 40, 16, 43),
+        secteurVivaces("v6", "noue", 16, 40, 32, 43),
+        secteurVivaces("v7", "noue", 32, 40, 48, 43)
     ]
 };
 
@@ -186,6 +196,7 @@ const ESSENCES_PARKING = {
     "Alnus cordata": ["rond-moyen", 5],
     "Betula pendula": ["leger-clair", 4.5],
     "Betula pubescens": ["leger-clair", 4.5],
+    "Betula nigra": ["leger-clair", 5.5],
     "Carpinus betulus": ["rond-fonce", 5],
     "Castanea sativa": ["rond-fonce", 6.5],
     "Catalpa bignonioides": ["leger-clair", 6],
@@ -197,6 +208,7 @@ const ESSENCES_PARKING = {
     "Fraxinus excelsior": ["leger-clair", 6],
     "Ginkgo biloba": ["leger-clair", 3.5],
     "Gleditsia triacanthos": ["leger-clair", 6],
+    "Gleditsia triacanthos 'Skyline'": ["leger-clair", 6],
     "Koelreuteria paniculata": ["leger-clair", 4.5],
     "Laburnum anagyroides": ["leger-clair", 3.5],
     "Liquidambar styraciflua": ["rond-moyen", 4.5],
@@ -204,6 +216,9 @@ const ESSENCES_PARKING = {
     "Magnolia kobus": ["rond-moyen", 4],
     "Magnolia grandiflora": ["rond-fonce", 4.5],
     "Malus sylvestris": ["rond-moyen", 4],
+    "Malus 'Red Sentinel'": ["rond-moyen", 3.5],
+    "Prunus padus": ["leger-clair", 4.5],
+    "Quercus palustris": ["rond-fonce", 6],
     "Metasequoia glyptostroboides": ["conifere", 4],
     "Morus alba": ["rond-moyen", 5],
     "Morus nigra": ["rond-fonce", 4],
@@ -594,7 +609,7 @@ function dessinerArbustes(ctx, images) {
 
     const hasard = hasardFixe(7);
 
-    PLAN_PARKING.massifs.forEach(massif => {
+    PLAN_PARKING.massifs.slice(2).forEach(massif => {
 
         const [u0, v0] = massif[0];
         const [u1, v1] = massif[2];
@@ -646,6 +661,67 @@ function dessinerVoitures(ctx, images) {
 }
 
 
+// Une vivace sélectionnée couvre un secteur par plusieurs touffes du même type.
+function touffesVivaces(vivaces) {
+    const touffes = [];
+    PLAN_PARKING.emplacementsVivaces.forEach((secteur, index) => {
+        const plante = vivaces[index];
+        if (!plante) return;
+        const hasard = hasardFixe(hacherTexte(secteur.id + plante.nomVernaculaire));
+        const graminiforme = /gramin/i.test(plante.type);
+        const populage = plante.nomScientifique === "Caltha palustris";
+        const hauteur = plante.nomScientifique === "Miscanthus sinensis" ? 1.05 :
+            populage ? 0.32 : graminiforme ? 0.57 : 0.43;
+        const teinte = graminiforme ? 82 + hasard() * 55 : 94 + hasard() * 28;
+        for (let u = secteur.u0 + 0.45; u < secteur.u1 - 0.35; u += 0.66 + hasard() * 0.28) {
+            for (let v = secteur.v0 + 0.4; v < secteur.v1 - 0.3; v += 0.68 + hasard() * 0.28) {
+                touffes.push({
+                    u: u + (hasard() - 0.5) * 0.3,
+                    v: v + (hasard() - 0.5) * 0.35,
+                    hauteur: hauteur * (0.78 + hasard() * 0.44),
+                    teinte, graminiforme, populage,
+                    graine: Math.floor(hasard() * 1000000)
+                });
+            }
+        }
+    });
+    return touffes;
+}
+
+
+function dessinerTouffeVivace(ctx, touffe, x, y, echelle) {
+    const hasard = hasardFixe(touffe.graine);
+    const rayon = Math.max(2, Math.sqrt(touffe.hauteur) * echelle * 0.44);
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = "rgba(17, 32, 23, 0.27)";
+    ctx.beginPath();
+    ctx.ellipse(-rayon * 0.15, rayon * 0.15, rayon * 1.12, rayon * 0.48, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.lineCap = "round";
+    for (let i = 0; i < 8; i++) {
+        const angle = hasard() * Math.PI * 2;
+        const dx = Math.cos(angle) * rayon * (0.6 + hasard() * 0.6);
+        const dy = Math.sin(angle) * rayon;
+        const clair = 27 + hasard() * 24;
+        ctx.strokeStyle = "hsl(" + touffe.teinte + " 34% " + clair + "%)";
+        ctx.lineWidth = Math.max(0.65, rayon * (touffe.graminiforme ? 0.13 : 0.25));
+        ctx.beginPath();
+        ctx.moveTo(dx * 0.12, 0);
+        ctx.quadraticCurveTo(dx * 0.33, dy * 0.78, dx, dy);
+        ctx.stroke();
+        if (touffe.populage && i % 3 === 0) {
+            ctx.fillStyle = "#e3b539";
+            ctx.beginPath();
+            ctx.arc(dx, dy, Math.max(0.6, rayon * 0.2), 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+    ctx.restore();
+}
+
+
 function dessinerArbres(ctx, images, arbres) {
 
     const objets = PLAN_PARKING.emplacementsArbres
@@ -676,7 +752,7 @@ function dessinerArbres(ctx, images, arbres) {
 /**
  * Dessine le rendu complet sur le canvas.
  * @param {HTMLCanvasElement} canvas
- * @param {{ voie: string|null, places: string|null, arbres: Array<object|null> }} choix
+ * @param {{ voie: string|null, places: string|null, arbres: Array<object|null>, vivaces: Array<object|null> }} choix
  * @returns {Promise<void>}
  */
 function dessinerRenduParking(canvas, choix) {
@@ -700,6 +776,13 @@ function dessinerRenduParking(canvas, choix) {
         ctx.drawImage(sol, 0, 0);
 
         dessinerArbustes(ctx, images);
+        ctx.save();
+        ctx.clip(cheminPx(PLAN_PARKING.contourPx));
+        for (const touffe of touffesVivaces(choix.vivaces || [])) {
+            const [x, y] = versPx([touffe.u, touffe.v]);
+            dessinerTouffeVivace(ctx, touffe, x, y, RENDU.pxParM);
+        }
+        ctx.restore();
         dessinerVoitures(ctx, images);
         dessinerArbres(ctx, images, choix.arbres || []);
     });

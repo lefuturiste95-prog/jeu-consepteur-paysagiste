@@ -374,7 +374,7 @@ function objetsArbustesPieton(images) {
 
     if (!sujets.length) return objets;
 
-    PLAN_PARKING.massifs.forEach(massif => {
+    PLAN_PARKING.massifs.slice(2).forEach(massif => {
 
         const [u0, v0] = massif[0];
         const [u1, v1] = massif[2];
@@ -397,6 +397,26 @@ function objetsArbustesPieton(images) {
     });
 
     return objets;
+}
+
+
+// Réemploie les petits sujets des massifs de la vue piétonne.
+function objetsVivacesPieton(images, vivaces) {
+    const sujets = [...(images.arbres["rond-moyen"] || []), ...(images.arbres["rond-fonce"] || [])];
+    if (!sujets.length) return [];
+
+    return touffesVivaces(vivaces)
+        .filter((_, index) => index % 3 === 0)
+        .map(touffe => {
+            const sprite = sujets[touffe.graine % sujets.length];
+            const largeurM = 0.55 + (touffe.graine % 41) / 100;
+            return {
+                sprite, largeurM, arbuste: true,
+                houppierM: largeurM * 0.6,
+                reflet: touffe.graine % 2 === 0,
+                vue: projeterPieton(touffe.u, touffe.v)
+            };
+        });
 }
 
 
@@ -428,7 +448,7 @@ function dessinerArbrePieton(ctx, objet) {
 /**
  * Dessine la vue piétonne complète sur le canvas.
  * @param {HTMLCanvasElement} canvas
- * @param {{ voie: string|null, places: string|null, arbres: Array<object|null> }} choix
+ * @param {{ voie: string|null, places: string|null, arbres: Array<object|null>, vivaces: Array<object|null> }} choix
  * @returns {Promise<void>}
  */
 function dessinerRenduPieton(canvas, choix) {
@@ -454,5 +474,11 @@ function dessinerRenduPieton(canvas, choix) {
         ctx.restore();
 
         objets.forEach(objet => dessinerArbrePieton(ctx, objet));
+
+        const solVisible = cheminPx(CAMERA_PIETON.zoneVisible);
+        objetsVivacesPieton(images, choix.vivaces || [])
+            .filter(({ vue }) => vue.distance > 0 && ctx.isPointInPath(solVisible, vue.x, vue.y))
+            .sort((a, b) => b.vue.distance - a.vue.distance)
+            .forEach(objet => dessinerArbrePieton(ctx, objet));
     });
 }

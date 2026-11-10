@@ -1,7 +1,7 @@
 # L'Apprenti Concepteur
 
 Jeu web pour découvrir le métier de concepteur paysagiste.
-Deux chantiers, un catalogue de 140 végétaux,
+Un chantier de parking paysager, un catalogue de végétaux,
 un score et un tableau des scores.
 
 ## Lancer le jeu
@@ -68,9 +68,8 @@ PY
 
 ## Modifier les chantiers
 
-Tout est dans la constante `MISSIONS` en haut de `script.js`.
+Les réglages du chantier sont dans `missionParking`, en haut de `script.js`.
 Le chantier Parking contient trois vues réelles : vue aérienne, vue piétonne depuis l’accès et vue piétonne depuis le terrain.
-Le chantier Zone 6 conserve pour l’instant l’ancien contenu du chantier 2.
 Les anciens modes Photo / Mixte / Plan ont été supprimés.
 
 
@@ -80,8 +79,8 @@ Les anciens modes Photo / Mixte / Plan ont été supprimés.
 - Code : `etudessuperieures`
 - La page `admin.html` est protégée contre les accès accidentels par `sessionStorage`.
 - L'administrateur peut déjà supprimer un score précis ou effacer tout le classement.
-- Les outils visuels pour modifier les 3 chantiers, placer les points « ? » et les emplacements seront ajoutés dans la prochaine étape.
-- Le bilan final contient maintenant un bouton **Retour à l'accueil** en plus de **Rejouer** et **Revoir le détail des chantiers**.
+- L’onglet Analyse permet de modifier les points d’analyse du chantier.
+- Le bilan final contient maintenant un bouton **Retour à l'accueil** en plus de **Rejouer** et **Revoir le détail du chantier**.
 
 > Important : le code administrateur est côté navigateur. Il convient pour un forum et pour éviter les accès accidentels, mais ce n'est pas une sécurité serveur.
 
@@ -111,7 +110,7 @@ Code :
 `etudessuperieures`
 
 L'interface permet maintenant :
-- de modifier le nom et les textes des deux chantiers ;
+- de modifier le nom et les textes du chantier Parking ;
 - de modifier les textes de la phase Analyse et Aménagement du parking ;
 - de changer les chemins des images ;
 - d'ajouter ou supprimer des vues ;
@@ -165,7 +164,7 @@ Le fond satellite reste inchangé. Le projet est dessiné par-dessus en couches 
 
 ## Rendu du parking (vue aérienne et vue piétonne)
 
-Depuis le plan QGIS, cliquez sur **Essayer le rendu interactif** pour composer le résultat sur de vraies images du site :
+Depuis le plan QGIS, cliquez sur **Voir le rendu réaliste**. Utilisez les menus déroulants pour choisir les revêtements, les arbres et les vivaces. Les repères A désignent les arbres et les repères V les secteurs de vivaces. Le résultat apparaît sur de vraies images du site :
 
 - `rendu-parking.js` : le **plan** (`PLAN_PARKING`, en mètres), le catalogue des revêtements, les essences, la vue aérienne ;
 - `rendu-pieton.js` : la caméra calée sur la photo depuis l'accès (`CAMERA_PIETON`) et la vue piétonne ;
@@ -183,3 +182,5 @@ Les images de `image/parking/rendu/` sont déjà prêtes. Il ne faut les regén�
 | `exporter_sprites.py` | exporte les arbres retenus dans `selection.json` |
 | `voitures.py` | voitures prélevées dans l'orthophoto |
 | `pieton.py` | arbres vus de côté et sols de la vue piétonne |
+
+Le catalogue du jeu comporte huit arbres de [Smits](https://smitsbv.nl/producten/) et huit vivaces de [Willemse](https://www.willemsefrance.fr/collections/plantes-vivaces). Les fiches du jeu renvoient à la source de chaque plante. Les catégories d’humidité et d’exposition sont simplifiées pour le score du jeu. Après une modification du CSV, synchronisez sa copie dans `data/plantes-embarquees.js` pour garder le mode hors connexion.

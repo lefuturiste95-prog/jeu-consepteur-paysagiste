@@ -91,7 +91,7 @@ const CONFIG_PAR_DEFAUT = {
                         {
                             id: "cours-eau",
                             x: 64,
-                            y: 88,
+                            y: 79,
                             titre: "Cours d’eau au sud",
                             indice:
                                 "Observez la limite sud de la parcelle.",
@@ -102,8 +102,8 @@ const CONFIG_PAR_DEFAUT = {
                         },
                         {
                             id: "acces",
-                            x: 20,
-                            y: 38,
+                            x: 58,
+                            y: 10,
                             titre: "Accès existant",
                             indice:
                                 "Repérez les surfaces déjà circulées à proximité du terrain.",
@@ -114,8 +114,8 @@ const CONFIG_PAR_DEFAUT = {
                         },
                         {
                             id: "lisiere",
-                            x: 86,
-                            y: 54,
+                            x: 78,
+                            y: 66,
                             titre: "Lisière végétale",
                             indice:
                                 "Regardez la bordure droite de la parcelle.",
@@ -182,7 +182,7 @@ const CONFIG_PAR_DEFAUT = {
                         },
                         {
                             id: "lisiere",
-                            x: 86,
+                            x: 94,
                             y: 50,
                             titre: "Lisière végétale",
                             indice:
@@ -193,36 +193,6 @@ const CONFIG_PAR_DEFAUT = {
                                 "devra dialoguer avec cet environnement."
                         }
                     ]
-                }
-            ]
-        },
-
-        {
-            titre: "Aménagement végétal du parking",
-
-            brief:
-                "Le fonctionnement général du parking est défini. " +
-                "Il faut maintenant choisir des végétaux adaptés pour les îlots plantés, " +
-                "les abords et les zones participant à la gestion de l’eau.",
-
-            conseil:
-                "Répartissez les strates végétales : arbres pour l’ombrage, arbustes " +
-                "pour structurer les îlots et vivaces pour couvrir le sol.",
-
-            vues: [
-                {
-                    id: "plan-parking",
-                    label: "Plan du parking",
-                    image: "image/parking/vue-amenagement-qgis-v2.png",
-                    ratio: "16 / 9",
-                    points: []
-                },
-                {
-                    id: "terrain",
-                    label: "Vue du terrain",
-                    image: "image/parking/vue-pieton-terrain.jpeg",
-                    ratio: "4 / 3",
-                    points: []
                 }
             ]
         }
@@ -286,29 +256,9 @@ function lireConfig() {
 
         const donnee = JSON.parse(localStorage.getItem(CLE_CONFIG));
 
-        if (
-            donnee &&
-            Array.isArray(donnee.chantiers) &&
-            donnee.chantiers.length >= 2
-        ) {
-            // Migration de l'ancien chantier "Zone 6".
-            if (
-                String(donnee.chantiers[1]?.titre || "")
-                    .trim()
-                    .toLowerCase() === "zone 6"
-            ) {
-                donnee.chantiers[1] =
-                    copie(CONFIG_PAR_DEFAUT.chantiers[1]);
-
-                localStorage.setItem(
-                    CLE_CONFIG,
-                    JSON.stringify(donnee)
-                );
-            }
-
-            return donnee;
+        if (Array.isArray(donnee?.chantiers) && donnee.chantiers[0]) {
+            return { ...donnee, chantiers: [donnee.chantiers[0]] };
         }
-
     } catch (erreur) {
         console.warn("Configuration admin illisible :", erreur);
     }
@@ -1338,12 +1288,12 @@ $("#importer-config").addEventListener("change", evenement => {
             if (
                 !donnee ||
                 !Array.isArray(donnee.chantiers) ||
-                donnee.chantiers.length < 2
+                !donnee.chantiers[0]
             ) {
                 throw new Error("Format incorrect");
             }
 
-            config = donnee;
+            config = { ...donnee, chantiers: [donnee.chantiers[0]] };
 
             sauvegarderConfig("Configuration importée");
 

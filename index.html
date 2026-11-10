@@ -51,7 +51,7 @@
         <h1>L'Apprenti<br>Concepteur</h1>
 
         <p class="accroche">
-            Deux chantiers pour découvrir la démarche du concepteur paysagiste.
+            Un chantier de parking paysager pour découvrir la démarche du concepteur paysagiste.
             Analysez d’abord le site, puis proposez un aménagement cohérent.
         </p>
 
@@ -86,13 +86,15 @@
 
         <div class="barre-haute-gauche">
             <div class="ligne-pastilles">
-                <span class="pastille-mission" id="numero-mission">Chantier 1/2</span>
+                <span class="pastille-mission" id="numero-mission">Chantier Parking</span>
                 <span class="pastille-phase" id="phase-mission">Analyse</span>
             </div>
             <h2 id="titre-mission">Chargement…</h2>
         </div>
 
         <div class="barre-haute-droite">
+            <button class="bouton-icone" id="bouton-retour-etape" type="button"
+                    title="Retour à l’étape précédente" aria-label="Retour à l’étape précédente">←</button>
             <div class="compteur-score">
                 <span class="compteur-label">Score</span>
                 <strong id="score-courant">0</strong>
@@ -117,9 +119,8 @@
                 <div class="conditions" id="conditions-mission"></div>
 
                 <p class="instruction-phase" id="instruction-phase"></p>
-
-                <button class="bouton bouton-lien" id="bouton-filtrer-chantier">
-                    ⚙ Filtrer le catalogue selon ce site
+                <button class="bouton bouton-lien" id="bouton-indices-parking" type="button">
+                    Revoir les indices du site
                 </button>
 
             </div>
@@ -142,31 +143,13 @@
                 <div class="scene-outils" id="scene-outils"
                      role="group" aria-label="Changer le point de vue du chantier"></div>
 
-                <!-- Les emplacements du prototype végétal restent pour l'instant. -->
                 <div class="scene-hotspots" id="scene-hotspots" aria-label="Points d’analyse"></div>
 
-                <div class="scene-slots" id="scene-slots"></div>
-
                 <!-- Chantier Parking, phase Aménagement : rendu composé sur
-                     l'orthophoto (voir rendu-parking.js) et emplacements d'arbres. -->
+                     l’orthophoto et repères de plantation. -->
                 <canvas class="scene-rendu" id="scene-rendu"
                         aria-label="Vue aérienne de votre aménagement"></canvas>
                 <div class="scene-arbres" id="scene-arbres"></div>
-            </div>
-
-            <div class="barre-actions" id="barre-actions-standard">
-
-                <p class="progression" id="progression">0 / 5 emplacements plantés</p>
-
-                <div class="actions-droite">
-                    <button class="bouton bouton-fantome" id="bouton-vider">
-                        Tout retirer
-                    </button>
-                    <button class="bouton bouton-principal" id="bouton-valider" disabled>
-                        Valider le chantier
-                    </button>
-                </div>
-
             </div>
 
         </section>
@@ -175,7 +158,7 @@
         <aside class="panneau-phase panneau-analyse" id="panneau-analyse">
 
             <div class="panneau-phase-tete">
-                <p class="sur-titre">Chantier 1 — Parking</p>
+                <p class="sur-titre">Chantier Parking</p>
                 <h3>Analyse du site</h3>
             </div>
 
@@ -207,95 +190,31 @@
         <aside class="panneau-phase panneau-amenagement" id="panneau-amenagement">
 
             <div class="panneau-phase-tete">
-                <p class="sur-titre">Chantier 1 — Parking</p>
+                <p class="sur-titre">Chantier Parking</p>
                 <h3>Aménagement</h3>
             </div>
 
             <p class="panneau-phase-intro">
-                Ici, le fond satellite reste exactement le même.
-                Le projet est dessiné par-dessus avec des couches vectorielles métriques,
-                comme dans QGIS : aucune génération d’image n’est nécessaire.
+                Le projet est dessiné sur la même photo aérienne que le rendu réaliste.
+                Les voies, les places et les plantations sont représentées par des couches vectorielles à l’échelle.
             </p>
 
             <div class="amenagement-resume amenagement-qgis-resume">
-                <span>✓ Fond satellite conservé</span>
+                <span>✓ Même tracé que dans le rendu réaliste</span>
                 <span>✓ Places standard : 2,50 × 5,00 m</span>
-                <span>✓ Places PMR : 3,30 × 5,00 m</span>
                 <span>✓ Voies de circulation : 6,00 m</span>
                 <span>✓ Noue végétalisée au sud</span>
-                <span>◌ Implantation à ajuster avec le vrai fond géoréférencé QGIS</span>
             </div>
 
             <div class="legende-qgis" aria-label="Légende du plan">
                 <span><i class="legende-symbole legende-voie"></i> Circulation</span>
                 <span><i class="legende-symbole legende-place"></i> Place perméable</span>
-                <span><i class="legende-symbole legende-pmr"></i> Place PMR</span>
                 <span><i class="legende-symbole legende-plantation"></i> Plantation</span>
                 <span><i class="legende-symbole legende-noue"></i> Noue</span>
             </div>
 
-            <button class="bouton bouton-principal bouton-bloc" id="bouton-vers-zone6">
-                Configurer les sols →
-            </button>
-
-            <button class="bouton bouton-fantome bouton-bloc" id="bouton-rendu-parking">
-                Essayer le rendu interactif
-            </button>
-
-        </aside>
-
-        <!-- ---------- Colonne de droite : sols et minéraux ---------- -->
-        <aside class="panneau-phase panneau-materiaux" id="panneau-materiaux">
-
-            <div class="panneau-phase-tete">
-                <p class="sur-titre">Aménagement du site — Étape 1</p>
-                <h3>Sols & minéraux</h3>
-            </div>
-
-            <p class="panneau-phase-intro">
-                Commencez par définir les revêtements du parking.
-                Faites un choix pour chaque zone avant de passer aux végétaux.
-            </p>
-
-            <div class="materiaux-groupes">
-
-                <div class="materiau-groupe" data-categorie="circulation">
-                    <strong>Voies de circulation</strong>
-                    <div class="materiau-choix">
-                        <button type="button" data-materiau="Enrobé">Enrobé</button>
-                        <button type="button" data-materiau="Grave stabilisée">Grave stabilisée</button>
-                        <button type="button" data-materiau="Pavés drainants">Pavés drainants</button>
-                    </div>
-                </div>
-
-                <div class="materiau-groupe" data-categorie="places">
-                    <strong>Places de stationnement</strong>
-                    <div class="materiau-choix">
-                        <button type="button" data-materiau="Pavés engazonnés">Pavés engazonnés</button>
-                        <button type="button" data-materiau="Gravier stabilisé">Gravier stabilisé</button>
-                        <button type="button" data-materiau="Enrobé">Enrobé</button>
-                    </div>
-                </div>
-
-                <div class="materiau-groupe" data-categorie="pieton">
-                    <strong>Accès piéton</strong>
-                    <div class="materiau-choix">
-                        <button type="button" data-materiau="Stabilisé">Stabilisé</button>
-                        <button type="button" data-materiau="Pavés">Pavés</button>
-                        <button type="button" data-materiau="Béton désactivé">Béton désactivé</button>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="materiaux-etat" id="materiaux-etat">
-                0 / 3 choix effectués
-            </div>
-
-            <button class="bouton bouton-principal bouton-bloc"
-                    id="bouton-vers-vegetaux"
-                    disabled>
-                Passer aux végétaux →
+            <button class="bouton bouton-principal bouton-bloc" id="bouton-rendu-parking">
+                Voir le rendu réaliste →
             </button>
 
         </aside>
@@ -303,7 +222,7 @@
         <aside class="panneau-phase" id="panneau-rendu-parking">
 
             <div class="panneau-phase-tete">
-                <p class="sur-titre">Chantier 1 — Parking</p>
+                <p class="sur-titre">Chantier Parking</p>
                 <h3>Rendu interactif</h3>
             </div>
 
@@ -312,96 +231,40 @@
             </button>
 
             <p class="panneau-phase-intro">
-                Le plan est fixé : choisissez les revêtements, puis touchez chaque
-                emplacement sur la vue pour y planter un arbre. La vue se met à jour
-                à chaque choix.
+                Choisissez les revêtements. Sur la vue aérienne, touchez un repère A
+                pour choisir un arbre ou un repère V pour choisir des vivaces. Consultez la fiche avant de planter.
             </p>
 
             <div class="choix-bloc">
-                <p class="filtre-titre">Revêtement des voies</p>
-                <div class="puces" id="choix-voie"></div>
+                <label class="filtre-titre" for="choix-voie">Revêtement des voies</label>
+                <select class="choix-menu" id="choix-voie"></select>
             </div>
 
             <div class="choix-bloc">
-                <p class="filtre-titre">Revêtement des places</p>
-                <div class="puces" id="choix-places"></div>
+                <label class="filtre-titre" for="choix-places">Revêtement des places</label>
+                <select class="choix-menu" id="choix-places"></select>
             </div>
 
             <div class="choix-bloc">
-                <p class="filtre-titre">
-                    Arbres <span class="compteur-arbres" id="compteur-arbres">0 / 0</span>
-                </p>
+                <p class="compteur-plantations" id="compteur-plantations" aria-live="polite"></p>
+                <label class="filtre-titre" for="choix-plantation" id="libelle-plantation">Plantation</label>
                 <p class="emplacement-courant" id="emplacement-courant"></p>
                 <div class="champ-recherche">
                     <span class="loupe" aria-hidden="true">⌕</span>
-                    <input type="search" id="recherche-arbre"
-                           placeholder="Rechercher un arbre…"
-                           aria-label="Rechercher un arbre">
+                    <input type="search" id="recherche-plantation"
+                           placeholder="Rechercher une plante…"
+                           aria-label="Rechercher une plante">
                 </div>
-                <div class="liste-arbres" id="liste-arbres"></div>
+                <select class="choix-menu" id="choix-plantation" aria-describedby="emplacement-courant"></select>
+                <div class="fiche-plantation" id="fiche-plantation" aria-live="polite"></div>
+                <button class="bouton bouton-fantome bouton-bloc" id="bouton-planter" type="button" disabled>
+                    Planter à cet emplacement
+                </button>
             </div>
 
             <button class="bouton bouton-principal bouton-bloc" id="bouton-valider-parking" disabled>
                 Valider l’aménagement
             </button>
-
-        </aside>
-
-        <!-- ---------- Colonne de droite : le catalogue ---------- -->
-        <aside class="catalogue" id="catalogue">
-
-            <div class="catalogue-tete">
-
-                <h3>Catalogue de végétaux</h3>
-
-                <button class="bouton-icone bouton-replier" id="bouton-replier"
-                        aria-label="Replier le catalogue">▾</button>
-
-            </div>
-
-            <div class="catalogue-corps">
-
-                <div class="champ-recherche">
-                    <span class="loupe" aria-hidden="true">⌕</span>
-                    <input type="search"
-                           id="recherche-plante"
-                           placeholder="Rechercher une plante…"
-                           aria-label="Rechercher une plante">
-                </div>
-
-                <details class="bloc-filtres" id="bloc-filtres">
-
-                    <summary>Filtres</summary>
-
-                    <div class="filtre">
-                        <p class="filtre-titre">Exposition</p>
-                        <div class="puces" id="puces-exposition"></div>
-                    </div>
-
-                    <div class="filtre">
-                        <p class="filtre-titre">Humidité du sol</p>
-                        <div class="puces" id="puces-humidite"></div>
-                    </div>
-
-                    <div class="filtre">
-                        <p class="filtre-titre">Type de végétal</p>
-                        <div class="puces" id="puces-groupe"></div>
-                    </div>
-
-                    <button class="bouton bouton-fantome bouton-bloc"
-                            id="reinitialiser-filtres">
-                        Réinitialiser les filtres
-                    </button>
-
-                </details>
-
-                <p class="nombre-resultats" id="nombre-resultats">
-                    Chargement des plantes…
-                </p>
-
-                <div class="liste-plantes" id="liste-plantes"></div>
-
-            </div>
 
         </aside>
 
@@ -474,7 +337,7 @@
 
         <div class="boutons-bilan">
             <button class="bouton bouton-fantome" id="bouton-revoir">
-                Revoir le détail des chantiers
+                Revoir le détail du chantier
             </button>
 
             <button class="bouton bouton-fantome" id="bouton-retour-accueil">
@@ -519,8 +382,12 @@
 
         <p class="conseil" id="resultat-conseil"></p>
 
+        <button class="bouton bouton-fantome bouton-bloc" id="bouton-retour-resultat" type="button">
+            ← Retour à mes choix
+        </button>
+
         <button class="bouton bouton-principal bouton-bloc" id="bouton-suite">
-            Chantier suivant →
+            Voir mon bilan →
         </button>
 
     </div>
@@ -545,11 +412,11 @@
             <li>
                 <strong>Aménager.</strong>
                 Une fois l’analyse terminée, le jeu passe à la phase d’aménagement.
-                Le projet QGIS permet de visualiser les circulations, les places, les îlots plantés et la gestion de l’eau sans modifier la photo d’origine.
+                Consultez le plan QGIS, puis ouvrez le rendu réaliste et choisissez les revêtements.
             </li>
             <li>
                 <strong>Choisir les végétaux.</strong>
-                Le catalogue végétal sert maintenant à aménager le même parking. Les filtres permettent de comparer les plantes avec les conditions du site.
+                Plantez les arbres de la bande centrale et de la noue. Choisissez des vivaces pour le bord du parking et la noue. Consultez les fiches pour vérifier si les plantes conviennent.
             </li>
         </ol>
 
@@ -567,7 +434,7 @@
     <div class="fenetre">
 
         <p class="sur-titre">Détail de la partie</p>
-        <h2>Vos deux chantiers</h2>
+        <h2>Détail du chantier Parking</h2>
 
         <div id="detail-partie"></div>
 
@@ -603,6 +470,18 @@
 
     </div>
 
+</div>
+
+
+<div class="voile" id="voile-indices-parking" role="dialog" aria-modal="true"
+     aria-labelledby="titre-indices-parking">
+    <div class="fenetre fenetre-analyse">
+        <h2 id="titre-indices-parking">Indices du site</h2>
+        <div id="liste-indices-parking" class="liste-indices-parking"></div>
+        <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-indices" type="button">
+            Revenir à l’aménagement
+        </button>
+    </div>
 </div>
 
 
@@ -651,10 +530,10 @@
 
 
 <script src="data/plantes-embarquees.js"></script>
-<script src="qgis/parking_local_a_recaler/parking-qgis.js"></script>
 <script src="image/parking/rendu/sprites.js"></script>
 <script src="image/parking/rendu/sprites-pieton.js"></script>
 <script src="rendu-parking.js"></script>
+<script src="qgis/parking_local_a_recaler/parking-qgis.js"></script>
 <script src="rendu-pieton.js"></script>
 <script src="script.js"></script>
 <script src="parking-amenagement.js"></script>

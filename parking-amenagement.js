@@ -10,18 +10,32 @@
 // Milieux de plantation : ce que chaque emplacement impose à l'arbre
 const MILIEUX_PARKING = {
     bande: {
-        nom: "Bande plantée entre les places",
-        resume: "plein soleil, sol tassé plutôt sec",
+        nom: "Bande centrale entre les places",
+        resume: "Soleil · sol frais à sec",
         expositions: ["soleil", "plein soleil"],
         humidites: ["frais", "sec"]
     },
+    lisiere: {
+        nom: "Bordure devant les places",
+        resume: "Soleil · sol drainé, frais à sec",
+        expositions: ["soleil", "plein soleil"],
+        humidites: ["frais", "sec", "très sec"]
+    },
     noue: {
         nom: "Noue au bord du ruisseau",
-        resume: "sol humide, parfois gorgé d'eau",
-        expositions: ["mi-ombre", "soleil"],
+        resume: "Soleil ou mi-ombre · sol humide à très humide",
+        expositions: ["mi-ombre", "soleil", "plein soleil"],
         humidites: ["humide", "très humide"]
     }
 };
+
+const EMPLACEMENTS_PARKING = [
+    ...PLAN_PARKING.emplacementsArbres.map((emplacement, index) =>
+        ({ ...emplacement, index, groupe: "Arbre", cle: "arbres", repere: "A" + (index + 1) })),
+    ...PLAN_PARKING.emplacementsVivaces.map((emplacement, index) =>
+        ({ ...emplacement, index, groupe: "Vivace", cle: "vivaces", repere: "V" + (index + 1) }))
+];
+
 
 const BONUS_PAR_ESSENCE = 10;
 const BONUS_ESSENCES_MAX = 6;
@@ -32,7 +46,9 @@ function nouveauChoixParking() {
         voie: null,
         places: null,
         arbres: PLAN_PARKING.emplacementsArbres.map(() => null),
+        vivaces: PLAN_PARKING.emplacementsVivaces.map(() => null),
         vise: 0,
+        candidat: null,
         recherche: "",
         vue: "aerienne"
     };
@@ -48,12 +64,11 @@ function ouvrirAmenagementParking() {
     partie.parking ??= nouveauChoixParking();
 
     $("#ecran-jeu").classList.add("rendu-parking-actif");
-    $("#recherche-arbre").value = partie.parking.recherche;
+    $("#recherche-plantation").value = partie.parking.recherche;
 
     construireBoutonsVuesParking();
 
     construireChoixRevetements();
-    afficherListeArbres();
     majAmenagementParking();
 }
 
@@ -87,6 +102,8 @@ function majBoutonsVuesParking() {
     const dimensions = vue === "pieton" ? CAMERA_PIETON : RENDU;
 
     $("#scene").style.aspectRatio = dimensions.largeur + " / " + dimensions.hauteur;
+    $("#scene-rendu").setAttribute("aria-label", vue === "pieton"
+        ? "Vue piétonne de votre aménagement" : "Vue aérienne de votre aménagement");
 
     document.querySelectorAll("#scene-outils .scene-mode").forEach(bouton => {
         const actif = bouton.dataset.vue === vue;
@@ -107,29 +124,17 @@ function fermerAmenagementParking() {
 // ===============================
 
 function construireChoixRevetements() {
-
     [["voie", "#choix-voie"], ["places", "#choix-places"]].forEach(([zone, selecteur]) => {
-
-        const conteneur = $(selecteur);
-        conteneur.innerHTML = "";
-
-        REVETEMENTS.forEach(revetement => {
-
-            const puce = document.createElement("button");
-            puce.type = "button";
-            puce.className = "puce";
-            puce.classList.toggle("est-active", partie.parking[zone] === revetement.id);
-            puce.textContent = revetement.nom;
-
-            puce.addEventListener("click", () => {
-                partie.parking = { ...partie.parking, [zone]: revetement.id };
-                conteneur.querySelectorAll(".puce").forEach(autre =>
-                    autre.classList.toggle("est-active", autre === puce));
-                majAmenagementParking();
-            });
-
-            conteneur.appendChild(puce);
-        });
+        const menu = $(selecteur);
+        const invite = new Option("Choisir un revêtement", "");
+        invite.disabled = true;
+        menu.replaceChildren(invite, ...REVETEMENTS.map(revetement =>
+            new Option(revetement.nom, revetement.id)));
+        menu.value = partie.parking[zone] ?? "";
+        menu.onchange = () => {
+            partie.parking = { ...partie.parking, [zone]: menu.value };
+            majAmenagementParking();
+        };
     });
 }
 
@@ -138,125 +143,173 @@ function construireChoixRevetements() {
 // CHOIX DES ARBRES
 // ===============================
 
-function arbresDuCatalogue() {
-
-    const recherche = partie.parking.recherche;
-
-    return plantes
-        .filter(plante => plante.groupe === "Arbre")
-        .filter(plante => !recherche ||
-            (plante.nomVernaculaire + " " + plante.nomScientifique).toLowerCase().includes(recherche))
-        .sort((a, b) => a.nomVernaculaire.localeCompare(b.nomVernaculaire, "fr"));
-}
-
-
-function afficherListeArbres() {
-
-    const conteneur = $("#liste-arbres");
-    conteneur.innerHTML = "";
-
-    arbresDuCatalogue().forEach(plante => {
-
-        const bouton = document.createElement("button");
-        bouton.type = "button";
-        bouton.className = "arbre-choix";
-        bouton.innerHTML = `
-            <strong>${echapperConfigHTML(plante.nomVernaculaire)}</strong>
-            <small>${echapperConfigHTML(plante.nomScientifique)}</small>`;
-
-        bouton.addEventListener("click", () => planterArbreParking(plante));
-        conteneur.appendChild(bouton);
-    });
-}
-
-
-function planterArbreParking(plante) {
-
-    const { arbres, vise } = partie.parking;
-    const nouveauxArbres = arbres.map((arbre, index) => index === vise ? plante : arbre);
-
-    // On passe au prochain emplacement vide, s'il en reste
-    const suivant = nouveauxArbres.indexOf(null);
-
-    partie.parking = {
-        ...partie.parking,
-        arbres: nouveauxArbres,
-        vise: suivant === -1 ? vise : suivant
+function compatibilitePlantation(plante, milieu) {
+    return {
+        expoOk: plante.expositions.some(exposition => milieu.expositions.includes(exposition)),
+        humOk: plante.humidites.some(humidite => milieu.humidites.includes(humidite))
     };
+}
 
-    majAmenagementParking();
+
+function notationPlantation(plante, milieu) {
+    const { expoOk, humOk } = compatibilitePlantation(plante, milieu);
+    const points = POINTS_GROUPE + (expoOk ? POINTS_EXPOSITION : 0) + (humOk ? POINTS_HUMIDITE : 0);
+    return { expoOk, humOk, points };
+}
+
+
+function afficherFichePlantation() {
+    const { vise, candidat } = partie.parking;
+    const emplacement = EMPLACEMENTS_PARKING[vise];
+    const plante = candidat || partie.parking[emplacement.cle][emplacement.index];
+    const fiche = $("#fiche-plantation");
+    $("#bouton-planter").disabled = !candidat;
+    if (!plante) {
+        fiche.textContent = "Sélectionne une plante pour voir ses besoins et les points possibles.";
+        return;
+    }
+
+    const milieu = MILIEUX_PARKING[emplacement.milieu];
+    const { expoOk, humOk, points } = notationPlantation(plante, milieu);
+    const texte = echapperConfigHTML;
+    const valeurs = liste => texte(liste.join(", ") || "Non renseigné");
+    const origine = plante.source || "";
+    const source = /^https:\/\/(?:www\.)?smitsbv\.nl\//.test(origine) ? "Smits" :
+        /^https:\/\/(?:www\.)?willemsefrance\.fr\//.test(origine) ? "Willemse" : "";
+    const statut = (liste, ok) => liste.length ? (ok ? "compatible" : "à revoir") : "non évalué";
+    fiche.innerHTML = `
+        <strong>${texte(plante.nomVernaculaire)}</strong>
+        ${plante.nomScientifique ? `<em>${texte(plante.nomScientifique)}</em>` : ""}
+        <dl>
+            <dt>Type</dt><dd>${texte(plante.type || plante.groupe)}</dd>
+            ${plante.hauteurAdulte ? `<dt>Hauteur adulte</dt><dd>${texte(plante.hauteurAdulte)}</dd>` : ""}
+            <dt>Exposition</dt><dd>${valeurs(plante.expositions)} <b>· ${statut(plante.expositions, expoOk)}</b></dd>
+            <dt>Humidité du sol</dt><dd>${valeurs(plante.humidites)} <b>· ${statut(plante.humidites, humOk)}</b></dd>
+            <dt>Floraison</dt><dd>${valeurs(plante.floraison)}</dd>
+        </dl>
+        ${plante.note ? `<p><b>À retenir</b> · ${texte(plante.note)}</p>` : ""}
+        ${source ? `<p><a href="${texte(plante.source)}" target="_blank" rel="noopener noreferrer">Fiche source · ${source}</a></p>` : ""}
+        <p><b>${points}/100 points</b> pour le repère ${emplacement.repere}
+            <small>(40 exposition · 40 sol · 20 type de plante)</small>
+        </p>`;
+}
+
+
+function normaliserRecherchePlantation(texte) {
+    return texte.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
+}
+
+
+function afficherMenuPlantation() {
+    const { vise, recherche } = partie.parking;
+    const emplacement = EMPLACEMENTS_PARKING[vise];
+    const milieu = MILIEUX_PARKING[emplacement.milieu];
+    const menu = $("#choix-plantation");
+    const options = plantes
+        .filter(plante => plante.groupe === emplacement.groupe &&
+            normaliserRecherchePlantation(plante.nomVernaculaire + " " + plante.nomScientifique).includes(recherche))
+        .map(plante => ({ plante, points: notationPlantation(plante, milieu).points }))
+        .filter(({ points }) => emplacement.groupe === "Arbre" || points === 100)
+        .sort((a, b) => b.points - a.points ||
+            a.plante.nomVernaculaire.localeCompare(b.plante.nomVernaculaire, "fr"));
+
+    const vivace = emplacement.groupe === "Vivace";
+    $("#libelle-plantation").textContent = vivace ? "Vivaces adaptées au secteur" : "Arbre à planter";
+    const libelle = vivace ? "Choisir une vivace" : "Choisir un arbre";
+    const invite = new Option(options.length ? libelle : "Aucun résultat", "");
+    invite.disabled = true;
+    menu.replaceChildren(invite, ...options.map(({ plante, points }) => {
+        const nom = plante.nomScientifique
+            ? plante.nomVernaculaire + " — " + plante.nomScientifique
+            : plante.nomVernaculaire;
+        return new Option(points === 100 ? "✓ " + nom : nom, plante.id);
+    }));
+    const plante = partie.parking.candidat || partie.parking[emplacement.cle][emplacement.index];
+    menu.value = plante ? String(plante.id) : "";
+    if (menu.selectedIndex === -1) menu.selectedIndex = 0;
+    menu.disabled = options.length === 0;
+    afficherFichePlantation();
+}
+
+
+function planterParking(plante) {
+    const cible = EMPLACEMENTS_PARKING[partie.parking.vise];
+    const plantations = partie.parking[cible.cle].map((choix, index) =>
+        index === cible.index ? plante : choix);
+    partie.parking = { ...partie.parking, [cible.cle]: plantations, candidat: null };
+
+    const suivant = EMPLACEMENTS_PARKING.findIndex(emplacement =>
+        emplacement.cle === cible.cle && !plantations[emplacement.index]);
+    const autre = suivant < 0 ? EMPLACEMENTS_PARKING.findIndex(emplacement =>
+        !partie.parking[emplacement.cle][emplacement.index]) : suivant;
+    viserEmplacement(autre < 0 ? partie.parking.vise : autre);
 }
 
 
 function viserEmplacement(index) {
-    partie.parking = { ...partie.parking, vise: index };
+    if (EMPLACEMENTS_PARKING[index].milieu !== EMPLACEMENTS_PARKING[partie.parking.vise].milieu) {
+        $("#recherche-plantation").value = "";
+        partie.parking = { ...partie.parking, recherche: "" };
+    }
+    if (index !== partie.parking.vise) {
+        partie.parking = { ...partie.parking, vise: index, candidat: null };
+    }
     majAmenagementParking();
 }
 
 
-function retirerArbreParking(index) {
-
-    partie.parking = {
-        ...partie.parking,
-        arbres: partie.parking.arbres.map((arbre, i) => i === index ? null : arbre),
-        vise: index
-    };
-
+function retirerPlantation() {
+    const emplacement = EMPLACEMENTS_PARKING[partie.parking.vise];
+    const plantations = partie.parking[emplacement.cle].map((plante, index) =>
+        index === emplacement.index ? null : plante);
+    partie.parking = { ...partie.parking, [emplacement.cle]: plantations, candidat: null };
     majAmenagementParking();
 }
 
 
-function dessinerEmplacementsArbres() {
-
+function dessinerReperesPlantations() {
     const conteneur = $("#scene-arbres");
     conteneur.innerHTML = "";
-
-    // Les emplacements ne se touchent que sur le plan vu du ciel
     if (partie.parking.vue === "pieton") return;
 
-    PLAN_PARKING.emplacementsArbres.forEach((emplacement, index) => {
-
+    EMPLACEMENTS_PARKING.forEach((emplacement, index) => {
         const { x, y } = positionEmplacementPourcent(emplacement);
-        const plante = partie.parking.arbres[index];
+        const plante = partie.parking[emplacement.cle][emplacement.index];
         const bouton = document.createElement("button");
-
         bouton.type = "button";
-        bouton.className = "repere-arbre";
+        bouton.className = "repere-plantation";
+        bouton.classList.toggle("repere-vivace", emplacement.groupe === "Vivace");
         bouton.classList.toggle("est-plante", Boolean(plante));
         bouton.classList.toggle("est-vise", index === partie.parking.vise);
         bouton.style.left = x + "%";
         bouton.style.top = y + "%";
-        bouton.textContent = plante ? "" : String(index + 1);
-        bouton.title = plante ? plante.nomVernaculaire : MILIEUX_PARKING[emplacement.milieu].nom;
-        bouton.setAttribute("aria-label", plante
-            ? "Emplacement " + (index + 1) + " : " + plante.nomVernaculaire
-            : "Emplacement " + (index + 1) + " vide");
-
-        bouton.addEventListener("click", () => viserEmplacement(index));
+        bouton.textContent = emplacement.repere;
+        const description = plante ? plante.nomVernaculaire : MILIEUX_PARKING[emplacement.milieu].nom;
+        bouton.title = description;
+        bouton.setAttribute("aria-label", emplacement.repere + " : " + description);
+        bouton.setAttribute("aria-pressed", index === partie.parking.vise ? "true" : "false");
+        bouton.addEventListener("click", () => {
+            viserEmplacement(index);
+            $("#choix-plantation").focus();
+        });
         conteneur.appendChild(bouton);
     });
 }
 
 
 function majEmplacementCourant() {
-
-    const { vise, arbres } = partie.parking;
-    const emplacement = PLAN_PARKING.emplacementsArbres[vise];
+    const emplacement = EMPLACEMENTS_PARKING[partie.parking.vise];
     const milieu = MILIEUX_PARKING[emplacement.milieu];
-    const plante = arbres[vise];
+    const plante = partie.parking[emplacement.cle][emplacement.index];
 
     $("#emplacement-courant").innerHTML = `
-        <strong>Emplacement ${vise + 1} — ${milieu.nom}</strong>
+        <strong>${emplacement.repere} — ${milieu.nom}</strong>
         <span>${milieu.resume}</span>
         ${plante ? `<span class="arbre-plante">
             ${echapperConfigHTML(plante.nomVernaculaire)}
-            <button type="button" class="bouton-retirer-arbre" id="retirer-arbre">Retirer</button>
+            <button type="button" class="bouton-retirer-arbre" id="retirer-plantation">Retirer</button>
         </span>` : ""}`;
-
-    const boutonRetirer = $("#retirer-arbre");
-    if (boutonRetirer) {
-        boutonRetirer.addEventListener("click", () => retirerArbreParking(vise));
-    }
+    $("#retirer-plantation")?.addEventListener("click", retirerPlantation);
 }
 
 
@@ -269,16 +322,18 @@ let renduEnCours = Promise.resolve();
 
 function majAmenagementParking() {
 
-    const { voie, places, arbres } = partie.parking;
-    const nombrePlantes = arbres.filter(Boolean).length;
-    const complet = Boolean(voie && places) && nombrePlantes === arbres.length;
-
-    $("#compteur-arbres").textContent = nombrePlantes + " / " + arbres.length;
-    $("#bouton-valider-parking").disabled = !complet;
-
+    const { voie, places, arbres, vivaces } = partie.parking;
+    const arbresPlantes = arbres.filter(Boolean).length;
+    const vivacesPlantees = vivaces.filter(Boolean).length;
+    $("#compteur-plantations").textContent =
+        arbresPlantes + "/" + arbres.length + " arbres · " +
+        vivacesPlantees + "/" + vivaces.length + " secteurs de vivaces";
+    $("#bouton-valider-parking").disabled =
+        !voie || !places || arbresPlantes !== arbres.length || vivacesPlantees !== vivaces.length;
     majBoutonsVuesParking();
-    dessinerEmplacementsArbres();
+    dessinerReperesPlantations();
     majEmplacementCourant();
+    afficherMenuPlantation();
 
     // Les rendus s'enchaînent : le dernier choix est toujours celui affiché
     const choix = partie.parking;
@@ -297,7 +352,7 @@ function majAmenagementParking() {
 
 function evaluerParking() {
 
-    const { voie, places, arbres } = partie.parking;
+    const { voie, places, arbres, vivaces } = partie.parking;
     const revetementVoie = REVETEMENTS.find(r => r.id === voie);
     const revetementPlaces = REVETEMENTS.find(r => r.id === places);
 
@@ -306,32 +361,27 @@ function evaluerParking() {
         { zone: "Places", revetement: revetementPlaces, points: revetementPlaces.places }
     ];
 
-    const lignesArbres = PLAN_PARKING.emplacementsArbres.map((emplacement, index) => {
-
-        const plante = arbres[index];
+    const lignesPlantations = EMPLACEMENTS_PARKING.map(emplacement => {
+        const plante = partie.parking[emplacement.cle][emplacement.index];
         const milieu = MILIEUX_PARKING[emplacement.milieu];
-        const expoOk = plante.expositions.some(valeur => milieu.expositions.includes(valeur));
-        const humOk = plante.humidites.some(valeur => milieu.humidites.includes(valeur));
-        const points = (expoOk ? POINTS_EXPOSITION : 0) + (humOk ? POINTS_HUMIDITE : 0) + POINTS_GROUPE;
-
-        return { plante, milieu, expoOk, humOk, points };
+        const { expoOk, humOk, points } = notationPlantation(plante, milieu);
+        return { plante, milieu, repere: emplacement.repere, expoOk, humOk, points };
     });
 
-    const essences = new Set(arbres.map(plante => plante.id)).size;
+    const essences = new Set([...arbres, ...vivaces].map(plante => plante.id)).size;
     const bonus = Math.min(essences, BONUS_ESSENCES_MAX) * BONUS_PAR_ESSENCE;
 
-    const score = [...lignesRevetements, ...lignesArbres]
+    const score = [...lignesRevetements, ...lignesPlantations]
         .reduce((total, ligne) => total + ligne.points, 0) + bonus;
-    const maximum = 200 + lignesArbres.length * 100 + BONUS_ESSENCES_MAX * BONUS_PAR_ESSENCE;
+    const maximum = 200 + lignesPlantations.length * 100 + BONUS_ESSENCES_MAX * BONUS_PAR_ESSENCE;
     const ratio = score / maximum;
 
     return {
         type: "amenagement-parking",
         titre: "Parking — Aménagement",
-        conseil: "Un parking paysager infiltre la pluie là où elle tombe et choisit " +
-                 "chaque arbre selon son milieu : sec et ensoleillé entre les places, humide dans la noue.",
+        conseil: "Adaptez les plantations à leur milieu : arbres de la bande centrale, vivaces de sol drainé en bordure et plantations de sol humide dans la noue.",
         choix: { ...partie.parking },
-        lignesRevetements, lignesArbres, essences, bonus,
+        lignesRevetements, lignesPlantations, essences, bonus,
         score, maximum, ratio,
         etoiles: ratio >= 0.9 ? 3 : ratio >= 0.72 ? 2 : ratio >= 0.5 ? 1 : 0
     };
@@ -349,10 +399,10 @@ function detailParkingHTML(resultat) {
             <span class="ligne-detail-points">${ligne.points}</span>
         </div>`).join("");
 
-    const arbres = resultat.lignesArbres.map((ligne, index) => `
+    const plantations = resultat.lignesPlantations.map(ligne => `
         <div class="ligne-detail">
             <span class="ligne-detail-nom">
-                ${index + 1}. ${echapperConfigHTML(ligne.plante.nomVernaculaire)}
+                ${ligne.repere} · ${echapperConfigHTML(ligne.plante.nomVernaculaire)}
                 <small>${ligne.milieu.nom} · ${ligne.milieu.resume}</small>
             </span>
             <span class="verdicts">
@@ -364,7 +414,7 @@ function detailParkingHTML(resultat) {
 
     const pluriel = resultat.essences > 1 ? "s" : "";
 
-    return revetements + arbres + `
+    return revetements + plantations + `
         <div class="ligne-detail">
             <span class="ligne-detail-nom">
                 Bonus diversité
@@ -381,6 +431,7 @@ function detailParkingHTML(resultat) {
 
 function validerParking() {
 
+    if ($("#bouton-valider-parking").disabled) return;
     const resultat = evaluerParking();
 
     partie.resultats.push(resultat);
@@ -402,7 +453,20 @@ function copierRenduParking(canvasAerien, canvasPieton, choix) {
 
 $("#bouton-valider-parking").addEventListener("click", validerParking);
 
-$("#recherche-arbre").addEventListener("input", (evenement) => {
-    partie.parking = { ...partie.parking, recherche: evenement.target.value.toLowerCase().trim() };
-    afficherListeArbres();
+$("#choix-plantation").addEventListener("change", evenement => {
+    const emplacement = EMPLACEMENTS_PARKING[partie.parking.vise];
+    const plante = plantes.find(plante =>
+        plante.groupe === emplacement.groupe && String(plante.id) === evenement.target.value);
+    partie.parking = { ...partie.parking, candidat: plante || null };
+    afficherFichePlantation();
+});
+
+$("#bouton-planter").addEventListener("click", () => {
+    const { candidat } = partie.parking;
+    if (candidat) planterParking(candidat);
+});
+
+$("#recherche-plantation").addEventListener("input", (evenement) => {
+    partie.parking = { ...partie.parking, recherche: normaliserRecherchePlantation(evenement.target.value) };
+    afficherMenuPlantation();
 });
