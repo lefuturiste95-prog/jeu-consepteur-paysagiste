@@ -1,0 +1,13 @@
+﻿L’APPRENTI CONCEPTEUR
+
+1. Extrayez tout le contenu du fichier ZIP dans un dossier de votre ordinateur.
+2. Dans le dossier extrait, ouvrez index.html avec un navigateur récent.
+3. Cliquez sur « Commencer la partie ».
+
+Un navigateur suffit. Le catalogue de plantes, les images et le plan du parking sont inclus. Hors connexion, le navigateur utilise ses polices de remplacement.
+
+Pour envoyer le jeu ou en conserver une sauvegarde, gardez le fichier ZIP entier. Le classement et les réglages déjà enregistrés sont propres au navigateur utilisé.
+
+Crédits du rendu du parking
+Photo aérienne IGN, BD ORTHO, Licence Ouverte 2.0.
+Textures de revêtements de la vue aérienne, ambientCG, CC0.
