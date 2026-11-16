@@ -2122,3 +2122,25 @@ h1, h2, h3 {
 }
 
 .bilan-rendu canvas + canvas { margin-top: 12px; }
+
+/* Barème écologique et ressources florales */
+.bareme-ecologie { margin: 1rem 0; padding: 1rem; background: #eef4e8; border-radius: 14px; }
+.bareme-ecologie summary { cursor: pointer; font-weight: 700; color: #24523c; }
+.bareme-ecologie ul { padding-left: 1.2rem; }
+.bareme-ecologie p, .note-bareme { font-size: .85rem; line-height: 1.55; color: #536759; }
+.fiche-plantation small { display: block; margin-top: .35rem; }
+.calendrier-floraison { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .35rem; margin: 1rem 0; }
+.mois-floraison { text-align: center; padding: .4rem .1rem; border: 1px solid #c2cfc2; border-radius: 6px; color: #5a655b; }
+.mois-floraison.est-couvert { background: #24583d; color: white; font-weight: 700; }
+.ligne-detail b small { display: block; font-size: .65rem; font-weight: normal; }
+
+.bilan-familles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; margin: 1rem 0; }
+.bilan-familles > div { display: grid; gap: .3rem; padding: .8rem; border-radius: 10px; background: #eef4e8; }
+.bilan-familles span { font-weight: 700; color: #24523c; }
+
+/* Étape de prise en main avant chaque nouvelle partie */
+.ecran-regles { background: var(--sable); padding: clamp(20px, 5vw, 64px) 16px; align-items: center; justify-content: center; }
+.regles-contenu { width: 100%; max-width: 720px; padding: clamp(24px, 4vw, 40px); border-radius: 26px; background: var(--papier); box-shadow: var(--ombre-forte); }
+.regles-contenu h2 { font-size: clamp(28px, 4vw, 38px); margin-bottom: 16px; }
+.regles-contenu .bouton { margin-top: 12px; }
+.regles-score { margin-top: 20px; line-height: 1.6; color: #536759; }

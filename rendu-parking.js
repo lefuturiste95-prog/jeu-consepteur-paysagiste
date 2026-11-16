@@ -105,13 +105,11 @@ const PLAN_PARKING = {
         { id: "n2", milieu: "noue", u: 32, v: 41.5 }
     ],
     emplacementsVivaces: [
-        secteurVivaces("v1", "lisiere", 6, 0, 18, 2),
-        secteurVivaces("v2", "lisiere", 18, 0, 31, 2),
-        secteurVivaces("v3", "lisiere", 31, 0, 44, 2),
-        secteurVivaces("v4", "lisiere", 44, 0, 50, 7),
-        secteurVivaces("v5", "noue", 0, 40, 16, 43),
-        secteurVivaces("v6", "noue", 16, 40, 32, 43),
-        secteurVivaces("v7", "noue", 32, 40, 48, 43)
+        secteurVivaces("v1", "lisiere", 6, 0, 25, 2),
+        secteurVivaces("v2", "lisiere", 25, 0, 44, 2),
+        secteurVivaces("v3", "lisiere", 44, 0, 50, 7),
+        secteurVivaces("v4", "noue", 0, 40, 24, 43),
+        secteurVivaces("v5", "noue", 24, 40, 48, 43)
     ]
 };
 
@@ -119,43 +117,43 @@ const PLAN_PARKING = {
 // ===============================
 // CATALOGUE DES REVETEMENTS
 // ===============================
-// voie / places : note sur 100 selon la perméabilité et l'usage
-// (roulage continu ou stationnement).
+// Coefficients pédagogiques relatifs, pas des mesures hydrauliques.
+// Eau et aptitude à l’usage sont évaluées séparément.
 
 const REVETEMENTS = [
     {
         id: "enrobe", nom: "Enrobé bitumineux", texture: "enrobe",
-        marquage: "peinture", voie: 50, places: 25,
+        marquage: "peinture", voie: 100, places: 100, eau: 0,
         avis: "Durable et confortable, mais totalement imperméable : toute la pluie part au réseau."
     },
     {
         id: "beton-drainant", nom: "Béton drainant", texture: "beton-drainant",
-        marquage: "peinture", voie: 100, places: 85,
+        marquage: "peinture", voie: 100, places: 100, eau: 100,
         avis: "Résiste au roulage tout en laissant l'eau s'infiltrer : idéal pour les voies."
     },
     {
         id: "paves-beton", nom: "Pavés béton à joints perméables", texture: "paves-beton",
-        marquage: "peinture", voie: 85, places: 80,
+        marquage: "peinture", voie: 85, places: 90, eau: 85,
         avis: "Bonne infiltration par les joints et bonne tenue au passage des véhicules."
     },
     {
         id: "stabilise", nom: "Stabilisé (grave compactée)", texture: "stabilise",
-        marquage: "bordurette", voie: 55, places: 70,
+        marquage: "bordurette", voie: 55, places: 70, eau: 60,
         avis: "Perméable et économique, mais il se creuse d'ornières sous un trafic régulier."
     },
     {
         id: "gravier", nom: "Gravier en dalles alvéolées", texture: "gravier",
-        marquage: "bordurette", voie: 40, places: 85,
+        marquage: "bordurette", voie: 40, places: 85, eau: 100,
         avis: "Très perméable pour stationner ; peu confortable en circulation continue."
     },
     {
         id: "dalles-gazon", nom: "Dalles béton-gazon", texture: "dalles-gazon",
-        marquage: "bordurette", voie: 20, places: 100,
+        marquage: "bordurette", voie: 20, places: 100, eau: 100,
         avis: "Places vertes et infiltrantes ; le gazon ne supporte pas le passage répété des voies."
     },
     {
         id: "paves-joints-herbe", nom: "Pavés à joints enherbés", texture: "paves-joints-herbe",
-        marquage: "bordurette", voie: 45, places: 100,
+        marquage: "bordurette", voie: 45, places: 100, eau: 90,
         avis: "Très bonne infiltration et aspect végétal pour les places de stationnement."
     }
 ];

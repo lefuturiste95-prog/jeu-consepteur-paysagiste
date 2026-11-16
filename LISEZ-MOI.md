@@ -1,186 +1,49 @@
-# L'Apprenti Concepteur
+# L’Apprenti Concepteur
 
-Jeu web pour découvrir le métier de concepteur paysagiste.
-Un chantier de parking paysager, un catalogue de végétaux,
-un score et un tableau des scores.
+Jeu pédagogique de conception d’un parking paysager.
 
-## Lancer le jeu
+## Ouvrir ou partager le jeu
 
-**Sur l'ordinateur** — double-cliquez sur `index.html`.
-Le catalogue est embarqué dans `data/plantes-embarquees.js`,
-le jeu fonctionne donc même sans serveur.
+Décompresser l’archive complète, puis ouvrir `index.html` avec un navigateur récent. Conserver les dossiers `data`, `image` et `qgis` à côté de ce fichier. Pour partager cette version, transmettre le ZIP entier. Les polices utilisent Internet, avec des polices de secours disponibles hors ligne.
 
-**Sur la tablette** — double-cliquez sur `Ouvrir sur ma tablette.command`.
-Une fenêtre de terminal s'ouvre et affiche une adresse du type
-`http://192.168.1.42:8000`. Tapez-la dans Safari ou Chrome sur la
-tablette (connectée au même Wi-Fi que le Mac).
+Cette copie est une version locale. Elle ne modifie pas automatiquement le site GitHub Pages déjà partagé. Pour le mettre à jour, publier le contenu du dossier dans le dépôt du site.
 
-Pour un vrai confort : sur la tablette, menu **Partage →
-« Sur l'écran d'accueil »**. Le jeu s'installe comme une application,
-en plein écran, sans barre de navigateur.
+## Jouer
 
-Gardez la fenêtre du terminal ouverte pendant la partie.
+1. Cliquer sur Commencer une partie, puis lire Comment jouer et commencer l’analyse.
+2. Observer la vue aérienne et les vues piétonnes et découvrir les 5 indices.
+3. Consulter le plan QGIS et ouvrir le rendu interactif.
+4. Choisir les revêtements, les 7 arbres et les 5 secteurs de vivaces. Les deux derniers arbres sont dans la noue. Consulter les besoins et les données écologiques de chaque plante avant de planter.
+5. Valider pour obtenir le bilan sur 5 000. Le retour aux choix permet de corriger la palette. Les deux vues du projet figurent au bilan.
 
-## Règles et notation
+## Notation et catalogue Excel
 
-Chaque emplacement de plantation rapporte jusqu'à 100 points :
+La note est sur 5 000, avec 500 points pour les voies, 500 pour les places et 4 000 pour les végétaux. Les arbres représentent 70 % de l’adaptation et de la diversité des plantations. Le sol est évalué par état d’humidité, les répétitions et les mois sans floraison utile retirent des points. Les arrondis sont faits à la fin de chaque critère. Les fiches des plantes ne montrent pas de note individuelle.
 
-| Critère                | Points |
-|------------------------|--------|
-| Exposition compatible  | 40     |
-| Humidité du sol adaptée| 40     |
-| Bon type de végétal    | 20     |
+La liste des végétaux reste alphabétique, sans correction automatique avant validation. Les répétitions réduisent la diversité. Les données non documentées ne donnent pas de bonus inventé. Le barème est expliqué dans l’aménagement avant validation. Le détail de la formule, les limites et les sources sont dans [BAREME-ECOLOGIQUE.md](BAREME-ECOLOGIQUE.md).
 
-S'y ajoute un bonus de floraison : 10 points par mois de floraison
-couvert par la composition, dans la limite de 6 mois (60 points).
+Le catalogue enrichi compte 51 végétaux, soit 20 arbres et 31 vivaces. Le fichier Catalogue-vegetaux.xlsx contient les caractéristiques et leurs sources. Pour actualiser la sélection après modification de l’Excel, utiliser `outils/synchroniser-catalogue.ps1`, comme expliqué dans le document du barème. La synchronisation ne modifie pas le classeur.
 
-Le rang final va de « Première saison » à « Paysagiste d'exception ».
-Les scores sont enregistrés dans le navigateur de l'appareil
-(`localStorage`), sans aucun envoi sur Internet.
+## Réglages et scores
 
-## Organisation des fichiers
+Le bouton Admin de l’accueil ouvre les réglages du chantier. Code `etudessuperieures`. Cet accès évite les modifications accidentelles, sans constituer une sécurité serveur.
 
-```
-index.html                     structure des 3 écrans
-style.css                      thème nature, responsive
-script.js                      données, chantiers, notation, scoreboard
-manifest.json                  installation sur l'écran d'accueil
-data/API_plantes.csv           catalogue source (séparateur « ; »)
-data/plantes-embarquees.js     copie du CSV pour l'ouverture hors serveur
-image/jardintest.jpg           photo de l'écran d'accueil
-image/icone.png                icône de l'application
-Ouvrir sur ma tablette.command lance le serveur local
-```
+Les réglages et les classements restent dans le navigateur de chaque appareil. Ils ne sont pas partagés entre amis. Le classement écologique sur 5 000 est distinct de l’ancien classement, qui reste conservé dans le navigateur.
 
-## Modifier le catalogue
+## Fichiers principaux
 
-Éditez `data/API_plantes.csv` (les deux premières lignes sont un titre
-et les en-têtes), puis regénérez la copie embarquée :
+`index.html`, `style.css` et `script.js` gèrent les écrans. `parking-amenagement.js` gère la sélection des végétaux et la notation. `rendu-parking.js` et `rendu-pieton.js` composent les deux vues. `data/API_plantes.csv` et `data/plantes-embarquees.js` contiennent le même catalogue pour l’usage en ligne et hors serveur. `data/ecologie-plantes.json` conserve les compléments écologiques vérifiés et leurs liens sources.
 
-```bash
-python3 - <<'PY'
-import json
-csv = open('data/API_plantes.csv', encoding='utf-8-sig').read()
-open('data/plantes-embarquees.js', 'w', encoding='utf-8').write(
-    "window.CSV_PLANTES = " + json.dumps(csv, ensure_ascii=False) + ";\n")
-PY
-```
+## Ajouts du 15 novembre 2026
 
-## Modifier les chantiers
+Trois graminées (miscanthus Gracillimus, calamagrostide Karl Foerster et herbe aux écouvillons) et quatre vivaces fleuries (hémérocalle Stella de Oro, bergénia, iris des jardins et marguerite commune) sont ajoutées à l’Excel et au jeu.
 
-Les réglages du chantier sont dans `missionParking`, en haut de `script.js`.
-Le chantier Parking contient trois vues réelles : vue aérienne, vue piétonne depuis l’accès et vue piétonne depuis le terrain.
-Les anciens modes Photo / Mixte / Plan ont été supprimés.
+Les plantes courantes suivent les mêmes critères que les autres. Leur nom ou leur popularité ne donne ni bonus ni malus. Les liens étrangers ont été remplacés par des versions françaises ou des fiches françaises sur la même plante.
 
+## Note sur 5 000 et cinq secteurs de vivaces
 
-## Espace administrateur — version 1
+Le regroupement conserve toutes les surfaces plantées, avec trois secteurs en bordure et deux dans la noue. Trois étoiles à partir de 4 900 points, deux à 4 500 et une à 3 750. Le classement utilise une nouvelle version pour conserver les anciens scores séparément.
 
-- Bouton **Admin** en haut à droite de la page d'accueil.
-- Code : `etudessuperieures`
-- La page `admin.html` est protégée contre les accès accidentels par `sessionStorage`.
-- L'administrateur peut déjà supprimer un score précis ou effacer tout le classement.
-- L’onglet Analyse permet de modifier les points d’analyse du chantier.
-- Le bilan final contient maintenant un bouton **Retour à l'accueil** en plus de **Rejouer** et **Revoir le détail du chantier**.
+## Parcours de lancement
 
-> Important : le code administrateur est côté navigateur. Il convient pour un forum et pour éviter les accès accidentels, mais ce n'est pas une sécurité serveur.
-
-
-## Version Parking — Analyse / Aménagement
-
-Le chantier 1 est maintenant séparé en deux phases :
-
-1. **Analyse** : vue aérienne + deux vues piétonnes avec 5 points « œil » à découvrir.
-2. **Aménagement** : affichage provisoire de la dernière vue générée du parking.
-
-Les images utilisées sont dans `image/parking/` :
-
-- `vue-aerienne.png`
-- `vue-pieton-acces.jpeg`
-- `vue-pieton-terrain.jpeg`
-- `vue-amenagement-provisoire.png`
-
-Les positions et textes des points d’analyse sont modifiables directement dans la première mission de `script.js`.
-
-
-## Administration — version complète
-
-L'accès se fait depuis le bouton **Admin** de la page d'accueil.
-
-Code :
-`etudessuperieures`
-
-L'interface permet maintenant :
-- de modifier le nom et les textes du chantier Parking ;
-- de modifier les textes de la phase Analyse et Aménagement du parking ;
-- de changer les chemins des images ;
-- d'ajouter ou supprimer des vues ;
-- de placer les points d'analyse directement en cliquant sur l'image ;
-- de déplacer, modifier ou supprimer chaque point ;
-- de supprimer des personnes du classement ou de vider le classement ;
-- d'exporter et d'importer la configuration au format JSON ;
-- de remettre les réglages d'origine.
-
-Les réglages sont enregistrés dans `localStorage`.
-Ils restent donc liés au navigateur et à l'appareil utilisés.
-
-
-## Prototype QGIS intégré
-
-Une nouvelle démonstration est disponible dans :
-
-- `demo-qgis.html` : aperçu direct du principe sans lancer toute la partie.
-- `qgis/parking-qgis.js` : couches vectorielles affichées dans le jeu.
-- `qgis/fond_vue_aerienne_calage_local.tif` : vue aérienne calibrée en mètres.
-- `qgis/parking_projet.gpkg` : couches vectorielles pour QGIS.
-- `qgis/README_QGIS.md` : notice technique.
-
-Dans le chantier Parking, après la phase Analyse, trois modes sont proposés :
-
-1. **Vue actuelle** : photo aérienne d'origine, sans modification.
-2. **Projet QGIS** : la même photo + le plan vectoriel.
-3. **Plan seul** : uniquement le dessin du projet.
-
-Le prototype utilise des places de 2,50 × 5,00 m, des places PMR de
-3,30 × 5,00 m et des voies de circulation de 6,00 m.
-
-### Limite du prototype
-
-La capture est calibrée grâce à la barre d'échelle visible de 20 m.
-Le dessin est donc cohérent en dimensions relatives mais n'est pas encore
-géoréférencé aux vraies coordonnées IGN. Pour le rendu définitif, il faudra
-ouvrir une vraie orthophoto géoréférencée dans QGIS et y replacer les couches.
-
-
-## Mise à jour QGIS v2
-
-Le plan parking a été agrandi pour utiliser presque toute l'emprise disponible.
-
-Capacité du prototype actuel :
-- 0 places standard ;
-- 0 places PMR ;
-- 0 places au total.
-
-Le fond satellite reste inchangé. Le projet est dessiné par-dessus en couches vectorielles.
-
-## Rendu du parking (vue aérienne et vue piétonne)
-
-Depuis le plan QGIS, cliquez sur **Voir le rendu réaliste**. Utilisez les menus déroulants pour choisir les revêtements, les arbres et les vivaces. Les repères A désignent les arbres et les repères V les secteurs de vivaces. Le résultat apparaît sur de vraies images du site :
-
-- `rendu-parking.js` : le **plan** (`PLAN_PARKING`, en mètres), le catalogue des revêtements, les essences, la vue aérienne ;
-- `rendu-pieton.js` : la caméra calée sur la photo depuis l'accès (`CAMERA_PIETON`) et la vue piétonne ;
-- `parking-amenagement.js` : les choix du joueur, la notation et le résultat.
-
-**Pour corriger le plan**, modifiez `PLAN_PARKING` dans `rendu-parking.js` : les deux vues suivent.
-
-Les images de `image/parking/rendu/` sont déjà prêtes. Il ne faut les regénérer que pour changer le cadrage ou les sujets, avec les scripts de `outils/rendu-parking/` (Python, `pip install pillow numpy scipy ultralytics`) :
-
-| Script | Rôle |
-|--------|------|
-| `base.py` | photo aérienne IGN (BD ORTHO, Licence Ouverte 2.0) |
-| `textures.py` | revêtements vue aérienne (textures CC0 ambientCG) |
-| `detecter_houppiers.py` | détoure les arbres de l'orthophoto (SAM 2) |
-| `exporter_sprites.py` | exporte les arbres retenus dans `selection.json` |
-| `voitures.py` | voitures prélevées dans l'orthophoto |
-| `pieton.py` | arbres vus de côté et sols de la vue piétonne |
-
-Le catalogue du jeu comporte huit arbres de [Smits](https://smitsbv.nl/producten/) et huit vivaces de [Willemse](https://www.willemsefrance.fr/collections/plantes-vivaces). Les fiches du jeu renvoient à la source de chaque plante. Les catégories d’humidité et d’exposition sont simplifiées pour le score du jeu. Après une modification du CSV, synchronisez sa copie dans `data/plantes-embarquees.js` pour garder le mode hors connexion.
+L’accueil présente uniquement Commencer une partie pour lancer le jeu. Les explications apparaissent systématiquement à l’étape suivante. Une partie mise en pause se reprend directement.

@@ -1,0 +1,70 @@
+{
+  "Acer campestre": {
+    "pollinisateurs": true,
+    "floraison": "avril, mai",
+    "source": "https://smitsbv.nl/be-fr/produits/acer-campestre/"
+  },
+  "Amelanchier lamarckii": {
+    "pollinisateurs": true,
+    "floraison": "avril",
+    "source": "https://www.willemsefrance.fr/products/amelanchier-de-lamarck"
+  },
+  "Sorbus aria": {
+    "pollinisateurs": true,
+    "floraison": "mai",
+    "source": "https://www.pepinierelemaire.be/catalogue/sorbus-aria-0"
+  },
+  "Malus 'Red Sentinel'": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/pommier-dornement-red-sentinel"
+  },
+  "Prunus padus": {
+    "pollinisateurs": true,
+    "source": "https://smitsbv.nl/fr/produits/prunus-padus/"
+  },
+  "Achillea millefolium 'Excel'": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/achillee-millefeuille-excel"
+  },
+  "Nepeta × faassenii 'Walker’s Low'": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/nepeta-walkers-low"
+  },
+  "Sedum reflexum 'Angelina'": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/sedum-des-rochers-angelina"
+  },
+  "Calamintha nepeta subsp. nepeta": {
+    "pollinisateurs": true,
+    "floraison": "juin, juillet, août, septembre",
+    "source": "https://www.willemsefrance.fr/products/petit-calament"
+  },
+  "Salvia nemorosa 'Blauhügel'": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/sauge-des-bois-blauhugel"
+  },
+  "Thymus serpyllum": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/thym-serpolet"
+  },
+  "Caltha palustris": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/populage-des-marais-souci-deau"
+  },
+  "Iris versicolor": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/iris-versicolor"
+  },
+  "Filipendula ulmaria": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/reine-des-pres"
+  },
+  "Lythrum salicaria 'Robert'": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/salicaire-commune-robert"
+  },
+  "Leucanthemum vulgare": {
+    "pollinisateurs": true,
+    "source": "https://www.willemsefrance.fr/products/3-marguerites-communes"
+  }
+}

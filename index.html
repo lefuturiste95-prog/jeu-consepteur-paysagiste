@@ -57,12 +57,10 @@
 
         <div class="boutons-accueil">
             <button class="bouton bouton-principal" id="bouton-jouer">
-                Commencer la partie
+                Commencer une partie
             </button>
 
-            <button class="bouton bouton-fantome" id="bouton-regles">
-                Comment jouer&nbsp;?
-            </button>
+
         </div>
 
         <p class="meilleur-score" id="meilleur-score"></p>
@@ -75,6 +73,42 @@
 
 </section>
 
+
+<section class="ecran ecran-regles" id="ecran-regles" aria-labelledby="regles-titre">
+
+    <div class="regles-contenu">
+
+        <p class="sur-titre">Avant de commencer</p>
+        <h2 id="regles-titre" tabindex="-1">Comment jouer ?</h2>
+
+        <ol class="liste-regles">
+            <li>
+                <strong>Analyser.</strong>
+                Sur le chantier Parking, passez de la vue aérienne aux vues piétonnes
+                et touchez les yeux pour découvrir les contraintes du site.
+            </li>
+            <li>
+                <strong>Aménager.</strong>
+                Une fois l’analyse terminée, le jeu passe à la phase d’aménagement.
+                Consultez le plan QGIS, puis ouvrez le rendu réaliste et choisissez les revêtements.
+            </li>
+            <li>
+                <strong>Choisir les végétaux.</strong>
+                Plantez les arbres de la bande centrale et de la noue. Choisissez les plantes des cinq zones de vivaces, trois en bordure et deux dans la noue. Consultez les fiches pour vérifier si les plantes conviennent.
+            </li>
+        </ol>
+
+        <p class="regles-score">La mission est notée sur 5 000 points. Les végétaux représentent 4 000 points, les voies 500 et les places 500. Consulte les besoins des plantes et les indices du terrain avant de choisir.</p>
+        <button class="bouton bouton-principal bouton-bloc" id="bouton-demarrer-analyse" type="button">
+            J’ai compris, commencer l’analyse
+        </button>
+        <button class="bouton bouton-fantome bouton-bloc" id="bouton-retour-regles" type="button">
+            Retour à l’accueil
+        </button>
+
+    </div>
+
+</section>
 
 <!-- ==========================================================
      ECRAN 2 — LE JEU
@@ -232,17 +266,19 @@
 
             <p class="panneau-phase-intro">
                 Choisissez les revêtements. Sur la vue aérienne, touchez un repère A
-                pour choisir un arbre ou un repère V pour choisir des vivaces. Consultez la fiche avant de planter.
+                pour choisir un arbre ou un repère V pour choisir des vivaces. Consultez les caractéristiques avant de planter. La correction apparaît au bilan final.
             </p>
 
             <div class="choix-bloc">
                 <label class="filtre-titre" for="choix-voie">Revêtement des voies</label>
                 <select class="choix-menu" id="choix-voie"></select>
+                <p class="note-bareme" id="avis-voie"></p>
             </div>
 
             <div class="choix-bloc">
                 <label class="filtre-titre" for="choix-places">Revêtement des places</label>
                 <select class="choix-menu" id="choix-places"></select>
+                <p class="note-bareme" id="avis-places"></p>
             </div>
 
             <div class="choix-bloc">
@@ -255,6 +291,7 @@
                            placeholder="Rechercher une plante…"
                            aria-label="Rechercher une plante">
                 </div>
+                <p class="note-bareme" id="catalogue-origine">Catalogue Excel enrichi avec Floriscope.</p>
                 <select class="choix-menu" id="choix-plantation" aria-describedby="emplacement-courant"></select>
                 <div class="fiche-plantation" id="fiche-plantation" aria-live="polite"></div>
                 <button class="bouton bouton-fantome bouton-bloc" id="bouton-planter" type="button" disabled>
@@ -262,6 +299,25 @@
                 </button>
             </div>
 
+            <details class="bareme-ecologie">
+                <summary>Comprendre la note sur 5 000</summary>
+                <ul>
+                    <li>Végétaux · exposition · 600 points</li>
+                    <li>Végétaux · sol et variations d’humidité · 1 400 points</li>
+                    <li>Diversité des espèces · 1 000 points</li>
+                    <li>Floraisons utiles de mars à septembre · 500 points</li>
+                    <li>Ressources pour les pollinisateurs · 500 points</li>
+                    <li>Revêtement des voies · 500 points</li>
+                    <li>Revêtement des places · 500 points</li>
+                </ul>
+                <p>Les répétitions réduisent la diversité. Changer de variété au sein d’une espèce ne crée pas une nouvelle espèce. Les arbres comptent pour 70 % de l’adaptation et de la diversité, les vivaces pour 30 %.</p>
+                <p>Les bonus écologiques concernent uniquement les plantes adaptées à leur emplacement. Vise au moins 7 plantations utiles aux pollinisateurs et une ressource florale chaque mois de mars à septembre.</p>
+                <p>La diversité tient compte du nombre d’espèces et de l’équilibre de leurs effectifs. Le maximum demande une espèce différente à chaque emplacement. Les secteurs de vivaces comptent comme des unités de plantation, sans estimation de leur surface.</p>
+                <p>Information non documentée ne signifie pas absence d’intérêt écologique. Aucun bonus n’est inventé. Ce barème pédagogique n’est pas une mesure scientifique de biodiversité.</p>
+                <p>Les revêtements représentent 1 000 points, avec 500 pour les voies et 500 pour les places. Les végétaux représentent 4 000 points. Compare leur perméabilité et leur comportement en circulation ou en stationnement. Les coefficients du jeu ne sont pas des mesures hydrauliques.</p>
+                <p>Le sol doit convenir aux deux états annoncés pour la zone. Une adaptation partielle diminue la note et ne donne pas de bonus écologique.</p>
+                <p>3 étoiles dès 4 900 points · 2 dès 4 500 · 1 dès 3 750. Chaque critère est calculé avant un arrondi vers le bas, pour conserver les petites différences. L’analyse du site prépare le projet sans ajouter de points.</p>
+            </details>
             <button class="bouton bouton-principal bouton-bloc" id="bouton-valider-parking" disabled>
                 Valider l’aménagement
             </button>
@@ -288,7 +344,7 @@
         <div class="bilan-chiffres">
             <div class="chiffre">
                 <strong id="bilan-score">0</strong>
-                <span>points</span>
+                <span>points / 5 000</span>
             </div>
             <div class="chiffre">
                 <strong id="bilan-pourcent">0 %</strong>
@@ -296,7 +352,7 @@
             </div>
             <div class="chiffre">
                 <strong id="bilan-etoiles">0</strong>
-                <span>étoiles / 6</span>
+                <span>étoiles / 3</span>
             </div>
         </div>
 
@@ -321,7 +377,7 @@
 
         <div class="bloc-classement">
 
-            <h3>Tableau des scores</h3>
+            <h3>Tableau des scores · barème écologique / 5 000</h3>
 
             <form class="form-classement" id="form-classement">
                 <input type="text" id="nom-joueur" maxlength="14"
@@ -375,7 +431,7 @@
 
         <p class="resultat-points">
             <strong id="resultat-score">0</strong>
-            <span id="resultat-max">/ 560 points</span>
+            <span id="resultat-max">/ 5 000 points</span>
         </p>
 
         <div class="detail-plantes" id="resultat-detail"></div>
@@ -395,38 +451,7 @@
 </div>
 
 
-<div class="voile" id="voile-regles" role="dialog" aria-modal="true"
-     aria-labelledby="regles-titre">
 
-    <div class="fenetre">
-
-        <p class="sur-titre">Règles du jeu</p>
-        <h2 id="regles-titre">Le métier en 3 gestes</h2>
-
-        <ol class="liste-regles">
-            <li>
-                <strong>Analyser.</strong>
-                Sur le chantier Parking, passez de la vue aérienne aux vues piétonnes
-                et touchez les yeux pour découvrir les contraintes du site.
-            </li>
-            <li>
-                <strong>Aménager.</strong>
-                Une fois l’analyse terminée, le jeu passe à la phase d’aménagement.
-                Consultez le plan QGIS, puis ouvrez le rendu réaliste et choisissez les revêtements.
-            </li>
-            <li>
-                <strong>Choisir les végétaux.</strong>
-                Plantez les arbres de la bande centrale et de la noue. Choisissez des vivaces pour le bord du parking et la noue. Consultez les fiches pour vérifier si les plantes conviennent.
-            </li>
-        </ol>
-
-        <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-regles">
-            C'est compris
-        </button>
-
-    </div>
-
-</div>
 
 
 <div class="voile" id="voile-detail" role="dialog" aria-modal="true">

@@ -12,6 +12,7 @@ const $ = (selecteur) => document.querySelector(selecteur);
 
 const ecrans = {
     accueil: $("#ecran-accueil"),
+    regles:  $("#ecran-regles"),
     jeu:     $("#ecran-jeu"),
     bilan:   $("#ecran-bilan")
 };
@@ -262,6 +263,9 @@ fetch("data/API_plantes.csv")
     .then(donnees => {
 
         analyserCSV(donnees);
+        $("#catalogue-origine").textContent = "Catalogue Excel enrichi avec Floriscope · " +
+            plantes.filter(p => p.groupe === "Arbre").length + " arbres et " +
+            plantes.filter(p => p.groupe === "Vivace").length + " vivaces.";
         if (partie.parking) afficherMenuPlantation();
         console.log(plantes.length + " plantes chargées");
 
@@ -311,7 +315,16 @@ function analyserCSV(donnees) {
                 floraison:       lireFloraison(colonnes[6]),
                 hauteurAdulte:    (colonnes[7] || "").trim(),
                 note:             (colonnes[8] || "").trim(),
-                source:           (colonnes[9] || "").trim()
+                source:           (colonnes[9] || "").trim(),
+                pollinisateurs:   (colonnes[10] || "").trim() === "documenté" ? true : null,
+                sourceEcologie:   (colonnes[11] || "").trim(),
+                espece:           (colonnes[12] || "").trim(),
+                zoneConseillee:   (colonnes[13] || "").trim(),
+                sousCategorieHorticole: (colonnes[14] || "").trim(),
+                nomsVernaculaires: (colonnes[15] || colonnes[2] || "").trim(),
+                categorieHorticole: (colonnes[16] || "").trim(),
+                sourceFloriscope: (colonnes[17] || "").trim(),
+                largeurAdulte: (colonnes[18] || "").trim()
             };
 
         })
@@ -697,10 +710,10 @@ function enregistrerResultatAnalyseParking() {
         conseil: "Une bonne conception commence par une lecture attentive du site.",
         lignes: [],
         elements,
-        score: 100,
-        maximum: 100,
+        score: 0,
+        maximum: 0,
         ratio: 1,
-        etoiles: 3
+        etoiles: 0
     };
 
     partie.resultats.push(resultat);
@@ -842,9 +855,9 @@ function afficherResultat(resultat) {
 
 function titreSelonRatio(ratio) {
 
-    if (ratio >= 0.9)  return "Chantier exemplaire !";
-    if (ratio >= 0.72) return "Beau travail";
-    if (ratio >= 0.5)  return "Ça pousse, mais…";
+    if (ratio >= 0.98) return "Chantier exemplaire !";
+    if (ratio >= 0.90) return "Beau travail";
+    if (ratio >= 0.75) return "Ça pousse, mais…";
     return "À revoir sur le terrain";
 }
 
@@ -854,11 +867,11 @@ function titreSelonRatio(ratio) {
 // ===============================
 
 const RANGS = [
-    { seuil: 0.95, nom: "Paysagiste d'exception",
-      texte: "Lecture du site impeccable : chaque végétal est à sa place." },
-    { seuil: 0.85, nom: "Concepteur confirmé",
-      texte: "Vos palettes sont justes et cohérentes avec chaque milieu." },
-    { seuil: 0.70, nom: "Apprenti paysagiste",
+    { seuil: 0.98, nom: "Paysagiste d'exception",
+      texte: "Très bon équilibre entre les revêtements et les végétaux du parking." },
+    { seuil: 0.90, nom: "Concepteur confirmé",
+      texte: "Des choix cohérents pour les circulations, le stationnement et les plantations." },
+    { seuil: 0.75, nom: "Apprenti paysagiste",
       texte: "De bons réflexes : surveillez encore l'humidité du sol." },
     { seuil: 0.50, nom: "Stagiaire motivé",
       texte: "Relisez bien la fiche de chantier avant de choisir vos plantes." },
@@ -881,7 +894,7 @@ function afficherBilan() {
     $("#bilan-pourcent").textContent    = Math.round(ratio * 100) + " %";
     $("#bilan-etoiles").textContent     = etoiles;
 
-    $("#bilan-lignes").innerHTML = partie.resultats.map((resultat, index) => `
+    $("#bilan-lignes").innerHTML = partie.resultats.filter(resultat => resultat.maximum > 0).map((resultat, index) => `
         <tr>
             <td>${index + 1}. ${resultat.titre}</td>
             <td>${resultat.score} / ${resultat.maximum}</td>
@@ -907,7 +920,7 @@ function afficherBilan() {
 // CLASSEMENT (mémorisé sur l'appareil)
 // ===============================
 
-const CLE_CLASSEMENT = "apprenti-concepteur-classement";
+const CLE_CLASSEMENT = "apprenti-concepteur-classement-5000-v5";
 
 
 function lireClassement() {
@@ -1025,24 +1038,31 @@ $("#bouton-jouer").addEventListener("click", () => {
 
     if (partie.analyseEnPause) {
         partie.analyseEnPause = false;
-        $("#bouton-jouer").textContent = "Commencer la partie";
+        $("#bouton-jouer").textContent = "Commencer une partie";
         afficherEcran("jeu");
         return;
     }
 
+    preparerNouvellePartie();
+});
+
+function preparerNouvellePartie() {
     partie.score = 0;
     partie.resultats = [];
     partie.analyseTrouvee = new Set();
-
+    partie.analyseEnPause = false;
+    partie.parking = null;
     $("#score-courant").textContent = "0";
+    $("#bouton-jouer").textContent = "Commencer une partie";
+    afficherEcran("regles");
+    $("#regles-titre").focus();
+}
 
-    lancerParkingAnalyse();
+$("#bouton-demarrer-analyse").addEventListener("click", () => lancerParkingAnalyse());
+$("#bouton-retour-regles").addEventListener("click", () => {
+    afficherEcran("accueil");
+    $("#bouton-jouer").focus();
 });
-
-$("#bouton-regles").addEventListener("click", () => ouvrirFenetre("#voile-regles"));
-
-$("#bouton-fermer-regles").addEventListener("click",
-    () => fermerFenetre("#voile-regles"));
 
 
 // --- Accès administrateur ---
@@ -1170,14 +1190,8 @@ $("#form-classement").addEventListener("submit", (evenement) => {
 
 
 $("#bouton-rejouer").addEventListener("click", () => {
-
-    partie.score = 0;
-    partie.resultats = [];
-
-    $("#score-courant").textContent = "0";
-
     afficherMeilleurScore();
-    lancerParkingAnalyse();
+    preparerNouvellePartie();
 });
 
 
@@ -1216,8 +1230,9 @@ $("#bouton-revoir").addEventListener("click", () => {
             <div class="detail-chantier">
                 <h3>${index + 1}. ${resultat.titre}</h3>
                 <p class="detail-sous">
-                    ${resultat.score} / ${resultat.maximum} points ·
-                    ${"★".repeat(resultat.etoiles) || "aucune étoile"}
+                    ${resultat.maximum > 0
+                        ? resultat.score + " / " + resultat.maximum + " points · " + ("★".repeat(resultat.etoiles) || "aucune étoile")
+                        : "Analyse terminée · étape préparatoire sans points"}
                 </p>
                 <div class="detail-plantes">${contenu}</div>
             </div>`;
@@ -1248,7 +1263,6 @@ document.querySelectorAll(".voile").forEach(voile => {
 document.addEventListener("keydown", (evenement) => {
 
     if (evenement.key === "Escape") {
-        fermerFenetre("#voile-regles");
         fermerFenetre("#voile-detail");
         fermerFenetre("#voile-admin");
         fermerFenetre("#voile-analyse");

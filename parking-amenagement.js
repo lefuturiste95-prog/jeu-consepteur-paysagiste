@@ -1,6 +1,6 @@
 /* ==========================================================
    CHANTIER PARKING — PHASE AMENAGEMENT
-   Choix des revêtements et des arbres, rendu en direct sur la
+   Choix des revêtements et des végétaux, rendu en direct sur la
    vue aérienne, notation et affichage du résultat.
    Dépend de script.js (partie, plantes, $, message…) et de
    rendu-parking.js (PLAN_PARKING, REVETEMENTS, dessinerRenduParking).
@@ -11,19 +11,19 @@
 const MILIEUX_PARKING = {
     bande: {
         nom: "Bande centrale entre les places",
-        resume: "Soleil · sol frais à sec",
+        resume: "Soleil · alternance de sol frais et sec",
         expositions: ["soleil", "plein soleil"],
         humidites: ["frais", "sec"]
     },
     lisiere: {
         nom: "Bordure devant les places",
-        resume: "Soleil · sol drainé, frais à sec",
+        resume: "Soleil · sol drainé, alternance frais / sec",
         expositions: ["soleil", "plein soleil"],
-        humidites: ["frais", "sec", "très sec"]
+        humidites: ["frais", "sec"]
     },
     noue: {
         nom: "Noue au bord du ruisseau",
-        resume: "Soleil ou mi-ombre · sol humide à très humide",
+        resume: "Soleil ou mi-ombre · alternance humide / très humide",
         expositions: ["mi-ombre", "soleil", "plein soleil"],
         humidites: ["humide", "très humide"]
     }
@@ -37,8 +37,6 @@ const EMPLACEMENTS_PARKING = [
 ];
 
 
-const BONUS_PAR_ESSENCE = 10;
-const BONUS_ESSENCES_MAX = 6;
 
 
 function nouveauChoixParking() {
@@ -151,10 +149,14 @@ function compatibilitePlantation(plante, milieu) {
 }
 
 
-function notationPlantation(plante, milieu) {
+function notationPlantation(plante, milieu, groupeAttendu = plante.groupe) {
     const { expoOk, humOk } = compatibilitePlantation(plante, milieu);
-    const points = POINTS_GROUPE + (expoOk ? POINTS_EXPOSITION : 0) + (humOk ? POINTS_HUMIDITE : 0);
-    return { expoOk, humOk, points };
+    const typeOk = plante.groupe === groupeAttendu;
+    const couvertureSol = milieu.humidites.filter(h => plante.humidites.includes(h)).length / milieu.humidites.length;
+    const tauxSol = typeOk ? couvertureSol : 0;
+    const tauxExposition = typeOk && expoOk ? 1 : 0;
+    return { expoOk, humOk, typeOk, humComplet: typeOk && couvertureSol === 1,
+        tauxSol, tauxExposition, points: 100 * (tauxExposition + 2 * tauxSol) / 3 };
 }
 
 
@@ -165,33 +167,39 @@ function afficherFichePlantation() {
     const fiche = $("#fiche-plantation");
     $("#bouton-planter").disabled = !candidat;
     if (!plante) {
-        fiche.textContent = "Sélectionne une plante pour voir ses besoins et les points possibles.";
+        fiche.textContent = "Sélectionne une plante pour consulter ses besoins, sa floraison et son rôle dans la palette.";
         return;
     }
 
-    const milieu = MILIEUX_PARKING[emplacement.milieu];
-    const { expoOk, humOk, points } = notationPlantation(plante, milieu);
     const texte = echapperConfigHTML;
     const valeurs = liste => texte(liste.join(", ") || "Non renseigné");
     const origine = plante.source || "";
     const source = /^https:\/\/(?:www\.)?smitsbv\.nl\//.test(origine) ? "Smits" :
-        /^https:\/\/(?:www\.)?willemsefrance\.fr\//.test(origine) ? "Willemse" : "";
-    const statut = (liste, ok) => liste.length ? (ok ? "compatible" : "à revoir") : "non évalué";
+        /^https:\/\/(?:www\.)?willemsefrance\.fr\//.test(origine) ? "Willemse" :
+        /^https:\/\/(?:www\.)?floriscope\.io\//.test(origine) ? "Floriscope" : "";
+    const ficheFloriscope = /^https:\/\/(?:www\.)?floriscope\.io\/plantes\//.test(plante.sourceFloriscope || "");
+    const sourceEco = /^https:\/\/(?:www\.)?(?:smitsbv\.nl|willemsefrance\.fr|rhs\.org\.uk|pollinis\.org|pepinierelemaire\.be)\//.test(plante.sourceEcologie || "");
+
     fiche.innerHTML = `
         <strong>${texte(plante.nomVernaculaire)}</strong>
         ${plante.nomScientifique ? `<em>${texte(plante.nomScientifique)}</em>` : ""}
         <dl>
-            <dt>Type</dt><dd>${texte(plante.type || plante.groupe)}</dd>
+            <dt>Nom(s) vernaculaire(s)</dt><dd>${texte(plante.nomsVernaculaires || plante.nomVernaculaire)}</dd>
+            <dt>Groupe de plantation</dt><dd>${texte(plante.groupe)}</dd>
+            <dt>Sous-catégorie horticole</dt><dd>${texte(plante.sousCategorieHorticole || "Non renseignée")}</dd>
+            ${plante.categorieHorticole ? `<dt>Catégorie horticole</dt><dd>${texte(plante.categorieHorticole)}</dd>` : ""}
             ${plante.hauteurAdulte ? `<dt>Hauteur adulte</dt><dd>${texte(plante.hauteurAdulte)}</dd>` : ""}
-            <dt>Exposition</dt><dd>${valeurs(plante.expositions)} <b>· ${statut(plante.expositions, expoOk)}</b></dd>
-            <dt>Humidité du sol</dt><dd>${valeurs(plante.humidites)} <b>· ${statut(plante.humidites, humOk)}</b></dd>
-            <dt>Floraison</dt><dd>${valeurs(plante.floraison)}</dd>
+            <dt>Exposition</dt><dd>${valeurs(plante.expositions)}</dd>
+            <dt>Humidité du sol</dt><dd>${valeurs(plante.humidites)}</dd>
+            <dt>Mois de floraison</dt><dd>${valeurs(plante.floraison)}</dd>
+            <dt>Pollinisateurs</dt><dd>${plante.pollinisateurs === true ? "Intérêt documenté pour les pollinisateurs" : "Intérêt non documenté dans ce catalogue"}</dd>
         </dl>
+        ${plante.largeurAdulte ? `<dl><dt>Largeur adulte</dt><dd>${texte(plante.largeurAdulte)}</dd></dl>` : ""}
         ${plante.note ? `<p><b>À retenir</b> · ${texte(plante.note)}</p>` : ""}
         ${source ? `<p><a href="${texte(plante.source)}" target="_blank" rel="noopener noreferrer">Fiche source · ${source}</a></p>` : ""}
-        <p><b>${points}/100 points</b> pour le repère ${emplacement.repere}
-            <small>(40 exposition · 40 sol · 20 type de plante)</small>
-        </p>`;
+        ${ficheFloriscope && plante.sourceFloriscope !== plante.source ? `<p><a href="${texte(plante.sourceFloriscope)}" target="_blank" rel="noopener noreferrer">Caractéristiques · Floriscope</a></p>` : ""}
+        ${sourceEco ? `<p><a href="${texte(plante.sourceEcologie)}" target="_blank" rel="noopener noreferrer">Source de l’intérêt pour les pollinisateurs</a></p>` : ""}
+        <p>Compare ces besoins au sol et à l’exposition indiqués pour le repère ${emplacement.repere}. Le bilan expliquera les effets de ta composition.</p>`;
 }
 
 
@@ -203,26 +211,22 @@ function normaliserRecherchePlantation(texte) {
 function afficherMenuPlantation() {
     const { vise, recherche } = partie.parking;
     const emplacement = EMPLACEMENTS_PARKING[vise];
-    const milieu = MILIEUX_PARKING[emplacement.milieu];
     const menu = $("#choix-plantation");
     const options = plantes
         .filter(plante => plante.groupe === emplacement.groupe &&
-            normaliserRecherchePlantation(plante.nomVernaculaire + " " + plante.nomScientifique).includes(recherche))
-        .map(plante => ({ plante, points: notationPlantation(plante, milieu).points }))
-        .filter(({ points }) => emplacement.groupe === "Arbre" || points === 100)
-        .sort((a, b) => b.points - a.points ||
-            a.plante.nomVernaculaire.localeCompare(b.plante.nomVernaculaire, "fr"));
+            normaliserRecherchePlantation((plante.nomsVernaculaires || plante.nomVernaculaire) + " " + plante.nomVernaculaire + " " + plante.nomScientifique).includes(recherche))
+        .sort((a, b) => a.nomVernaculaire.localeCompare(b.nomVernaculaire, "fr"));
 
     const vivace = emplacement.groupe === "Vivace";
-    $("#libelle-plantation").textContent = vivace ? "Vivaces adaptées au secteur" : "Arbre à planter";
+    $("#libelle-plantation").textContent = vivace ? "Vivace à planter" : "Arbre à planter";
     const libelle = vivace ? "Choisir une vivace" : "Choisir un arbre";
     const invite = new Option(options.length ? libelle : "Aucun résultat", "");
     invite.disabled = true;
-    menu.replaceChildren(invite, ...options.map(({ plante, points }) => {
+    menu.replaceChildren(invite, ...options.map(plante => {
         const nom = plante.nomScientifique
             ? plante.nomVernaculaire + " — " + plante.nomScientifique
             : plante.nomVernaculaire;
-        return new Option(points === 100 ? "✓ " + nom : nom, plante.id);
+        return new Option(nom, plante.id);
     }));
     const plante = partie.parking.candidat || partie.parking[emplacement.cle][emplacement.index];
     menu.value = plante ? String(plante.id) : "";
@@ -330,6 +334,10 @@ function majAmenagementParking() {
         vivacesPlantees + "/" + vivaces.length + " secteurs de vivaces";
     $("#bouton-valider-parking").disabled =
         !voie || !places || arbresPlantes !== arbres.length || vivacesPlantees !== vivaces.length;
+    [["voie", "#avis-voie"], ["places", "#avis-places"]].forEach(([zone, cible]) => {
+        const revetement = REVETEMENTS.find(r => r.id === partie.parking[zone]);
+        $(cible).textContent = revetement ? revetement.avis : "Compare le comportement du revêtement dans la zone choisie.";
+    });
     majBoutonsVuesParking();
     dessinerReperesPlantations();
     majEmplacementCourant();
@@ -350,78 +358,154 @@ function majAmenagementParking() {
 // NOTATION
 // ===============================
 
+// Barème pédagogique. Chaque critère reste borné, même avec une palette incomplète.
+const SAISON_POLLINISATEURS = ["mars", "avril", "mai", "juin", "juillet", "août", "septembre"];
+
+function identiteEspece(plante) {
+    if (plante.espece) return plante.espece;
+    return String(plante.nomScientifique || plante.nomVernaculaire)
+        .split(/['‘’]/)[0].trim().toLowerCase();
+}
+
+function repartitionEspeces(plantations) {
+    const effectifs = new Map();
+    for (const plante of plantations.filter(Boolean)) {
+        const espece = identiteEspece(plante);
+        effectifs.set(espece, (effectifs.get(espece) || 0) + 1);
+    }
+    return effectifs;
+}
+
+function diversiteGroupe(plantations) {
+    const total = plantations.length;
+    if (total < 2) return 0;
+    const effectifs = repartitionEspeces(plantations);
+    const presents = [...effectifs.values()].reduce((somme, nombre) => somme + nombre, 0);
+    const carres = [...effectifs.values()].reduce((somme, nombre) => somme + nombre * nombre, 0);
+    return (presents * presents - carres) / (total * (total - 1));
+}
+
+// Note calculée à partir des données brutes, puis arrondie vers le bas par critère.
+const BAREME_PARKING = Object.freeze({
+    maximum: 5000, exposition: 600, sol: 1400, diversite: 1000,
+    floraisons: 500, pollinisateurs: 500, voies: 500, places: 500
+});
+
+// Les arbres représentent 70 % de l’adaptation et de la diversité des végétaux.
+const POIDS_PLANTATIONS = Object.freeze({ arbres: 0.7, vivaces: 0.3 });
+
 function evaluerParking() {
-
     const { voie, places, arbres, vivaces } = partie.parking;
-    const revetementVoie = REVETEMENTS.find(r => r.id === voie);
-    const revetementPlaces = REVETEMENTS.find(r => r.id === places);
-
-    const lignesRevetements = [
-        { zone: "Voies", revetement: revetementVoie, points: revetementVoie.voie },
-        { zone: "Places", revetement: revetementPlaces, points: revetementPlaces.places }
-    ];
-
+    const plancher = valeur => Math.floor(valeur + 1e-9);
     const lignesPlantations = EMPLACEMENTS_PARKING.map(emplacement => {
         const plante = partie.parking[emplacement.cle][emplacement.index];
         const milieu = MILIEUX_PARKING[emplacement.milieu];
-        const { expoOk, humOk, points } = notationPlantation(plante, milieu);
-        return { plante, milieu, repere: emplacement.repere, expoOk, humOk, points };
+        const adequation = plante ? notationPlantation(plante, milieu, emplacement.groupe) :
+            { points: 0, expoOk: false, humOk: false, humComplet: false, typeOk: false, tauxSol: 0, tauxExposition: 0 };
+        return { plante, milieu, groupe: emplacement.groupe, cle: emplacement.cle, repere: emplacement.repere, ...adequation };
     });
-
-    const essences = new Set([...arbres, ...vivaces].map(plante => plante.id)).size;
-    const bonus = Math.min(essences, BONUS_ESSENCES_MAX) * BONUS_PAR_ESSENCE;
-
-    const score = [...lignesRevetements, ...lignesPlantations]
-        .reduce((total, ligne) => total + ligne.points, 0) + bonus;
-    const maximum = 200 + lignesPlantations.length * 100 + BONUS_ESSENCES_MAX * BONUS_PAR_ESSENCE;
-    const ratio = score / maximum;
-
+    const bienPlacees = lignesPlantations.filter(l => l.plante && l.typeOk && l.expoOk && l.humComplet);
+    const melliferes = bienPlacees.filter(l => l.plante.pollinisateurs === true);
+    const calendrier = MOIS.map(mois => ({
+        mois, especes: [...new Set(melliferes.filter(l => l.plante.floraison.includes(mois)).map(l => identiteEspece(l.plante)))]
+    }));
+    const moisCouverts = calendrier.filter(l => SAISON_POLLINISATEURS.includes(l.mois) && l.especes.length).length;
+    const palette = cle => lignesPlantations.filter(l => l.cle === cle)
+        .map(l => bienPlacees.includes(l) ? l.plante : null);
+    const diversite = POIDS_PLANTATIONS.arbres * diversiteGroupe(palette("arbres")) +
+        POIDS_PLANTATIONS.vivaces * diversiteGroupe(palette("vivaces"));
+    const effectifs = repartitionEspeces([...arbres, ...vivaces]);
+    const lignesRevetements = [
+        { zone: "Voies", revetement: REVETEMENTS.find(r => r.id === voie) },
+        { zone: "Places", revetement: REVETEMENTS.find(r => r.id === places) }
+    ];
+    const noterRevetement = (ligne, usage, maximum) => {
+        const r = ligne.revetement;
+        return r ? plancher(maximum * (r.eau + r[usage]) / 200) : 0;
+    };
+    const ciblePollinisateurs = Math.max(1, Math.round(EMPLACEMENTS_PARKING.length * 0.6));
+    const moyenne = cle => Object.entries(POIDS_PLANTATIONS).reduce((total, [groupe, poids]) => {
+        const lignes = lignesPlantations.filter(l => l.cle === groupe);
+        return total + poids * lignes.reduce((s, l) => s + l[cle], 0) / lignes.length;
+    }, 0);
+    const criteres = [
+        { nom: "Exposition des végétaux", famille: "vegetaux", maximum: BAREME_PARKING.exposition,
+            points: plancher(BAREME_PARKING.exposition * moyenne("tauxExposition")),
+            detail: lignesPlantations.filter(l => l.typeOk && l.expoOk).length + "/" + lignesPlantations.length + " plantations du bon groupe avec une exposition compatible.",
+            piste: "Revois les expositions qui ne conviennent pas aux emplacements." },
+        { nom: "Sol et variations d’humidité", famille: "vegetaux", maximum: BAREME_PARKING.sol,
+            points: plancher(BAREME_PARKING.sol * moyenne("tauxSol")),
+            detail: "Le sol alterne entre frais et sec en bordure et au centre, entre humide et très humide dans la noue. Tolérer un seul des deux états donne une adaptation partielle.",
+            piste: "Choisis des plantes capables de supporter les deux états du sol de leur zone." },
+        { nom: "Diversité des espèces", famille: "vegetaux", maximum: BAREME_PARKING.diversite,
+            points: plancher(BAREME_PARKING.diversite * diversite),
+            detail: "Les arbres comptent pour 70 % de la diversité et les cinq secteurs de vivaces pour 30 %. Toute répétition ou plantation incomplètement adaptée réduit ce critère.",
+            piste: "Remplace les répétitions par d’autres espèces entièrement adaptées." },
+        { nom: "Floraisons utiles étalées", famille: "vegetaux", maximum: BAREME_PARKING.floraisons,
+            points: plancher(BAREME_PARKING.floraisons * moisCouverts / SAISON_POLLINISATEURS.length),
+            detail: moisCouverts + "/7 mois couverts de mars à septembre, par des plantes entièrement adaptées dont l’intérêt pour les pollinisateurs est documenté.",
+            piste: "Complète les mois sans ressource florale avec des plantes entièrement adaptées." },
+        { nom: "Ressources pour les pollinisateurs", famille: "vegetaux", maximum: BAREME_PARKING.pollinisateurs,
+            points: plancher(BAREME_PARKING.pollinisateurs * Math.min(1, melliferes.length / ciblePollinisateurs)),
+            detail: melliferes.length + " plantations entièrement adaptées avec un intérêt documenté. Objectif " + ciblePollinisateurs + "/" + lignesPlantations.length + " emplacements.",
+            piste: "Augmente la part de plantes entièrement adaptées qui nourrissent les pollinisateurs." },
+        { nom: "Revêtement des voies", famille: "revetements", maximum: BAREME_PARKING.voies,
+            points: noterRevetement(lignesRevetements[0], "voie", BAREME_PARKING.voies),
+            detail: "500 points maximum. L’infiltration et l’aptitude au roulage répété comptent à parts égales.",
+            piste: "Compare la perméabilité et la tenue au roulage du revêtement des voies." },
+        { nom: "Revêtement des places", famille: "revetements", maximum: BAREME_PARKING.places,
+            points: noterRevetement(lignesRevetements[1], "places", BAREME_PARKING.places),
+            detail: "500 points maximum. L’infiltration et l’aptitude au stationnement comptent à parts égales.",
+            piste: "Compare la perméabilité et l’aptitude au stationnement du revêtement des places." }
+    ];
+    const score = criteres.reduce((s, c) => s + c.points, 0);
+    const totaux = Object.fromEntries(["vegetaux", "revetements"].map(famille => [famille,
+        criteres.filter(c => c.famille === famille).reduce((s, c) => s + c.points, 0)]));
+    const pistes = criteres.filter(c => c.points < c.maximum)
+        .sort((a, b) => a.points / a.maximum - b.points / b.maximum).slice(0, 2).map(c => c.piste);
+    const ratio = score / BAREME_PARKING.maximum;
     return {
-        type: "amenagement-parking",
-        titre: "Parking — Aménagement",
-        conseil: "Adaptez les plantations à leur milieu : arbres de la bande centrale, vivaces de sol drainé en bordure et plantations de sol humide dans la noue.",
-        choix: { ...partie.parking },
-        lignesRevetements, lignesPlantations, essences, bonus,
-        score, maximum, ratio,
-        etoiles: ratio >= 0.9 ? 3 : ratio >= 0.72 ? 2 : ratio >= 0.5 ? 1 : 0
+        type: "amenagement-parking", titre: "Parking — Bilan écologique", versionBareme: 5,
+        score, maximum: BAREME_PARKING.maximum, ratio,
+        etoiles: ratio >= 0.98 ? 3 : ratio >= 0.90 ? 2 : ratio >= 0.75 ? 1 : 0,
+        criteres, totaux, calendrier, lignesPlantations, lignesRevetements,
+        effectifs: Object.fromEntries(effectifs), choix: { ...partie.parking },
+        conseil: pistes.join(" ") || "L’ensemble des critères est satisfait, pour les végétaux comme pour les revêtements."
     };
 }
 
 
 function detailParkingHTML(resultat) {
-
-    const revetements = resultat.lignesRevetements.map(ligne => `
+    const texte = echapperConfigHTML;
+    const criteres = resultat.criteres.map(critere => `
         <div class="ligne-detail">
-            <span class="ligne-detail-nom">
-                ${ligne.zone} : ${ligne.revetement.nom}
-                <small>${ligne.revetement.avis}</small>
-            </span>
-            <span class="ligne-detail-points">${ligne.points}</span>
+            <span class="ligne-detail-nom">${texte(critere.nom)}<small>${texte(critere.detail)}</small></span>
+            <b class="ligne-detail-points">${critere.points}/${critere.maximum}</b>
         </div>`).join("");
-
-    const plantations = resultat.lignesPlantations.map(ligne => `
-        <div class="ligne-detail">
-            <span class="ligne-detail-nom">
-                ${ligne.repere} · ${echapperConfigHTML(ligne.plante.nomVernaculaire)}
-                <small>${ligne.milieu.nom} · ${ligne.milieu.resume}</small>
+    const calendrier = resultat.calendrier.map(({ mois, especes }) =>
+        `<span class="mois-floraison ${especes.length ? "est-couvert" : ""}"
+               title="${texte(mois)} · ${especes.length} espèce(s) utile(s) ${texte(especes.join(', '))}">${texte(mois.slice(0, 3))}</span>`).join("");
+    const plantations = resultat.lignesPlantations.filter(ligne => ligne.plante).map(ligne => {
+        const repetitions = resultat.effectifs[identiteEspece(ligne.plante)];
+        return `<div class="ligne-detail">
+            <span class="ligne-detail-nom">${texte(ligne.repere)} · ${texte(ligne.plante.nomVernaculaire)}
+                <small>${texte(ligne.milieu.nom)} · ${repetitions} emplacement(s) de cette espèce</small>
+                <small>Exposition ${ligne.expoOk ? "adaptée" : "à revoir"} · sol ${ligne.humComplet ? "adapté aux deux états" : ligne.humOk ? "partiellement adapté" : "à revoir"}</small>
             </span>
-            <span class="verdicts">
-                <span class="verdict ${ligne.expoOk ? "" : "est-faux"}" title="Exposition">☀</span>
-                <span class="verdict ${ligne.humOk ? "" : "est-faux"}" title="Humidité du sol">≈</span>
-            </span>
-            <span class="ligne-detail-points">${ligne.points}</span>
-        </div>`).join("");
 
-    const pluriel = resultat.essences > 1 ? "s" : "";
-
-    return revetements + plantations + `
-        <div class="ligne-detail">
-            <span class="ligne-detail-nom">
-                Bonus diversité
-                <small>${resultat.essences} essence${pluriel} différente${pluriel}</small>
-            </span>
-            <span class="ligne-detail-points">${resultat.bonus}</span>
         </div>`;
+    }).join("");
+    const revetements = resultat.lignesRevetements.filter(ligne => ligne.revetement).map(ligne => `
+        <div class="ligne-detail"><span class="ligne-detail-nom">${texte(ligne.zone)} · ${texte(ligne.revetement.nom)}
+            <small>${texte(ligne.revetement.avis)}</small></span></div>`).join("");
+    return `<div class="bilan-familles">
+        <div><strong>Végétaux</strong><span>${resultat.totaux.vegetaux} / 4 000</span></div>
+        <div><strong>Revêtements</strong><span>${resultat.totaux.revetements} / 1 000</span></div>
+    </div>` + criteres + `
+        <div class="calendrier-floraison" aria-label="Calendrier des ressources florales">${calendrier}</div>
+        <p class="note-bareme">Barème pédagogique sur 5 000. Les arrondis sont faits à la fin de chaque critère, vers le bas. Un mois coloré indique une floraison documentée, sans garantir une floraison continue tout le mois.</p>
+        <details><summary>Détail des revêtements</summary>${revetements}</details>
+        <details><summary>Détail des plantations</summary>${plantations}</details>`;
 }
 
 

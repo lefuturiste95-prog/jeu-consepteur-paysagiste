@@ -20,7 +20,7 @@ if (sessionStorage.getItem("adminAutorise") !== "oui") {
 // ===============================
 
 const CLE_CONFIG = "apprenti-concepteur-config";
-const CLE_CLASSEMENT = "apprenti-concepteur-classement";
+const CLE_CLASSEMENT = "apprenti-concepteur-classement-5000-v5";
 
 const CONFIG_PAR_DEFAUT = {
     version: 1,
