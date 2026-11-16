@@ -908,83 +908,179 @@ function afficherBilan() {
         copierRenduParking($("#bilan-rendu-canvas"), $("#bilan-rendu-pieton"), parking.choix);
     }
 
-    $("#nom-joueur").value = "";
-    $("#form-classement").style.display = "flex";
-
+    preparerEnregistrementScore(parking);
+    lignesClassement = [];
+    dessinerClassement();
+    $("#plus-classement").hidden = true;
     afficherClassement();
     afficherEcran("bilan");
 }
 
 
 // ===============================
-// CLASSEMENT (mémorisé sur l'appareil)
+// CLASSEMENT PARTAGÉ ET COPIE LOCALE
 // ===============================
 
 const CLE_CLASSEMENT = "apprenti-concepteur-classement-5000-v5";
+const TAILLE_PAGE_CLASSEMENT = 20;
+let lignesClassement = [];
+let versionLectureClassement = 0;
+let enregistrementBilan = null;
 
+function classementPartageActif() {
+    return Boolean(window.ScoresPartages?.estConfigure());
+}
 
 function lireClassement() {
-
     try {
-        return JSON.parse(localStorage.getItem(CLE_CLASSEMENT)) || [];
+        const donnees = JSON.parse(localStorage.getItem(CLE_CLASSEMENT));
+        return Array.isArray(donnees) ? donnees.filter(entree =>
+            entree && typeof entree.nom === "string" && Number.isInteger(entree.score) &&
+            entree.score >= 0 && entree.score <= 5000) : [];
     } catch (erreur) {
         return [];
     }
 }
 
-
 function ecrireClassement(classement) {
-
     try {
         localStorage.setItem(CLE_CLASSEMENT, JSON.stringify(classement));
+        return true;
     } catch (erreur) {
-        console.warn("Classement non sauvegardé :", erreur);
+        console.warn("Copie locale du score indisponible.");
+        return false;
     }
 }
 
-
-function afficherClassement(nouveau) {
-
-    const classement = lireClassement()
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 8);
-
-    const liste = $("#classement");
-
-    if (classement.length === 0) {
-
-        liste.innerHTML =
-            `<p class="classement-vide">
-                Aucun score enregistré pour le moment.
-             </p>`;
-
-        return;
+function preparerEnregistrementScore(resultat) {
+    if (!enregistrementBilan || enregistrementBilan.resultat !== resultat) {
+        enregistrementBilan = { resultat, entree: null, enCours: false, termine: false, copieLocale: false };
+        $("#nom-joueur").value = "";
+        $("#statut-enregistrement").textContent = "";
     }
+    $("#form-classement").style.display = enregistrementBilan.termine ? "none" : "flex";
+    $("#nom-joueur").readOnly = Boolean(enregistrementBilan.entree);
+    $("#enregistrer-score").disabled = enregistrementBilan.enCours;
+    $("#enregistrer-score").textContent = enregistrementBilan.entree ? "Réessayer l’envoi" : "Enregistrer mon score";
+    $("#notice-scores").textContent = classementPartageActif()
+        ? "En enregistrant, tu partages ton prénom ou pseudo et ton score global. Les deux sous-scores et la date et l’heure sont conservés dans la base sans être affichés au classement."
+        : "Le classement partagé n’est pas encore activé. Pour le moment, les scores restent sur cet appareil.";
+}
 
-    liste.innerHTML = classement.map((entree, index) => `
-        <li class="${entree.date === nouveau ? "est-nouveau" : ""}">
+function dessinerClassement() {
+    const liste = $("#classement");
+    const vide = $("#classement-vide");
+    vide.hidden = lignesClassement.length !== 0;
+    liste.innerHTML = lignesClassement.map((entree, index) => `
+        <li>
             <span class="place">${index + 1}</span>
-            <span class="qui">${entree.nom}</span>
-            <span class="quand">${entree.date}</span>
-            <span class="pts">${entree.score}</span>
+            <span class="qui">${echapperConfigHTML(entree.nom)}</span>
+            <span class="pts">${entree.score.toLocaleString("fr-FR")} <small>/ 5 000</small></span>
         </li>`).join("");
 }
 
-
-function afficherMeilleurScore() {
-
-    const classement = lireClassement();
-
-    if (classement.length === 0) {
-        $("#meilleur-score").textContent = "";
-        return;
+async function afficherClassement(plus = false) {
+    const version = ++versionLectureClassement;
+    const statut = $("#statut-classement");
+    const suite = $("#plus-classement");
+    const actualiser = $("#actualiser-classement");
+    const partage = classementPartageActif();
+    $("#titre-classement").textContent = partage ? "Classement de tous les joueurs" : "Classement sur cet appareil";
+    suite.disabled = true;
+    actualiser.disabled = true;
+    statut.textContent = partage ? "Chargement du classement partagé…" : "";
+    try {
+        const debut = plus ? lignesClassement.length : 0;
+        const page = partage
+            ? await window.ScoresPartages.lire(TAILLE_PAGE_CLASSEMENT + 1, debut)
+            : lireClassement().sort((a, b) => b.score - a.score)
+                .slice(debut, debut + TAILLE_PAGE_CLASSEMENT + 1);
+        if (version !== versionLectureClassement) return;
+        lignesClassement = (plus ? lignesClassement : []).concat(page.slice(0, TAILLE_PAGE_CLASSEMENT));
+        suite.hidden = page.length <= TAILLE_PAGE_CLASSEMENT;
+        dessinerClassement();
+        statut.textContent = partage
+            ? "Classement partagé · score global uniquement · barème / 5 000"
+            : "Scores locaux · barème / 5 000";
+    } catch (erreur) {
+        if (version !== versionLectureClassement) return;
+        statut.textContent = lignesClassement.length
+            ? "Actualisation impossible. Les résultats affichés peuvent être anciens. Réessaie avec Actualiser."
+            : "Le classement partagé est indisponible. Réessaie avec Actualiser.";
+        $("#classement-vide").hidden = true;
+    } finally {
+        if (version === versionLectureClassement) {
+            suite.disabled = false;
+            actualiser.disabled = false;
+        }
     }
+}
 
-    const meilleur = classement.reduce((a, b) => a.score >= b.score ? a : b);
+async function afficherMeilleurScore() {
+    const partage = classementPartageActif();
+    try {
+        const classement = partage ? await window.ScoresPartages.lire(1, 0) : lireClassement();
+        const meilleur = classement.reduce((a, b) => !a || b.score > a.score ? b : a, null);
+        $("#meilleur-score").textContent = meilleur
+            ? (partage ? "Meilleur score partagé : " : "Meilleur score sur cet appareil : ") +
+                meilleur.score + " pts — " + meilleur.nom
+            : "";
+    } catch (erreur) {
+        $("#meilleur-score").textContent = "Meilleur score partagé indisponible pour le moment.";
+    }
+}
 
-    $("#meilleur-score").textContent =
-        "Meilleur score sur cet appareil : " +
-        meilleur.score + " pts — " + meilleur.nom;
+async function enregistrerScoreBilan(evenement) {
+    evenement.preventDefault();
+    const etat = enregistrementBilan;
+    if (!etat?.resultat || etat.enCours || etat.termine) return;
+    const statut = $("#statut-enregistrement");
+    try {
+        if (!etat.entree) {
+            const nom = $("#nom-joueur").value.trim();
+            const resultat = etat.resultat;
+            const entree = {
+                nom, score: resultat.score,
+                vegetaux: resultat.totaux.vegetaux,
+                mineraux: resultat.totaux.revetements,
+                date: new Date().toISOString()
+            };
+            window.ScoresPartages.verifier(entree);
+            etat.entree = Object.freeze(entree);
+        }
+        // L’entrée et son horodatage restent identiques lors d’une nouvelle tentative.
+        etat.enCours = true;
+        $("#nom-joueur").readOnly = true;
+        $("#enregistrer-score").disabled = true;
+        statut.textContent = classementPartageActif() ? "Envoi du score…" : "Enregistrement sur cet appareil…";
+        if (!etat.copieLocale) {
+            const locaux = lireClassement();
+            if (!locaux.some(e => e.nom === etat.entree.nom && e.date === etat.entree.date)) locaux.push(etat.entree);
+            etat.copieLocale = ecrireClassement(locaux);
+        }
+        if (classementPartageActif()) {
+            await window.ScoresPartages.envoyer(etat.entree);
+        } else if (!etat.copieLocale) {
+            throw new Error("Enregistrement local impossible.");
+        }
+        etat.termine = true;
+        if (enregistrementBilan !== etat) return;
+        $("#form-classement").style.display = "none";
+        statut.textContent = classementPartageActif()
+            ? "Ton score a été enregistré dans le classement partagé."
+            : "Score enregistré uniquement sur cet appareil. Le partage n’est pas encore activé.";
+        await afficherClassement();
+    } catch (erreur) {
+        if (enregistrementBilan !== etat) return;
+        statut.textContent = etat.entree
+            ? (etat.copieLocale ? "Score conservé sur cet appareil. " : "Score non enregistré. ") +
+                "L’envoi a échoué. Réessaie pour le partager."
+            : erreur.message;
+        $("#enregistrer-score").textContent = etat.entree ? "Réessayer l’envoi" : "Enregistrer mon score";
+    } finally {
+        etat.enCours = false;
+        if (enregistrementBilan === etat) $("#enregistrer-score").disabled = false;
+    }
 }
 
 
@@ -1047,6 +1143,8 @@ $("#bouton-jouer").addEventListener("click", () => {
 });
 
 function preparerNouvellePartie() {
+    enregistrementBilan = null;
+    versionLectureClassement++;
     partie.score = 0;
     partie.resultats = [];
     partie.analyseTrouvee = new Set();
@@ -1165,28 +1263,9 @@ $("#bouton-plein-ecran").addEventListener("click", () => {
 
 // --- Bilan ---
 
-$("#form-classement").addEventListener("submit", (evenement) => {
-
-    evenement.preventDefault();
-
-    const nom = $("#nom-joueur").value.trim() || "Anonyme";
-
-    const date = new Date().toLocaleDateString("fr-FR");
-
-    const entree = { nom, score: partie.score, date };
-
-    const classement = lireClassement();
-
-    classement.push(entree);
-
-    ecrireClassement(classement);
-
-    $("#form-classement").style.display = "none";
-
-    afficherClassement(date);
-
-    message("Score enregistré : " + partie.score + " points.");
-});
+$("#form-classement").addEventListener("submit", enregistrerScoreBilan);
+$("#actualiser-classement").addEventListener("click", () => afficherClassement());
+$("#plus-classement").addEventListener("click", () => afficherClassement(true));
 
 
 $("#bouton-rejouer").addEventListener("click", () => {
@@ -1198,6 +1277,8 @@ $("#bouton-rejouer").addEventListener("click", () => {
 $("#bouton-retour-accueil").addEventListener("click", () => {
 
     // On remet la partie en attente sans effacer le classement enregistré.
+    enregistrementBilan = null;
+    versionLectureClassement++;
     partie.score = 0;
     partie.resultats = [];
     partie.analyseTrouvee = new Set();

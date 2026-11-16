@@ -377,17 +377,26 @@
 
         <div class="bloc-classement">
 
-            <h3>Tableau des scores · barème écologique / 5 000</h3>
+            <h3 id="titre-classement">Classement des joueurs</h3>
+            <p class="notice-scores" id="notice-scores"></p>
 
             <form class="form-classement" id="form-classement">
-                <input type="text" id="nom-joueur" maxlength="14"
-                       placeholder="Votre prénom" aria-label="Votre prénom">
-                <button class="bouton bouton-principal" type="submit">
-                    Enregistrer
+                <input type="text" id="nom-joueur" maxlength="30" required
+                       placeholder="Prénom ou pseudo" aria-label="Prénom ou pseudo"
+                       autocomplete="off" aria-describedby="notice-scores">
+                <button class="bouton bouton-principal" type="submit" id="enregistrer-score">
+                    Enregistrer mon score
                 </button>
             </form>
 
-            <ol class="classement" id="classement"></ol>
+            <p class="statut-scores" id="statut-enregistrement" role="status" aria-live="polite"></p>
+            <div class="actions-classement">
+                <button type="button" class="bouton bouton-fantome" id="actualiser-classement">Actualiser</button>
+                <p class="statut-scores" id="statut-classement" role="status" aria-live="polite"></p>
+            </div>
+            <p class="classement-vide" id="classement-vide" hidden>Aucun score enregistré pour le moment.</p>
+            <ol class="classement" id="classement" aria-label="Joueurs classés par score global décroissant"></ol>
+            <button type="button" class="bouton bouton-fantome" id="plus-classement" hidden>Voir les résultats suivants</button>
 
         </div>
 
@@ -560,6 +569,8 @@
 <script src="rendu-parking.js"></script>
 <script src="qgis/parking_local_a_recaler/parking-qgis.js"></script>
 <script src="rendu-pieton.js"></script>
+<script src="config-scores.js"></script>
+<script src="scores.js"></script>
 <script src="script.js"></script>
 <script src="parking-amenagement.js"></script>
 

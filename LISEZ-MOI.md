@@ -28,7 +28,7 @@ Le catalogue enrichi compte 51 végétaux, soit 20 arbres et 31 vivaces. Le fich
 
 Le bouton Admin de l’accueil ouvre les réglages du chantier. Code `etudessuperieures`. Cet accès évite les modifications accidentelles, sans constituer une sécurité serveur.
 
-Les réglages et les classements restent dans le navigateur de chaque appareil. Ils ne sont pas partagés entre amis. Le classement écologique sur 5 000 est distinct de l’ancien classement, qui reste conservé dans le navigateur.
+Les réglages restent propres au navigateur. Le classement peut être partagé entre tous les appareils via Supabase après son activation dans `config-scores.js`. La procédure et le schéma de la base sont dans [CLASSEMENT-PARTAGE.md](CLASSEMENT-PARTAGE.md). Sans configuration, le jeu indique clairement que les scores sont locaux. Le classement écologique sur 5 000 reste distinct des anciens barèmes.
 
 ## Fichiers principaux
 
