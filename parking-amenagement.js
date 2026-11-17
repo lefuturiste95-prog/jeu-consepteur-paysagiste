@@ -48,6 +48,7 @@ function nouveauChoixParking() {
         vise: 0,
         candidat: null,
         recherche: "",
+        pageCatalogue: 0,
         vue: "aerienne"
     };
 }
@@ -212,24 +213,40 @@ function afficherMenuPlantation() {
     const { vise, recherche } = partie.parking;
     const emplacement = EMPLACEMENTS_PARKING[vise];
     const menu = $("#choix-plantation");
-    const options = plantes
+    const toutes = plantes
         .filter(plante => plante.groupe === emplacement.groupe &&
             normaliserRecherchePlantation((plante.nomsVernaculaires || plante.nomVernaculaire) + " " + plante.nomVernaculaire + " " + plante.nomScientifique).includes(recherche))
         .sort((a, b) => a.nomVernaculaire.localeCompare(b.nomVernaculaire, "fr"));
 
+    const taille = 12;
+    const dernierePage = Math.max(0, Math.ceil(toutes.length / taille) - 1);
+    const page = Math.min(partie.parking.pageCatalogue || 0, dernierePage);
+    partie.parking.pageCatalogue = page;
+    const options = toutes.slice(page * taille, (page + 1) * taille);
+    $("#catalogue-page").textContent = toutes.length
+        ? (page * taille + 1) + "–" + Math.min((page + 1) * taille, toutes.length) + " sur " + toutes.length + " plantes · noms scientifiques dans la fiche"
+        : "Aucune plante trouvée. Essaie un autre nom.";
+    $("#catalogue-precedent").disabled = page === 0;
+    $("#catalogue-suivant").disabled = page === dernierePage;
     const vivace = emplacement.groupe === "Vivace";
     $("#libelle-plantation").textContent = vivace ? "Vivace à planter" : "Arbre à planter";
     const libelle = vivace ? "Choisir une vivace" : "Choisir un arbre";
     const invite = new Option(options.length ? libelle : "Aucun résultat", "");
     invite.disabled = true;
     menu.replaceChildren(invite, ...options.map(plante => {
-        const nom = plante.nomScientifique
-            ? plante.nomVernaculaire + " — " + plante.nomScientifique
-            : plante.nomVernaculaire;
+        const nom = plante.nomVernaculaire;
         return new Option(nom, plante.id);
     }));
     const plante = partie.parking.candidat || partie.parking[emplacement.cle][emplacement.index];
     menu.value = plante ? String(plante.id) : "";
+    if (menu.selectedIndex === -1 && plante && toutes.includes(plante)) {
+        const pagePlante = Math.floor(toutes.indexOf(plante) / taille);
+        // Une plantation déjà sélectionnée reste visible dans sa page.
+        if (pagePlante !== page && !partie.parking.navigationCatalogue) {
+            partie.parking.pageCatalogue = pagePlante;
+            return afficherMenuPlantation();
+        }
+    }
     if (menu.selectedIndex === -1) menu.selectedIndex = 0;
     menu.disabled = options.length === 0;
     afficherFichePlantation();
@@ -256,7 +273,7 @@ function viserEmplacement(index) {
         partie.parking = { ...partie.parking, recherche: "" };
     }
     if (index !== partie.parking.vise) {
-        partie.parking = { ...partie.parking, vise: index, candidat: null };
+        partie.parking = { ...partie.parking, vise: index, candidat: null, pageCatalogue: 0, navigationCatalogue: false };
     }
     majAmenagementParking();
 }
@@ -305,10 +322,18 @@ function majEmplacementCourant() {
     const emplacement = EMPLACEMENTS_PARKING[partie.parking.vise];
     const milieu = MILIEUX_PARKING[emplacement.milieu];
     const plante = partie.parking[emplacement.cle][emplacement.index];
+    const voisins = PLAN_PARKING.emplacementsArbres.filter(e => e.id !== emplacement.id);
+    const distance = emplacement.groupe === "Arbre" ? Math.min(...voisins.map(e => Math.hypot(e.u - emplacement.u, e.v - emplacement.v))) : null;
+    const aide = emplacement.milieu === "noue"
+        ? "La noue reçoit l’eau de pluie : le sol peut rester humide puis devenir très humide."
+        : "Après la pluie, la terre est fraîche ; elle peut devenir sèche en été. Frais ne signifie pas inondé.";
+    const espace = distance === null ? "Compare aussi l’étalement et la hauteur adultes de la vivace à la place disponible."
+        : "Arbre voisin le plus proche : " + distance.toLocaleString("fr-FR", {maximumFractionDigits:2}) + " m entre les troncs. Compare cette distance au diamètre du houppier adulte ; un léger contact des couronnes n’est pas forcément gênant.";
 
     $("#emplacement-courant").innerHTML = `
         <strong>${emplacement.repere} — ${milieu.nom}</strong>
         <span>${milieu.resume}</span>
+        <small>${aide}</small><small>${espace}</small>
         ${plante ? `<span class="arbre-plante">
             ${echapperConfigHTML(plante.nomVernaculaire)}
             <button type="button" class="bouton-retirer-arbre" id="retirer-plantation">Retirer</button>
@@ -419,10 +444,7 @@ function evaluerParking() {
         { zone: "Voies", revetement: REVETEMENTS.find(r => r.id === voie) },
         { zone: "Places", revetement: REVETEMENTS.find(r => r.id === places) }
     ];
-    const noterRevetement = (ligne, usage, maximum) => {
-        const r = ligne.revetement;
-        return r ? plancher(maximum * (r.eau + r[usage]) / 200) : 0;
-    };
+    const noterRevetement = (ligne, usage) => evaluerRevetement(ligne.revetement, usage).points;
     const ciblePollinisateurs = Math.max(1, Math.round(EMPLACEMENTS_PARKING.length * 0.6));
     const moyenne = cle => Object.entries(POIDS_PLANTATIONS).reduce((total, [groupe, poids]) => {
         const lignes = lignesPlantations.filter(l => l.cle === groupe);
@@ -451,12 +473,12 @@ function evaluerParking() {
             piste: "Augmente la part de plantes entièrement adaptées qui nourrissent les pollinisateurs." },
         { nom: "Revêtement des voies", famille: "revetements", maximum: BAREME_PARKING.voies,
             points: noterRevetement(lignesRevetements[0], "voie", BAREME_PARKING.voies),
-            detail: "500 points maximum. L’infiltration et l’aptitude au roulage répété comptent à parts égales.",
-            piste: "Compare la perméabilité et la tenue au roulage du revêtement des voies." },
+            detail: "500 points maximum. Infiltration et usage : 25 % chacun ; économie à la pose et entretien/réparation : 20 % chacun ; durée de vie : 10 %. Note rapportée au meilleur compromis du catalogue pour les voies.",
+            piste: "Compare aussi la pose, les réparations et l’usure liée aux passages répétés dans les voies." },
         { nom: "Revêtement des places", famille: "revetements", maximum: BAREME_PARKING.places,
             points: noterRevetement(lignesRevetements[1], "places", BAREME_PARKING.places),
-            detail: "500 points maximum. L’infiltration et l’aptitude au stationnement comptent à parts égales.",
-            piste: "Compare la perméabilité et l’aptitude au stationnement du revêtement des places." }
+            detail: "500 points maximum. Les mêmes cinq critères sont appliqués au stationnement, avec une note rapportée au meilleur compromis du catalogue pour les places.",
+            piste: "Compare l’usage des places, la pose, la réparabilité et les bénéfices paysagers." }
     ];
     const score = criteres.reduce((s, c) => s + c.points, 0);
     const totaux = Object.fromEntries(["vegetaux", "revetements"].map(famille => [famille,
@@ -465,7 +487,7 @@ function evaluerParking() {
         .sort((a, b) => a.points / a.maximum - b.points / b.maximum).slice(0, 2).map(c => c.piste);
     const ratio = score / BAREME_PARKING.maximum;
     return {
-        type: "amenagement-parking", titre: "Parking — Bilan écologique", versionBareme: 5,
+        type: "amenagement-parking", titre: "Parking — Bilan écologique", versionBareme: 6,
         score, maximum: BAREME_PARKING.maximum, ratio,
         etoiles: ratio >= 0.98 ? 3 : ratio >= 0.90 ? 2 : ratio >= 0.75 ? 1 : 0,
         criteres, totaux, calendrier, lignesPlantations, lignesRevetements,
@@ -495,9 +517,14 @@ function detailParkingHTML(resultat) {
 
         </div>`;
     }).join("");
-    const revetements = resultat.lignesRevetements.filter(ligne => ligne.revetement).map(ligne => `
+    const revetements = resultat.lignesRevetements.filter(ligne => ligne.revetement).map(ligne => {
+        const note = evaluerRevetement(ligne.revetement, ligne.zone === "Voies" ? "voie" : "places");
+        return `
         <div class="ligne-detail"><span class="ligne-detail-nom">${texte(ligne.zone)} · ${texte(ligne.revetement.nom)}
-            <small>${texte(ligne.revetement.avis)}</small></span></div>`).join("");
+            <small>Note : ${note.points} / 500. ${texte(ligne.revetement.avis)}</small>
+            <small>${note.details.map(c => texte(c.nom) + " : indice " + c.indice + "/100 (poids " + c.poids / 5 + " %)").join(" · ")}</small>
+            <small>Indices de comparaison du scénario, sans prix ni durée garantis. La meilleure combinaison du catalogue pour cet usage reçoit 500.</small></span></div>`;
+    }).join("");
     return `<div class="bilan-familles">
         <div><strong>Végétaux</strong><span>${resultat.totaux.vegetaux} / 4 000</span></div>
         <div><strong>Revêtements</strong><span>${resultat.totaux.revetements} / 1 000</span></div>
@@ -551,6 +578,19 @@ $("#bouton-planter").addEventListener("click", () => {
 });
 
 $("#recherche-plantation").addEventListener("input", (evenement) => {
-    partie.parking = { ...partie.parking, recherche: normaliserRecherchePlantation(evenement.target.value) };
+    partie.parking = { ...partie.parking, recherche: normaliserRecherchePlantation(evenement.target.value), pageCatalogue: 0, navigationCatalogue: true };
+    afficherMenuPlantation();
+});
+
+$("#catalogue-precedent").addEventListener("click", () => {
+    partie.parking.candidat = null;
+    partie.parking.pageCatalogue = Math.max(0, (partie.parking.pageCatalogue || 0) - 1);
+    partie.parking.navigationCatalogue = true;
+    afficherMenuPlantation();
+});
+$("#catalogue-suivant").addEventListener("click", () => {
+    partie.parking.candidat = null;
+    partie.parking.pageCatalogue = (partie.parking.pageCatalogue || 0) + 1;
+    partie.parking.navigationCatalogue = true;
     afficherMenuPlantation();
 });

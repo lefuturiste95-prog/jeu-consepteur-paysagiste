@@ -2162,3 +2162,11 @@ h1, h2, h3 {
     .bloc-classement { padding: 18px 14px; }
     .classement li { gap: 8px; font-size: 14px; }
 }
+
+.emplacement-courant small { display: block; font-size: 13px; line-height: 1.6; margin-top: 8px; font-weight: 400; }
+.aide-plantation { margin: 12px 0; padding: 12px; background: #edf3e7; border-radius: 10px; font-size: 13px; }
+.aide-plantation summary { cursor: pointer; font-weight: 600; }
+.aide-plantation p { margin: 10px 0 0; }
+.navigation-catalogue { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+.conseils-revetements { text-align: left; line-height: 1.6; margin-bottom: 24px; }

@@ -123,40 +123,61 @@ const PLAN_PARKING = {
 const REVETEMENTS = [
     {
         id: "enrobe", nom: "Enrobé bitumineux", texture: "enrobe",
-        marquage: "peinture", voie: 100, places: 100, eau: 0,
-        avis: "Durable et confortable, mais totalement imperméable : toute la pluie part au réseau."
+        marquage: "peinture", voie: 100, places: 100, eau: 0, pose: 60, entretien: 45, duree: 85,
+        avis: "Pose courante et bonne tenue au trafic. Aspect minéral et absence d’infiltration en surface ; les reprises peuvent rester visibles."
     },
     {
         id: "beton-drainant", nom: "Béton drainant", texture: "beton-drainant",
-        marquage: "peinture", voie: 100, places: 100, eau: 100,
-        avis: "Résiste au roulage tout en laissant l'eau s'infiltrer : idéal pour les voies."
+        marquage: "peinture", voie: 85, places: 85, eau: 100, pose: 30, entretien: 25, duree: 85,
+        avis: "Surface infiltrante et résistante si la structure est adaptée. Pose spécialisée, nettoyage contre le colmatage et réparation des fissures plus contraignants : sa durabilité ne compense pas à elle seule ces coûts."
     },
     {
         id: "paves-beton", nom: "Pavés béton à joints perméables", texture: "paves-beton",
-        marquage: "peinture", voie: 85, places: 90, eau: 85,
-        avis: "Bonne infiltration par les joints et bonne tenue au passage des véhicules."
+        marquage: "peinture", voie: 85, places: 90, eau: 85, pose: 45, entretien: 75, duree: 90,
+        avis: "Infiltration par les joints, bonne tenue et éléments remplaçables localement. Pose coûteuse et entretien des joints à prévoir."
     },
     {
         id: "stabilise", nom: "Stabilisé (grave compactée)", texture: "stabilise",
-        marquage: "bordurette", voie: 55, places: 70, eau: 60,
-        avis: "Perméable et économique, mais il se creuse d'ornières sous un trafic régulier."
+        marquage: "bordurette", voie: 75, places: 75, eau: 60, pose: 100, entretien: 95, duree: 50,
+        avis: "Dans le scénario du jeu, le stabilisé sans liant est économique à poser et facile à recharger localement. Il demande un suivi des ornières et une remise à niveau ; sa perméabilité dépend des fines, de la structure et du compactage."
     },
     {
         id: "gravier", nom: "Gravier en dalles alvéolées", texture: "gravier",
-        marquage: "bordurette", voie: 40, places: 85, eau: 100,
-        avis: "Très perméable pour stationner ; peu confortable en circulation continue."
+        marquage: "bordurette", voie: 25, places: 70, eau: 100, pose: 55, entretien: 65, duree: 55,
+        avis: "Gravier maintenu dans des dalles alvéolées : infiltration et aspect naturel intéressants. Coût de la structure, rechargement et usure sous les passages et les manœuvres répétés ; moins pertinent en voirie."
     },
     {
         id: "dalles-gazon", nom: "Dalles béton-gazon", texture: "dalles-gazon",
-        marquage: "bordurette", voie: 20, places: 100, eau: 100,
-        avis: "Places vertes et infiltrantes ; le gazon ne supporte pas le passage répété des voies."
+        marquage: "bordurette", voie: 20, places: 100, eau: 100, pose: 35, entretien: 75, duree: 85,
+        avis: "Places végétalisées, aspect paysager et infiltration : dans ce scénario, ces bénéfices justifient une pose coûteuse. Entretien du gazon et réparation par éléments ; le roulage répété et un stationnement permanent peuvent dégrader la végétation."
     },
     {
         id: "paves-joints-herbe", nom: "Pavés à joints enherbés", texture: "paves-joints-herbe",
-        marquage: "bordurette", voie: 45, places: 100, eau: 90,
-        avis: "Très bonne infiltration et aspect végétal pour les places de stationnement."
+        marquage: "bordurette", voie: 40, places: 95, eau: 90, pose: 40, entretien: 70, duree: 85,
+        avis: "Aspect végétalisé et joints infiltrants, avec des pavés remplaçables. Entretien de la végétation et des joints ; les manœuvres répétées fragilisent les parties enherbées."
     }
 ];
+
+// Indices pédagogiques favorables : 100 = avantage élevé dans ce scénario.
+// Les coûts ne sont pas des prix au m² ; la perméabilité réelle nécessite une étude.
+const CRITERES_REVETEMENTS = Object.freeze([
+    {cle: "eau", nom: "Infiltration", poids: 125},
+    {cle: "usage", nom: "Adaptation à l’usage", poids: 125},
+    {cle: "pose", nom: "Économie à la pose", poids: 100},
+    {cle: "entretien", nom: "Entretien et réparabilité", poids: 100},
+    {cle: "duree", nom: "Durée de vie", poids: 50}
+]);
+function evaluerRevetement(revetement, usage) {
+    const brut = r => CRITERES_REVETEMENTS.reduce((s,c) => s + c.poids * r[c.cle === "usage" ? usage : c.cle] / 100, 0);
+    const reference = Math.max(...REVETEMENTS.map(brut));
+    return {
+        points: revetement ? Math.floor(500 * brut(revetement) / reference + 1e-9) : 0,
+        brut: revetement ? brut(revetement) : 0,
+        reference,
+        details: revetement ? CRITERES_REVETEMENTS.map(c => ({nom:c.nom, poids:c.poids,
+            indice:revetement[c.cle === "usage" ? usage : c.cle]})) : []
+    };
+}
 
 const COULEURS_MARQUAGE = {
     peinture:   "rgba(226, 228, 222, 0.8)",

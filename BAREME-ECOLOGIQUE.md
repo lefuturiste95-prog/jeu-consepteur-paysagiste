@@ -32,11 +32,31 @@ Le maximum de diversité impose ici une espèce différente par emplacement pour
 
 ## Revêtements
 
-Chaque zone est évaluée séparément avec `plancher(500 × (coefficientInfiltration + coefficientUsage) / 200)`. Les coefficients sont sur 100. L’usage évalué est le roulage pour les voies et le stationnement pour les places.
+Le barème des revêtements v6 combine cinq indices favorables sur 100 : infiltration (25 %), adaptation à l’usage (25 %), économie à la pose (20 %), entretien et réparabilité (20 %), durée de vie (10 %). Les indices et les coefficients sont des hypothèses pédagogiques pour un parking de véhicules légers. Ils ne sont ni des prix, ni des durées garanties, ni une étude hydraulique.
 
-Les voies valent donc 500 points maximum et les places 500. Deux surfaces en enrobé donnent 250 points chacune, faute d’infiltration, soit une perte totale de 500 points. Des dalles-gazon sur les voies et du béton drainant sur les places retirent 200 points dans le barème fourni. Une variation d’un point d’un coefficient reste visible avec une baisse de 2 ou 3 points après arrondi.
+La somme pondérée brute est ensuite rapportée au meilleur compromis du catalogue pour le même usage : note = plancher(500 × brut / meilleurBrut). Cette normalisation rend 500 atteignable pour chaque zone. Elle signifie que les poids expriment l’importance relative des critères, et non des sous-notes sur 125 ou 100 points. Ajouter ou modifier un revêtement peut changer la référence : il faut alors revérifier le barème.
 
-Les coefficients sont pédagogiques, sans constituer des mesures hydrauliques. La perméabilité réelle dépend aussi de la structure, du sol et de l’entretien.
+| Revêtement | Voies / 500 | Places / 500 |
+|---|---:|---:|
+| Enrobé | 350 | 338 |
+| Béton drainant | 422 | 408 |
+| Pavés béton à joints perméables | 485 | 476 |
+| Stabilisé sans liant | 500 | 482 |
+| Gravier en dalles alvéolées | 390 | 447 |
+| Dalles béton-gazon | 389 | 500 |
+| Pavés à joints enherbés | 405 | 476 |
+
+Le stabilisé est valorisé pour son coût et sa reprise locale, tout en conservant une moindre note de durée de vie. Le béton drainant conserve une bonne infiltration mais perd sur les coûts de pose et de réparation. Le gravier alvéolé est moins adapté aux passages répétés. Les dalles béton-gazon sont valorisées sur les places pour leurs qualités paysagères et infiltrantes ; elles demandent un entretien et ne conviennent pas aux mêmes usages que les voies. L’esthétique est expliquée qualitativement, sans bonus chiffré supplémentaire caché.
+
+Les coefficients d’infiltration restent distincts du classement économique : le stabilisé n’est pas supposé toujours plus infiltrant que le béton drainant. Le fonctionnement dépend des fines, du compactage, du sol, de la fondation et de l’entretien. Sources : [ADOPTA](https://www.adopta.fr/revetements-de-sol-permeables/), [DRIEAT](https://www.drieat.ile-de-france.developpement-durable.gouv.fr/qu-est-ce-qu-un-revetement-permeable-pour-un-a3642.html).
+
+Le bilan affiche les avantages et les limites des deux matériaux retenus. Le détail du chantier indique les cinq indices et leurs poids. Le maximum total reste 5 000, avec 4 000 pour les végétaux, 500 pour les voies et 500 pour les places.
+
+### Aides au choix des plantes
+
+Les termes techniques sont conservés. Une aide explique leur sens et l’alternance saisonnière. La distance est calculée entre les coordonnées des troncs : 7,50 m pour les arbres centraux et 16 m pour les deux arbres de la noue. La fiche distingue cette distance du diamètre adulte du houppier. Ces informations sont des aides de lecture ; aucune nouvelle pénalité d’encombrement ou de tassement n’est déduite d’un texte libre non structuré.
+
+Le catalogue reste alphabétique, avec au plus 12 noms courants par page et une recherche sur les noms courants et scientifiques. Le nom scientifique reste dans la fiche complète. Les listes ne montrent ni note individuelle ni validation d’adaptation.
 
 ## Début de partie et bilan
 
@@ -44,7 +64,7 @@ L’accueil présente un seul bouton de lancement, Commencer une partie. Il cond
 
 Les notes individuelles et les validations restent masquées pendant le choix des végétaux. Le bilan affiche les sous-totaux Végétaux sur 4 000 et Revêtements sur 1 000, ainsi que les deux notes de revêtement sur 500. Trois étoiles à partir de 4 900, deux à 4 500, une à 3 750. L’analyse du site n’ajoute pas de points.
 
-Le classement de ce barème est distinct des précédents, qui restent conservés dans le navigateur. Revenir aux choix et valider à nouveau ne cumule pas la note du même aménagement.
+Les scores déjà enregistrés restent conservés. Le barème des revêtements a changé le 17 novembre 2026 ; les scores antérieurs ne sont donc pas strictement comparables. Le détail des résultats des nouvelles parties porte la version de barème 6. Revenir aux choix et valider à nouveau ne cumule pas la note du même aménagement.
 
 ## Catalogue et sources
 

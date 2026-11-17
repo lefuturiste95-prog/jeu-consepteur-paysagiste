@@ -285,6 +285,11 @@
                 <p class="compteur-plantations" id="compteur-plantations" aria-live="polite"></p>
                 <label class="filtre-titre" for="choix-plantation" id="libelle-plantation">Plantation</label>
                 <p class="emplacement-courant" id="emplacement-courant"></p>
+                <details class="aide-plantation"><summary>Quelques repères pour choisir</summary>
+                    <p>Au centre, A1 à A5 sont espacés de 7,50 m entre les troncs. Dans la noue, A6 et A7 sont espacés de 16 m. L’envergure est le diamètre du houppier, pas sa hauteur.</p>
+                    <p>Frais : la terre garde de l’humidité sans être gorgée d’eau. Sec et très sec : eau de plus en plus limitée. Humide et très humide : eau durablement présente, parfois en excès. Une alternance décrit des moments différents de l’année.</p>
+                    <p>Lis aussi les remarques sur le tassement, l’espace racinaire et l’envergure adulte dans les fiches avant de planter.</p>
+                </details>
                 <div class="champ-recherche">
                     <span class="loupe" aria-hidden="true">⌕</span>
                     <input type="search" id="recherche-plantation"
@@ -293,6 +298,8 @@
                 </div>
                 <p class="note-bareme" id="catalogue-origine">Catalogue Excel enrichi avec Floriscope.</p>
                 <select class="choix-menu" id="choix-plantation" aria-describedby="emplacement-courant"></select>
+                <div class="navigation-catalogue"><button class="bouton bouton-fantome" id="catalogue-precedent" type="button">← Précédents</button><button class="bouton bouton-fantome" id="catalogue-suivant" type="button">Suivants →</button></div>
+                <p class="note-bareme" id="catalogue-page" role="status"></p>
                 <div class="fiche-plantation" id="fiche-plantation" aria-live="polite"></div>
                 <button class="bouton bouton-fantome bouton-bloc" id="bouton-planter" type="button" disabled>
                     Planter à cet emplacement
@@ -314,7 +321,7 @@
                 <p>Les bonus écologiques concernent uniquement les plantes adaptées à leur emplacement. Vise au moins 7 plantations utiles aux pollinisateurs et une ressource florale chaque mois de mars à septembre.</p>
                 <p>La diversité tient compte du nombre d’espèces et de l’équilibre de leurs effectifs. Le maximum demande une espèce différente à chaque emplacement. Les secteurs de vivaces comptent comme des unités de plantation, sans estimation de leur surface.</p>
                 <p>Information non documentée ne signifie pas absence d’intérêt écologique. Aucun bonus n’est inventé. Ce barème pédagogique n’est pas une mesure scientifique de biodiversité.</p>
-                <p>Les revêtements représentent 1 000 points, avec 500 pour les voies et 500 pour les places. Les végétaux représentent 4 000 points. Compare leur perméabilité et leur comportement en circulation ou en stationnement. Les coefficients du jeu ne sont pas des mesures hydrauliques.</p>
+                <p>Les revêtements représentent 1 000 points, avec 500 pour les voies et 500 pour les places. Les végétaux représentent 4 000 points. Compare leur infiltration, leur usage, le coût de pose, l’entretien et la réparabilité, puis la durée de vie. Les notes sont rapportées au meilleur compromis du catalogue pour chaque usage. Les coefficients du jeu ne sont pas des mesures hydrauliques.</p>
                 <p>Le sol doit convenir aux deux états annoncés pour la zone. Une adaptation partielle diminue la note et ne donne pas de bonus écologique.</p>
                 <p>3 étoiles dès 4 900 points · 2 dès 4 500 · 1 dès 3 750. Chaque critère est calculé avant un arrondi vers le bas, pour conserver les petites différences. L’analyse du site prépare le projet sans ajouter de points.</p>
             </details>
@@ -374,6 +381,8 @@
             </thead>
             <tbody id="bilan-lignes"></tbody>
         </table>
+
+        <div class="conseils-revetements" id="bilan-conseils-revetements"></div>
 
         <div class="bloc-classement">
 

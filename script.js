@@ -904,6 +904,8 @@ function afficherBilan() {
     const parking = partie.resultats.find(resultat => resultat.type === "amenagement-parking");
     $("#bilan-rendu").classList.toggle("est-visible", Boolean(parking));
 
+    $("#bilan-conseils-revetements").innerHTML = parking ? (parking.lignesRevetements || [])
+        .filter(ligne => ligne.revetement).map(ligne => `<p><strong>${echapperConfigHTML(ligne.zone)} · ${echapperConfigHTML(ligne.revetement.nom)}</strong><br>${echapperConfigHTML(ligne.revetement.avis)}</p>`).join("") : "";
     if (parking) {
         copierRenduParking($("#bilan-rendu-canvas"), $("#bilan-rendu-pieton"), parking.choix);
     }
