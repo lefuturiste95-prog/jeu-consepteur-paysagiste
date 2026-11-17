@@ -1104,10 +1104,16 @@ function rechargerEditeurAnalyse() {
 // CLASSEMENT
 // ===============================
 
+function afficherClassementAdmin() {
+    afficherClassementLocalAdmin();
+    return window.AdminScoresPartages?.afficher();
+}
+
 function lireClassement() {
 
     try {
-        return JSON.parse(localStorage.getItem(CLE_CLASSEMENT)) || [];
+        const donnees = JSON.parse(localStorage.getItem(CLE_CLASSEMENT));
+        return Array.isArray(donnees) ? donnees.filter(entree => entree && typeof entree === "object") : [];
     } catch (erreur) {
         return [];
     }
@@ -1123,7 +1129,7 @@ function ecrireClassement(classement) {
 }
 
 
-function afficherClassementAdmin() {
+function afficherClassementLocalAdmin() {
 
     const zone = $("#admin-classement");
 
@@ -1195,9 +1201,9 @@ function afficherClassementAdmin() {
 
                         ecrireClassement(nouveauClassement);
 
-                        afficherClassementAdmin();
+                        afficherClassementLocalAdmin();
 
-                        afficherMessage("Score supprimé");
+                        afficherMessage("Copie locale supprimée");
                     }
                 );
             });
@@ -1222,9 +1228,9 @@ $("#effacer-classement").addEventListener("click", () => {
 
             localStorage.removeItem(CLE_CLASSEMENT);
 
-            afficherClassementAdmin();
+            afficherClassementLocalAdmin();
 
-            afficherMessage("Classement effacé");
+            afficherMessage("Copies locales effacées");
         }
     );
 });

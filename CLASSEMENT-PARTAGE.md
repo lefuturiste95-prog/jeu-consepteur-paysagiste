@@ -34,7 +34,7 @@ Sans connexion Internet, le jeu reste jouable. Sans configuration Supabase, il a
 
 ## Gestion
 
-Dans [le tableau de bord Supabase](https://supabase.com/dashboard/project/uvlyhpccalxcjsqervan), ouvrir le Table Editor et choisir le schéma `classement_prive` pour consulter les cinq colonnes, exporter les résultats ou supprimer une entrée. Le panneau Admin du jeu gère uniquement les copies locales ; son code d’accès ne donne aucun pouvoir sur la base.
+Dans [le tableau de bord Supabase](https://supabase.com/dashboard/project/uvlyhpccalxcjsqervan), ouvrir le Table Editor et choisir le schéma `classement_prive` pour consulter les cinq colonnes, exporter les résultats ou supprimer une entrée. L’onglet **Classement** du panneau Admin du jeu affiche maintenant les scores de tous les appareils, du meilleur au moins bon, par pages de 50. **Actualiser les scores** récupère les nouveaux résultats. Il utilise la même lecture publique limitée au nom et au score global que le bilan. Le bouton **Ouvrir les résultats détaillés dans Supabase** permet de consulter les cinq colonnes avec ton compte Supabase. La rubrique **Copies enregistrées sur cet appareil** conserve les commandes locales. Les suppressions locales ne modifient pas le classement partagé ; le code d’accès du jeu ne donne aucun pouvoir sur la base.
 
 La table n’accorde aucun accès direct aux visiteurs et RLS est activé. Deux fonctions à privilèges limités autorisent seulement l’ajout et la lecture des deux colonnes publiques. Le serveur impose les bornes et l’égalité total = végétaux + minéraux. Référence : [fonctions et permissions Supabase](https://supabase.com/docs/guides/database/functions).
 
@@ -47,7 +47,7 @@ Les scores sont calculés dans le navigateur : ce classement pédagogique ne cer
 Avec Node.js récent, à la racine du projet :
 
 ```text
-node --test outils/tests/classement.cjs
+node --test outils/tests/classement.cjs outils/tests/admin-scores.cjs
 ```
 
 Les tests simulent deux appareils indépendants, les erreurs réseau, les nouvelles tentatives, la pagination et les champs transmis. Ils n’écrivent aucun score dans la base de production. Les permissions réelles et les contraintes SQL ont aussi été vérifiées dans une transaction annulée.

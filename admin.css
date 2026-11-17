@@ -954,3 +954,25 @@ p {
         margin-left: 18px;
     }
 }
+
+/* Scores partagés dans l’administration. */
+[hidden] { display: none !important; }
+.statut-scores-partages { min-height: 1.5em; color: var(--encre-douce); }
+.table-scores-defilement { width: 100%; overflow-x: auto; }
+.table-scores-partages { width: 100%; border-collapse: collapse; background: var(--papier); }
+.table-scores-partages caption { text-align: left; margin-bottom: 12px; font-weight: 600; }
+.table-scores-partages th, .table-scores-partages td { padding: 12px; border-bottom: 1px solid var(--ligne); text-align: left; }
+.table-scores-partages th { background: var(--mousse); }
+.table-scores-partages td:nth-child(2) { overflow-wrap: anywhere; }
+.table-scores-partages th:last-child, .table-scores-partages td:last-child { text-align: right; white-space: nowrap; font-weight: 700; }
+#suite-scores-partages { margin-top: 18px; }
+.details-base-scores { margin-top: 26px; padding: 20px; border-radius: var(--rayon-petit); background: var(--mousse); }
+.details-base-scores p { margin-bottom: 12px; }
+.details-base-scores a { white-space: normal; text-align: center; }
+.scores-locaux-admin { margin-top: 30px; border-top: 1px solid var(--ligne); padding-top: 20px; }
+.scores-locaux-admin summary { font-weight: 700; cursor: pointer; padding: 8px 0; }
+.scores-locaux-admin .entete-section { margin-top: 20px; }
+@media (max-width: 560px) {
+    .table-scores-partages th, .table-scores-partages td { padding: 10px 6px; font-size: 13px; }
+    .details-base-scores { padding: 14px; }
+}

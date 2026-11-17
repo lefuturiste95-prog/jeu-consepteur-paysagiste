@@ -28,6 +28,8 @@ Le catalogue enrichi compte 51 végétaux, soit 20 arbres et 31 vivaces. Le fich
 
 Le bouton Admin de l’accueil ouvre les réglages du chantier. Code `etudessuperieures`. Cet accès évite les modifications accidentelles, sans constituer une sécurité serveur.
 
+L’onglet Classement de l’administration affiche les scores enregistrés depuis tous les appareils. Cliquer sur Actualiser les scores pour récupérer les nouveaux résultats, puis sur Voir les résultats suivants pour parcourir la liste complète. Les détails Végétaux, Minéraux et les dates sont accessibles par le bouton vers Supabase. Les copies locales restent disponibles dans une rubrique repliable.
+
 Les réglages restent propres au navigateur. Le classement peut être partagé entre tous les appareils via Supabase après son activation dans `config-scores.js`. La procédure et le schéma de la base sont dans [CLASSEMENT-PARTAGE.md](CLASSEMENT-PARTAGE.md). Sans configuration, le jeu indique clairement que les scores sont locaux. Le classement écologique sur 5 000 reste distinct des anciens barèmes.
 
 ## Fichiers principaux

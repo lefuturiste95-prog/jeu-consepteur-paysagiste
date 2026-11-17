@@ -512,25 +512,41 @@
              data-panneau-contenu="classement">
 
         <div class="entete-section">
-
             <div>
-                <p class="sur-titre">Données locales</p>
-                <h2>Classement sur cet appareil</h2>
-                <p>
-                    Ces commandes concernent uniquement la copie locale. Le classement partagé se gère dans Supabase. Tu peux supprimer une entrée locale ou vider cette copie.
-                </p>
+                <p class="sur-titre">Classement partagé</p>
+                <h2>Scores de tous les appareils</h2>
+                <p>Les résultats enregistrés en ligne apparaissent ici, du meilleur score au plus faible.</p>
             </div>
-
-            <button class="bouton bouton-danger"
-                    id="effacer-classement"
-                    type="button">
-                Effacer tout le classement
-            </button>
-
+            <button class="bouton bouton-principal-vert" id="actualiser-scores-partages" type="button">Actualiser les scores</button>
         </div>
 
-        <div id="admin-classement"
-             class="admin-classement"></div>
+        <p id="statut-scores-partages" class="statut-scores-partages" role="status" aria-live="polite"></p>
+        <p id="vide-scores-partages" class="classement-vide" hidden>Aucun joueur n’a encore enregistré de score dans la base partagée.</p>
+        <div class="table-scores-defilement">
+            <table class="table-scores-partages" id="table-scores-partages" hidden>
+                <caption>Classement de tous les joueurs · score global sur 5 000</caption>
+                <thead><tr><th scope="col">Place</th><th scope="col">Joueur</th><th scope="col">Score global</th></tr></thead>
+                <tbody id="lignes-scores-partages"></tbody>
+            </table>
+        </div>
+        <button class="bouton bouton-fantome" id="suite-scores-partages" type="button" hidden>Voir les résultats suivants</button>
+
+        <div class="details-base-scores">
+            <p>Pour consulter les scores Végétaux et Minéraux, les dates et les heures, ouvre la base avec ton compte Supabase.</p>
+            <a class="bouton bouton-fantome" href="https://supabase.com/dashboard/project/uvlyhpccalxcjsqervan" target="_blank" rel="noopener noreferrer">Ouvrir les résultats détaillés dans Supabase</a>
+        </div>
+
+        <details class="scores-locaux-admin">
+            <summary>Copies enregistrées sur cet appareil</summary>
+            <div class="entete-section">
+                <div>
+                    <h3>Copies locales</h3>
+                    <p>Les suppressions ci-dessous concernent uniquement cet appareil.</p>
+                </div>
+                <button class="bouton bouton-danger" id="effacer-classement" type="button">Effacer les copies locales</button>
+            </div>
+            <div id="admin-classement" class="admin-classement"></div>
+        </details>
 
     </section>
 
@@ -681,6 +697,9 @@
      aria-live="polite"></div>
 
 
+<script src="config-scores.js"></script>
+<script src="scores.js"></script>
+<script src="admin-scores.js"></script>
 <script src="admin.js"></script>
 
 </body>
