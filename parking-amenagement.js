@@ -541,10 +541,12 @@ function detailParkingHTML(resultat) {
 // ===============================
 
 function validerParking() {
+    if (window.TentativeLocale?.charger()) { restaurerBilanValide(); return; }
 
     if ($("#bouton-valider-parking").disabled) return;
     const resultat = evaluerParking();
 
+    window.TentativeLocale?.sauver(resultat);
     partie.resultats.push(resultat);
     partie.score += resultat.score;
     $("#score-courant").textContent = partie.score;

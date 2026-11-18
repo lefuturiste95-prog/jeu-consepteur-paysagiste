@@ -976,3 +976,10 @@ p {
     .table-scores-partages th, .table-scores-partages td { padding: 10px 6px; font-size: 13px; }
     .details-base-scores { padding: 14px; }
 }
+
+.connexion-scores { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 22px; padding: 18px; background: #e8efdf; border-radius: 12px; }
+.connexion-scores p { flex-basis: 100%; margin: 0; }
+.connexion-scores label { display: grid; gap: 6px; }
+.connexion-scores input { max-width: 100%; padding: 10px; }
+.table-scores-partages pre { white-space: pre-wrap; font: inherit; text-align: left; font-size: 13px; min-width: 220px; }
+.table-scores-partages td:last-child { white-space: normal; font-weight: 400; }

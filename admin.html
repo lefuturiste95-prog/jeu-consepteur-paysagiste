@@ -520,12 +520,21 @@
             <button class="bouton bouton-principal-vert" id="actualiser-scores-partages" type="button">Actualiser les scores</button>
         </div>
 
+        <form id="connexion-scores" class="connexion-scores">
+            <p>Accès réservé à l’enseignant. Les élèves n’ont pas de compte.</p>
+            <label>Adresse e-mail <input type="email" id="email-admin" value="lefuturiste95@gmail.com" readonly required autocomplete="username"></label>
+            <label>Mot de passe <input type="password" id="motdepasse-admin" required minlength="12" autocomplete="current-password"></label>
+            <button class="bouton bouton-principal-vert" type="submit" id="connexion-admin-valider">Se connecter aux bilans</button>
+            <button class="bouton bouton-fantome" type="button" id="creer-acces-admin">Créer mon accès enseignant</button>
+            <button class="bouton bouton-fantome" type="button" id="deconnexion-scores">Fermer l’accès aux bilans</button>
+            <p>Première utilisation : choisis un mot de passe d’au moins 12 caractères, crée ton accès et confirme ton adresse par e-mail. Reviens ensuite ici te connecter. Ne communique pas ton mot de passe aux élèves.</p>
+        </form>
         <p id="statut-scores-partages" class="statut-scores-partages" role="status" aria-live="polite"></p>
         <p id="vide-scores-partages" class="classement-vide" hidden>Aucun joueur n’a encore enregistré de score dans la base partagée.</p>
         <div class="table-scores-defilement">
             <table class="table-scores-partages" id="table-scores-partages" hidden>
                 <caption>Classement de tous les joueurs · score global sur 5 000</caption>
-                <thead><tr><th scope="col">Place</th><th scope="col">Joueur</th><th scope="col">Score global</th></tr></thead>
+                <thead><tr><th scope="col">Place</th><th scope="col">Joueur</th><th scope="col">Score global</th><th scope="col">Bilan et gestion</th></tr></thead>
                 <tbody id="lignes-scores-partages"></tbody>
             </table>
         </div>
@@ -699,6 +708,7 @@
 
 <script src="config-scores.js"></script>
 <script src="scores.js"></script>
+<script src="admin-auth.js"></script>
 <script src="admin-scores.js"></script>
 <script src="admin.js"></script>
 

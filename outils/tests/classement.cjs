@@ -172,7 +172,7 @@ test('un envoi retardé ne modifie pas le formulaire de la partie suivante', asy
     release(); await pending;
     assert.equal(a.$('#form-classement').style.display, 'flex');
     assert.equal(a.$('#nom-joueur').readOnly, false);
-    assert.equal(a.$('#statut-enregistrement').textContent, '');
+    assert.match(a.$('#statut-enregistrement').textContent, /Une seule tentative/);
 });
 
 test('pagination de tous les résultats et actualisation sans doublons', async () => {

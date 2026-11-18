@@ -6,7 +6,7 @@ Le projet Supabase `apprenti-concepteur-scores` centralise les résultats du bar
 
 Après le bilan, saisir un prénom ou un pseudo puis cliquer sur **Enregistrer mon score**. Le nom et le score global deviennent visibles aux autres joueurs. Le classement se recharge à l’ouverture du bilan et après l’enregistrement. **Actualiser** récupère les nouveaux résultats ; **Voir les résultats suivants** parcourt le classement par pages de 20. Chaque partie enregistrée est une entrée ; le nom n’est pas une identité vérifiée. À score égal, les parties les plus anciennes passent devant.
 
-Seules cinq informations métier sont envoyées et stockées dans `classement_prive.scores_parking_v5` :
+Les cinq informations métier de score sont envoyées et stockées dans `classement_prive.scores_parking_v5` :
 
 | Champ | Contenu |
 |---|---|
@@ -16,7 +16,7 @@ Seules cinq informations métier sont envoyées et stockées dans `classement_pr
 | `score_mineraux` | Revêtements sur 1 000 |
 | `date_heure` | Horodatage de l’enregistrement, en UTC |
 
-Les choix de végétaux, de sols et les détails du chantier ne sont pas envoyés. La lecture publique retourne exclusivement `nom_joueur` et `score_global` : ni les sous-scores ni la date ne sont exposés par l’API du classement. L’horodatage vient de l’appareil au premier envoi et reste identique pendant les tentatives suivantes.
+Depuis le 18 novembre 2026, la liste des choix et les notes par critère sont également réservées à l’enseignant, avec des identifiants techniques de tentative. Voir [TENTATIVE-ET-ADMIN.md](TENTATIVE-ET-ADMIN.md). La lecture publique retourne exclusivement `nom_joueur` et `score_global` : ni les sous-scores ni la date ne sont exposés par l’API du classement. L’horodatage vient de l’appareil au premier envoi et reste identique pendant les tentatives suivantes.
 
 ## Configuration actuelle
 
@@ -34,7 +34,7 @@ Sans connexion Internet, le jeu reste jouable. Sans configuration Supabase, il a
 
 ## Gestion
 
-Dans [le tableau de bord Supabase](https://supabase.com/dashboard/project/uvlyhpccalxcjsqervan), ouvrir le Table Editor et choisir le schéma `classement_prive` pour consulter les cinq colonnes, exporter les résultats ou supprimer une entrée. L’onglet **Classement** du panneau Admin du jeu affiche maintenant les scores de tous les appareils, du meilleur au moins bon, par pages de 50. **Actualiser les scores** récupère les nouveaux résultats. Il utilise la même lecture publique limitée au nom et au score global que le bilan. Le bouton **Ouvrir les résultats détaillés dans Supabase** permet de consulter les cinq colonnes avec ton compte Supabase. La rubrique **Copies enregistrées sur cet appareil** conserve les commandes locales. Les suppressions locales ne modifient pas le classement partagé ; le code d’accès du jeu ne donne aucun pouvoir sur la base.
+La gestion se fait dans Admin → Classement avec une connexion enseignant réservée à lefuturiste95@gmail.com. Tu peux consulter le bilan synthétique, corriger le nom ou supprimer un résultat pour autoriser une nouvelle tentative. Les premiers pas et les limites sont dans [TENTATIVE-ET-ADMIN.md](TENTATIVE-ET-ADMIN.md).
 
 La table n’accorde aucun accès direct aux visiteurs et RLS est activé. Deux fonctions à privilèges limités autorisent seulement l’ajout et la lecture des deux colonnes publiques. Le serveur impose les bornes et l’égalité total = végétaux + minéraux. Référence : [fonctions et permissions Supabase](https://supabase.com/docs/guides/database/functions).
 

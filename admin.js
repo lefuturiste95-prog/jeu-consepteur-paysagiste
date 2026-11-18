@@ -1424,7 +1424,9 @@ $("#bouton-retour-jeu")
 
 
 $("#bouton-deconnexion")
-    .addEventListener("click", () => {
+    .addEventListener("click", async () => {
+
+        await window.AdminAuth?.deconnexion();
 
         sessionStorage.removeItem("adminAutorise");
 

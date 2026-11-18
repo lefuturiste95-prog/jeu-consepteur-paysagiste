@@ -22,7 +22,11 @@
                 body: JSON.stringify(donnees),
                 signal: controleur.signal
             });
-            if (!reponse.ok) throw new Error("Le service de classement est indisponible.");
+            if (!reponse.ok) {
+                const data = await reponse.json().catch(() => ({}));
+                const erreur = new Error("Le service de classement est indisponible."); erreur.code=data.code;
+                throw erreur;
+            }
             if (reponse.status === 204) return null;
             const contenu = await reponse.text();
             return contenu ? JSON.parse(contenu) : null;
@@ -49,12 +53,13 @@
     async function envoyer(entree) {
         verifier(entree);
         // Seuls ces cinq champs quittent le jeu. Aucun choix de plantes n’est transmis.
-        await appeler("enregistrer_score_parking", {
+        await appeler(entree.jeton ? "enregistrer_bilan_parking" : "enregistrer_score_parking", {
             p_nom: entree.nom.trim(),
             p_score_global: entree.score,
             p_score_vegetaux: entree.vegetaux,
             p_score_mineraux: entree.mineraux,
-            p_date_heure: entree.date
+            p_date_heure: entree.date,
+            ...(entree.jeton ? {p_jeton:entree.jeton, p_bilan:entree.bilan} : {})
         });
     }
 
@@ -71,5 +76,5 @@
         return lignes.map(ligne => ({ nom: ligne.nom_joueur, score: ligne.score_global }));
     }
 
-    window.ScoresPartages = Object.freeze({ estConfigure: () => configure, envoyer, lire, verifier });
+    window.ScoresPartages = Object.freeze({ estConfigure: () => configure, envoyer, lire, verifier, statut: jeton => appeler("statut_tentative_parking", {p_jeton:jeton}) });
 })();

@@ -527,6 +527,7 @@ function masquerModeQGIS() {
 // ===============================
 
 function lancerParkingAnalyse(reprendre = false) {
+    if (window.TentativeLocale?.charger()) { restaurerBilanValide(); return; }
 
     partie.phaseParking = "analyse";
 
@@ -911,6 +912,8 @@ function afficherBilan() {
     }
 
     preparerEnregistrementScore(parking);
+    if (window.TentativeLocale && !window.TentativeLocale.estDurable()) message("Le stockage du navigateur est bloqué : le bilan ne pourra pas être retrouvé après fermeture.");
+    $("#bouton-rejouer").textContent = "Revoir mon bilan";
     lignesClassement = [];
     dessinerClassement();
     $("#plus-classement").hidden = true;
@@ -958,14 +961,17 @@ function preparerEnregistrementScore(resultat) {
     if (!enregistrementBilan || enregistrementBilan.resultat !== resultat) {
         enregistrementBilan = { resultat, entree: null, enCours: false, termine: false, copieLocale: false };
         $("#nom-joueur").value = "";
-        $("#statut-enregistrement").textContent = "";
+        const sauvegarde = window.TentativeLocale?.charger();
+        if (sauvegarde?.entree) enregistrementBilan.entree = sauvegarde.entree;
+        if (sauvegarde?.publie) enregistrementBilan.termine = true;
+        $("#statut-enregistrement").textContent = sauvegarde?.publie ? "Ce résultat est déjà enregistré." : "Une seule tentative est autorisée sur ce navigateur.";
     }
     $("#form-classement").style.display = enregistrementBilan.termine ? "none" : "flex";
     $("#nom-joueur").readOnly = Boolean(enregistrementBilan.entree);
     $("#enregistrer-score").disabled = enregistrementBilan.enCours;
     $("#enregistrer-score").textContent = enregistrementBilan.entree ? "Réessayer l’envoi" : "Enregistrer mon score";
     $("#notice-scores").textContent = classementPartageActif()
-        ? "En enregistrant, tu partages ton prénom ou pseudo et ton score global. Les deux sous-scores et la date et l’heure sont conservés dans la base sans être affichés au classement."
+        ? "En enregistrant, tu partages ton prénom ou pseudo et ton score global. Les sous-scores, la date et la liste des choix sont réservés à l’enseignant ; seul le nom et le score global sont publics."
         : "Le classement partagé n’est pas encore activé. Pour le moment, les scores restent sur cet appareil.";
 }
 
@@ -1045,10 +1051,13 @@ async function enregistrerScoreBilan(evenement) {
                 nom, score: resultat.score,
                 vegetaux: resultat.totaux.vegetaux,
                 mineraux: resultat.totaux.revetements,
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                jeton: window.TentativeLocale?.charger()?.jeton,
+                bilan: resumerBilan(resultat)
             };
             window.ScoresPartages.verifier(entree);
             etat.entree = Object.freeze(entree);
+            window.TentativeLocale?.actualiser({entree});
         }
         // L’entrée et son horodatage restent identiques lors d’une nouvelle tentative.
         etat.enCours = true;
@@ -1066,6 +1075,7 @@ async function enregistrerScoreBilan(evenement) {
             throw new Error("Enregistrement local impossible.");
         }
         etat.termine = true;
+        window.TentativeLocale?.actualiser({publie: classementPartageActif()});
         if (enregistrementBilan !== etat) return;
         $("#form-classement").style.display = "none";
         statut.textContent = classementPartageActif()
@@ -1074,6 +1084,15 @@ async function enregistrerScoreBilan(evenement) {
         await afficherClassement();
     } catch (erreur) {
         if (enregistrementBilan !== etat) return;
+        if (erreur.code === "23505") {
+            if (etat.entree) ecrireClassement(lireClassement().filter(e => !(e.nom === etat.entree.nom && e.date === etat.entree.date)));
+            etat.entree = null;
+            etat.copieLocale = false;
+            window.TentativeLocale?.actualiser({entree:null});
+            $("#nom-joueur").readOnly = false;
+            statut.textContent = "Ce nom ou cette tentative est déjà enregistré. Utilise prénom et initiale du nom en cas d’homonyme, ou contacte l’enseignant.";
+            return;
+        }
         statut.textContent = etat.entree
             ? (etat.copieLocale ? "Score conservé sur cet appareil. " : "Score non enregistré. ") +
                 "L’envoi a échoué. Réessaie pour le partager."
@@ -1145,6 +1164,7 @@ $("#bouton-jouer").addEventListener("click", () => {
 });
 
 function preparerNouvellePartie() {
+    if (window.TentativeLocale?.charger()) { restaurerBilanValide(); return; }
     enregistrementBilan = null;
     versionLectureClassement++;
     partie.score = 0;
@@ -1233,6 +1253,7 @@ $("#bouton-retour-qgis").addEventListener("click", passerAmenagementParking);
 $("#bouton-retour-etape").addEventListener("click", revenirEtapePrecedente);
 
 $("#bouton-retour-resultat").addEventListener("click", () => {
+    if (window.TentativeLocale?.charger()) { fermerFenetre("#voile-resultat"); restaurerBilanValide(); return; }
     const resultat = partie.resultats.pop();
     partie.score -= resultat.score;
     $("#score-courant").textContent = partie.score;
@@ -1354,6 +1375,29 @@ document.addEventListener("keydown", (evenement) => {
 });
 
 
+function resumerBilan(r) {
+    return {
+        version: r.versionBareme || 6,
+        criteres: (r.criteres || []).map(c => ({nom:c.nom,points:c.points,maximum:c.maximum})),
+        plantations: (r.lignesPlantations || []).filter(l => l.plante).map(l => ({repere:l.repere,nom:l.plante.nomVernaculaire,scientifique:l.plante.nomScientifique})),
+        revetements: (r.lignesRevetements || []).filter(l => l.revetement).map(l => ({zone:l.zone,nom:l.revetement.nom}))
+    };
+}
+async function restaurerBilanValide() {
+    const s = window.TentativeLocale?.charger();
+    if (!s) return;
+    if (s.publie && classementPartageActif()) {
+        try {
+            const existe = await window.ScoresPartages.statut(s.jeton);
+            if (!existe) { window.TentativeLocale.effacer(); enregistrementBilan=null; preparerNouvellePartie(); return; }
+        } catch { /* Hors ligne : conserver le verrou et le bilan. */ }
+    }
+    partie.resultats = [s.resultat]; partie.score = s.resultat.score;
+    partie.parking = s.resultat.choix;
+    $("#score-courant").textContent = partie.score;
+    afficherBilan();
+}
 // --- Démarrage ---
+setTimeout(() => { if (window.TentativeLocale?.charger()) restaurerBilanValide(); }, 0);
 
 afficherMeilleurScore();
