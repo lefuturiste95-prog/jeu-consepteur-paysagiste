@@ -329,7 +329,8 @@ function analyserCSV(donnees) {
 
         })
 
-        .filter(plante => plante.nomVernaculaire !== "");
+        .filter(plante => plante.nomVernaculaire !== "" &&
+            (!Array.isArray(window.SELECTION_CATALOGUE) || window.SELECTION_CATALOGUE.includes(plante.nomScientifique)));
 }
 
 

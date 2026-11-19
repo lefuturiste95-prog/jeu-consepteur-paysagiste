@@ -1,0 +1,30 @@
+/* Sélection active du jeu. Le catalogue source complet et l’Excel sont conservés.
+   Choix fondés sur l’adaptation aux milieux et la variété, sans modifier les besoins des fiches. */
+window.SELECTION_CATALOGUE = Object.freeze([
+    "Acer campestre",
+    "Koelreuteria paniculata",
+    "Corylus colurna",
+    "Carpinus betulus",
+    "Acer monspessulanum",
+    "Pyrus calleryana 'Chanticleer'",
+    "Prunus padus",
+    "Betula nigra",
+    "Alnus glutinosa",
+    "Nyssa sylvatica",
+    "Salvia nemorosa 'Blauhügel'",
+    "Echinacea purpurea",
+    "Geranium sanguineum",
+    "Stachys byzantina",
+    "Origanum vulgare",
+    "Veronica spicata 'Nana Blauteppich'",
+    "Bergenia crassifolia",
+    "Leucanthemum vulgare",
+    "Geum rivale",
+    "Caltha palustris",
+    "Carex elata 'Aurea'",
+    "Molinia caerulea 'Banshee'",
+    "Lysimachia nummularia",
+    "Lythrum salicaria 'Robert'",
+    "Iris versicolor",
+    "Deschampsia cespitosa 'Tardiflora'"
+]);

@@ -22,7 +22,7 @@ La note est sur 5 000, avec 500 points pour les voies, 500 pour les places et 4 
 
 La liste des végétaux reste alphabétique, sans correction automatique avant validation. Les répétitions réduisent la diversité. Les données non documentées ne donnent pas de bonus inventé. Le barème est expliqué dans l’aménagement avant validation. Le détail de la formule, les limites et les sources sont dans [BAREME-ECOLOGIQUE.md](BAREME-ECOLOGIQUE.md).
 
-Le catalogue enrichi compte 51 végétaux, soit 20 arbres et 31 vivaces. Le fichier Catalogue-vegetaux.xlsx contient les caractéristiques et leurs sources. Pour actualiser la sélection après modification de l’Excel, utiliser `outils/synchroniser-catalogue.ps1`, comme expliqué dans le document du barème. La synchronisation ne modifie pas le classeur.
+Le jeu propose 26 végétaux : 10 arbres et 16 vivaces. Le catalogue source et l’Excel conservent les 51 fiches de référence. Le fichier `data/selection-catalogue.js` définit la sélection proposée dans le jeu ; elle reste active après resynchronisation du catalogue. Le fichier Catalogue-vegetaux.xlsx contient les caractéristiques et leurs sources. Pour actualiser la sélection après modification de l’Excel, utiliser `outils/synchroniser-catalogue.ps1`, comme expliqué dans le document du barème. La synchronisation ne modifie pas le classeur.
 
 ## Réglages et scores
 

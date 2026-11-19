@@ -68,7 +68,7 @@ Les scores déjà enregistrés restent conservés. Le barème des revêtements a
 
 ## Catalogue et sources
 
-Le catalogue compte 51 végétaux, soit 20 arbres et 31 vivaces. Les 44 choix précédents sont conservés et 7 sont ajoutés, avec trois graminées et quatre vivaces fleuries. Le fichier `Catalogue-vegetaux.xlsx` rassemble les six rubriques demandées dans les premières colonnes, les sources, les dimensions et les conseils pour le parking.
+Le catalogue source conserve 51 végétaux. La sélection active du jeu est réduite à 26 : 10 arbres et 16 vivaces, soit environ moitié moins de propositions. Le fichier `Catalogue-vegetaux.xlsx` rassemble les six rubriques demandées dans les premières colonnes, les sources, les dimensions et les conseils pour le parking.
 
 Les compléments Floriscope sont présents sur 30 fiches du catalogue, avec une URL par taxon dans l’Excel et dans le jeu. Seuls les champs effectivement disponibles sur la fiche correspondante sont repris. Les données initiales sont conservées lorsqu’une information complémentaire manque. Une sous-catégorie absente reste non renseignée, même si la catégorie Vivaces est disponible. Les propriétés d’un cultivar n’ont pas été attribuées à un autre cultivar.
 
@@ -93,3 +93,38 @@ Après synchronisation, republier les deux exports et les fichiers modifiés dan
 ## Parcours raccourci du 19 novembre 2026
 
 Neuf choix de végétaux remplacent les douze précédents : 5 arbres et 4 secteurs de vivaces. Le maximum reste 5 000. Les moyennes et la diversité utilisent les nouveaux effectifs ; la cible des pollinisateurs devient 5 sur 9. Le résultat est marqué version 7. Les anciennes notes et listes sont conservées ; leur rendu est masqué si le nombre d’emplacements correspond au plan précédent, pour éviter une image trompeuse. Les anciennes tentatives ne sont pas déverrouillées.
+
+## Sélection active du 19 novembre 2026
+
+`data/selection-catalogue.js` définit les 26 noms scientifiques proposés aux joueurs. Le filtre est appliqué après lecture du catalogue, en ligne et hors serveur, sans changer les identifiants d’origine. L’Excel et ses 51 fiches restent conservés, et une resynchronisation de l’Excel ne réactive pas les végétaux exclus.
+
+La sélection privilégie l’adaptation aux deux milieux du modèle, des espèces différentes, des vivaces fleuries et des graminées. Quelques choix demandant une adaptation partielle restent à comparer dans les fiches ; la sélection n’est pas une liste de notes identiques. Les données de floraison et d’intérêt documenté n’ont pas été modifiées pour fabriquer un meilleur score. Deux palettes différentes atteignant 5 000 ont été vérifiées avec le catalogue réduit.
+
+Liste retenue :
+
+- Érable champêtre — Acer campestre
+- Savonnier de Chine — Koelreuteria paniculata
+- Noisetier de Byzance — Corylus colurna
+- Charme commun — Carpinus betulus
+- Erable de Montpellier — Acer monspessulanum
+- Poirier à fleurs Chanticleer — Pyrus calleryana 'Chanticleer'
+- Cerisier à grappes — Prunus padus
+- Bouleau noir — Betula nigra
+- Aulne glutineux — Alnus glutinosa
+- Tupélo noir — Nyssa sylvatica
+- Sauge des bois ‘Blauhügel’ — Salvia nemorosa 'Blauhügel'
+- Echinacée pourpre — Echinacea purpurea
+- Géranium sanguin — Geranium sanguineum
+- Oreille de Lapin — Stachys byzantina
+- Origan commun — Origanum vulgare
+- Véronique en épis Nana Blauteppich — Veronica spicata 'Nana Blauteppich'
+- Bergénia à feuilles épaisses — Bergenia crassifolia
+- Marguerite commune — Leucanthemum vulgare
+- Benoîte des ruisseaux — Geum rivale
+- Populage des marais — Caltha palustris
+- Laîche élevée Aurea — Carex elata 'Aurea'
+- Molinie bleue Banshee — Molinia caerulea 'Banshee'
+- Lysimaque nummulaire — Lysimachia nummularia
+- Salicaire commune ‘Robert’ — Lythrum salicaria 'Robert'
+- Iris versicolore — Iris versicolor
+- Canche cespiteuse Tardiflora — Deschampsia cespitosa 'Tardiflora'

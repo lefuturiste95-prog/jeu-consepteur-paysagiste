@@ -85,7 +85,7 @@ const context = vm.createContext({
     setTimeout: () => 0, clearTimeout() {}
 });
 const run = code => vm.runInContext(code, context);
-for (const file of ["data/plantes-embarquees.js", "rendu-parking.js", "rendu-pieton.js", "script.js", "parking-amenagement.js"]) {
+for (const file of ["data/selection-catalogue.js", "data/plantes-embarquees.js", "rendu-parking.js", "rendu-pieton.js", "script.js", "parking-amenagement.js"]) {
     run(read(file));
 }
 assert.equal(context.window.CSV_PLANTES, read("data/API_plantes.csv"));
@@ -105,6 +105,10 @@ context.document.createMarker = element;
 
 async function verify(){
  await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(run('plantes.length'),26);
+ assert.equal(run('plantes.filter(p=>p.groupe==="Arbre").length'),10);
+ assert.equal(run('plantes.filter(p=>p.groupe==="Vivace").length'),16);
+ assert.equal(run('new Set(plantes.map(p=>p.nomScientifique)).size'),26);
      run(`
         function choisir(nom){return plantes.find(p=>p.nomScientifique.startsWith(nom));}
         const paletteComplete={...nouveauChoixParking(),voie:'stabilise',places:'dalles-gazon',
@@ -118,6 +122,9 @@ async function verify(){
  assert.equal(run('EMPLACEMENTS_PARKING.length'),9);
  assert.equal(run('PLAN_PARKING.emplacementsVivaces.reduce((s,z)=>s+(z.u1-z.u0)*(z.v1-z.v0),0)'),262);
  assert.equal(run('evaluerParking().score'),5000);
+ run(`const autrePalette={...paletteComplete, arbres:['Acer campestre','Koelreuteria paniculata','Acer monspessulanum','Alnus glutinosa','Prunus padus'].map(choisir),vivaces:['Geranium sanguineum','Origanum vulgare','Caltha palustris','Molinia caerulea'].map(choisir)};partie.parking=autrePalette;`);
+ assert.equal(run('evaluerParking().score'),5000,'Une autre palette atteint aussi le maximum');
+ run('partie.parking=paletteComplete');
  assert.match(run('evaluerParking().criteres[4].detail'),/Objectif 5\/9/);
  assert.equal(run('evaluerParking().versionBareme'),7);
  for(const voie of run('REVETEMENTS.map(r=>r.id)'))for(const places of run('REVETEMENTS.map(r=>r.id)')){

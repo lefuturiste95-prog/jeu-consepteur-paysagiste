@@ -85,7 +85,7 @@ const context = vm.createContext({
     setTimeout: () => 0, clearTimeout() {}
 });
 const run = code => vm.runInContext(code, context);
-for (const file of ["data/plantes-embarquees.js", "rendu-parking.js", "rendu-pieton.js", "tentative.js", "script.js", "parking-amenagement.js"]) {
+for (const file of ["data/selection-catalogue.js", "data/plantes-embarquees.js", "rendu-parking.js", "rendu-pieton.js", "tentative.js", "script.js", "parking-amenagement.js"]) {
     run(read(file));
 }
 assert.equal(context.window.CSV_PLANTES, read("data/API_plantes.csv"));
