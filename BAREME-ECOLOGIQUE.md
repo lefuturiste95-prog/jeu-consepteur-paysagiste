@@ -128,3 +128,7 @@ Liste retenue :
 - Salicaire commune ‘Robert’ — Lythrum salicaria 'Robert'
 - Iris versicolore — Iris versicolor
 - Canche cespiteuse Tardiflora — Deschampsia cespitosa 'Tardiflora'
+
+## Bilan unique
+
+La validation ouvre directement l’écran vert du bilan. L’ancienne fenêtre blanche intermédiaire et son bouton de poursuite sont supprimés. Les deux rendus sont suivis du formulaire d’enregistrement puis du détail complet de la note : sous-totaux, critères, calendrier, conseils et listes. Le classement reste sur la même page. Le détail des revêtements est ouvert par défaut ; le bouton Comprendre ma note fait défiler vers cette section, sans ouvrir une autre fenêtre. Les tentatives déjà validées retrouvent ce même écran.

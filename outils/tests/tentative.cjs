@@ -73,7 +73,7 @@ const brush = {
     arc() { tracked.fleurs++; },
     isPointInPath: (p, x, y) => dansPolygone(p.points, x, y)
 };
-for (const id of ["scene-rendu", "resultat-rendu", "resultat-rendu-pieton", "bilan-rendu-canvas", "bilan-rendu-pieton"]) {
+for (const id of ["scene-rendu", "bilan-rendu-canvas", "bilan-rendu-pieton"]) {
     $("#" + id).getContext = () => brush;
 }
 const context = vm.createContext({
@@ -119,7 +119,13 @@ async function verify(){
  const cle='apprenti-tentative-validee-v1';
  assert(JSON.parse(store[cle]).jeton);
  assert.equal(JSON.parse(store[cle]).resultat.score,5000);
- $('#bouton-retour-resultat').onclick();
+ assert(!ids.has('voile-resultat'));
+ assert(!ids.has('bouton-suite'));
+ assert($('#ecran-bilan').classList.contains('est-actif'));
+ assert.match($('#bilan-detail-complet').innerHTML,/Exposition des végétaux/);
+ assert.match($('#bilan-detail-complet').innerHTML,/Revêtements/);
+ assert($('#bilan-rendu').classList.contains('est-visible'));
+ assert.equal($('#form-classement').style.display,'flex');
  assert.equal(run('partie.score'),5000);
  assert($('#ecran-bilan').classList.contains('est-actif'));
  $('#bouton-rejouer').onclick();

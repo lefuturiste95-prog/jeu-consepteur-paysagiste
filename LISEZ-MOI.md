@@ -14,7 +14,7 @@ Cette copie est une version locale. Elle ne modifie pas automatiquement le site 
 2. Observer la vue aérienne et les vues piétonnes et découvrir les 5 indices.
 3. Consulter le plan QGIS et ouvrir le rendu interactif.
 4. Choisir les revêtements, les 5 arbres et les 4 secteurs de vivaces. Les deux derniers arbres sont dans la noue. Consulter les besoins et les données écologiques de chaque plante avant de planter.
-5. Valider pour obtenir le bilan sur 5 000. Le retour aux choix permet de corriger la palette. Les deux vues du projet figurent au bilan.
+5. Valider pour ouvrir directement le bilan complet : les deux images, le score, les conseils, les critères et le classement sont réunis sur la page verte. Enregistrer son résultat sous les images.
 
 ## Notation et catalogue Excel
 

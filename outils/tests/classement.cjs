@@ -64,7 +64,7 @@ function appareil(backend, settings = config, storageBlocked = false) {
         fetch: (url, options) => url === 'data/API_plantes.csv'
             ? Promise.resolve({ok: true, text: async () => 'Catalogue de test\nEn-têtes\n'})
             : backend.fetch(url, options),
-        copierRenduParking() {}
+        copierRenduParking() {}, detailParkingHTML() { return '<p>Détail de la note</p>'; }
     });
     const run = code => vm.runInContext(code, context);
     run(read('scores.js'));

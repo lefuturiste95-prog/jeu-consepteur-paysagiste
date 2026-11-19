@@ -826,44 +826,6 @@ function majJauge() {
 }
 
 
-function afficherResultat(resultat) {
-
-    $("#resultat-etiquette").textContent =
-        resultat.titre;
-
-    $("#resultat-titre").textContent = titreSelonRatio(resultat.ratio);
-
-    $("#resultat-etoiles").innerHTML =
-        "★★★".split("").map((etoile, index) =>
-            index < resultat.etoiles
-                ? "<span>★</span>"
-                : "<span class='vide'>★</span>").join("");
-
-    $("#resultat-score").textContent = resultat.score;
-    $("#resultat-max").textContent   = "/ " + resultat.maximum + " points";
-
-    const rendu = $("#resultat-rendu");
-    const renduPieton = $("#resultat-rendu-pieton");
-    rendu.classList.add("est-visible");
-    renduPieton.classList.add("est-visible");
-    copierRenduParking(rendu, renduPieton, resultat.choix);
-    $("#resultat-detail").innerHTML = detailParkingHTML(resultat);
-
-    $("#resultat-conseil").textContent = resultat.conseil;
-
-    ouvrirFenetre("#voile-resultat");
-}
-
-
-function titreSelonRatio(ratio) {
-
-    if (ratio >= 0.98) return "Chantier exemplaire !";
-    if (ratio >= 0.90) return "Beau travail";
-    if (ratio >= 0.75) return "Ça pousse, mais…";
-    return "À revoir sur le terrain";
-}
-
-
 // ===============================
 // BILAN FINAL
 // ===============================
@@ -896,19 +858,12 @@ function afficherBilan() {
     $("#bilan-pourcent").textContent    = Math.round(ratio * 100) + " %";
     $("#bilan-etoiles").textContent     = etoiles;
 
-    $("#bilan-lignes").innerHTML = partie.resultats.filter(resultat => resultat.maximum > 0).map((resultat, index) => `
-        <tr>
-            <td>${index + 1}. ${resultat.titre}</td>
-            <td>${resultat.score} / ${resultat.maximum}</td>
-            <td>${"★".repeat(resultat.etoiles) || "—"}</td>
-        </tr>`).join("");
-
     const parking = partie.resultats.find(resultat => resultat.type === "amenagement-parking");
     const renduCompatible = parking && typeof PLAN_PARKING !== "undefined" && parking.choix?.arbres?.length === PLAN_PARKING.emplacementsArbres.length && parking.choix?.vivaces?.length === PLAN_PARKING.emplacementsVivaces.length;
     $("#bilan-rendu").classList.toggle("est-visible", Boolean(renduCompatible));
 
-    $("#bilan-conseils-revetements").innerHTML = parking ? (parking.lignesRevetements || [])
-        .filter(ligne => ligne.revetement).map(ligne => `<p><strong>${echapperConfigHTML(ligne.zone)} · ${echapperConfigHTML(ligne.revetement.nom)}</strong><br>${echapperConfigHTML(ligne.revetement.avis)}</p>`).join("") : "";
+    $("#bilan-conseil").textContent = parking?.conseil || "";
+    $("#bilan-detail-complet").innerHTML = parking ? detailParkingHTML(parking).replace('<details><summary>Détail des revêtements', '<details open><summary>Détail des revêtements') : "";
     if (renduCompatible) {
         copierRenduParking($("#bilan-rendu-canvas"), $("#bilan-rendu-pieton"), parking.choix);
     }
@@ -1254,23 +1209,6 @@ $("#bouton-retour-qgis").addEventListener("click", passerAmenagementParking);
 
 $("#bouton-retour-etape").addEventListener("click", revenirEtapePrecedente);
 
-$("#bouton-retour-resultat").addEventListener("click", () => {
-    if (window.TentativeLocale?.charger()) { fermerFenetre("#voile-resultat"); restaurerBilanValide(); return; }
-    const resultat = partie.resultats.pop();
-    partie.score -= resultat.score;
-    $("#score-courant").textContent = partie.score;
-    fermerFenetre("#voile-resultat");
-    $("#bouton-valider-parking").focus();
-});
-
-$("#bouton-suite").addEventListener("click", () => {
-
-    fermerFenetre("#voile-resultat");
-
-    afficherBilan();
-});
-
-
 // --- Plein écran (pratique sur tablette) ---
 
 $("#bouton-plein-ecran").addEventListener("click", () => {
@@ -1318,39 +1256,9 @@ $("#bouton-retour-accueil").addEventListener("click", () => {
 
 
 $("#bouton-revoir").addEventListener("click", () => {
-
-    $("#detail-partie").innerHTML = partie.resultats.map((resultat, index) => {
-
-        const contenu = resultat.type === "analyse-parking"
-            ? resultat.elements.map(element => `
-                <div class="ligne-detail">
-                    <span class="ligne-detail-nom">
-                        ${element.titre}
-                        <small>Élément identifié pendant l’analyse du site</small>
-                    </span>
-                    <span class="ligne-detail-points">✓</span>
-                </div>`).join("")
-            : detailParkingHTML(resultat);
-
-        return `
-            <div class="detail-chantier">
-                <h3>${index + 1}. ${resultat.titre}</h3>
-                <p class="detail-sous">
-                    ${resultat.maximum > 0
-                        ? resultat.score + " / " + resultat.maximum + " points · " + ("★".repeat(resultat.etoiles) || "aucune étoile")
-                        : "Analyse terminée · étape préparatoire sans points"}
-                </p>
-                <div class="detail-plantes">${contenu}</div>
-            </div>`;
-    }).join("");
-
-    ouvrirFenetre("#voile-detail");
+    $("#bilan-explications").scrollIntoView?.({behavior:"smooth",block:"start"});
+    $("#bilan-explications").focus({preventScroll:true});
 });
-
-
-$("#bouton-fermer-detail").addEventListener("click",
-    () => fermerFenetre("#voile-detail"));
-
 
 // --- Fermeture des fenêtres au clic sur le voile ---
 
@@ -1358,8 +1266,8 @@ document.querySelectorAll(".voile").forEach(voile => {
 
     voile.addEventListener("click", (evenement) => {
 
-        // le résultat de chantier ne se ferme que par le bouton
-        if (evenement.target === voile && voile.id !== "voile-resultat") {
+        // Fermer les fenêtres d’aide au clic sur leur fond.
+        if (evenement.target === voile) {
             voile.classList.remove("est-ouvert");
         }
     });
@@ -1369,7 +1277,6 @@ document.querySelectorAll(".voile").forEach(voile => {
 document.addEventListener("keydown", (evenement) => {
 
     if (evenement.key === "Escape") {
-        fermerFenetre("#voile-detail");
         fermerFenetre("#voile-admin");
         fermerFenetre("#voile-analyse");
         fermerFenetre("#voile-indices-parking");

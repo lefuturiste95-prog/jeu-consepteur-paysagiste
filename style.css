@@ -2170,3 +2170,16 @@ h1, h2, h3 {
 .navigation-catalogue { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 
 .conseils-revetements { text-align: left; line-height: 1.6; margin-bottom: 24px; }
+
+/* Un seul bilan : images, enregistrement et explications sur le fond vert. */
+.bilan-contenu { max-width: 960px; }
+.bilan-explications { text-align: left; background: var(--papier); color: var(--encre); padding: clamp(18px, 4vw, 30px); border-radius: var(--rayon); margin-bottom: 28px; scroll-margin-top: 20px; }
+.bilan-explications h3 { font-size: 24px; }
+.bilan-explications .ligne-detail { margin: 8px 0; }
+.bilan-explications details { margin-top: 16px; }
+.bilan-explications summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+.bloc-enregistrement { text-align: left; }
+.bilan-rendu.est-visible { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.bilan-rendu canvas + canvas { margin-top: 0; }
+.bilan-rendu figcaption { grid-column: 1 / -1; }
+@media(max-width:700px) { .bilan-rendu.est-visible { grid-template-columns: 1fr; } .bilan-explications .ligne-detail { padding: 10px; gap: 8px; } }

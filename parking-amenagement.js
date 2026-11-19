@@ -551,7 +551,7 @@ function validerParking() {
     partie.score += resultat.score;
     $("#score-courant").textContent = partie.score;
 
-    afficherResultat(resultat);
+    afficherBilan();
 }
 
 

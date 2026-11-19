@@ -371,22 +371,8 @@
             <figcaption>Votre parking, vu du ciel et depuis l’accès</figcaption>
         </figure>
 
-        <table class="tableau-bilan">
-            <thead>
-                <tr>
-                    <th>Chantier</th>
-                    <th>Score</th>
-                    <th>Étoiles</th>
-                </tr>
-            </thead>
-            <tbody id="bilan-lignes"></tbody>
-        </table>
-
-        <div class="conseils-revetements" id="bilan-conseils-revetements"></div>
-
-        <div class="bloc-classement">
-
-            <h3 id="titre-classement">Classement des joueurs</h3>
+        <section class="bloc-classement bloc-enregistrement" aria-labelledby="enregistrement-titre">
+            <h3 id="enregistrement-titre">Enregistrer mon résultat</h3>
             <p class="notice-scores" id="notice-scores"></p>
 
             <form class="form-classement" id="form-classement">
@@ -399,6 +385,17 @@
             </form>
 
             <p class="statut-scores" id="statut-enregistrement" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="bilan-explications" id="bilan-explications" tabindex="-1" aria-labelledby="bilan-detail-titre">
+            <h3 id="bilan-detail-titre">Comprendre ma note</h3>
+            <p class="conseil" id="bilan-conseil"></p>
+            <div id="bilan-detail-complet"></div>
+        </section>
+
+        <div class="bloc-classement">
+
+            <h3 id="titre-classement">Classement des joueurs</h3>
             <div class="actions-classement">
                 <button type="button" class="bouton bouton-fantome" id="actualiser-classement">Actualiser</button>
                 <p class="statut-scores" id="statut-classement" role="status" aria-live="polite"></p>
@@ -411,7 +408,7 @@
 
         <div class="boutons-bilan">
             <button class="bouton bouton-fantome" id="bouton-revoir">
-                Revoir le détail du chantier
+                Comprendre ma note
             </button>
 
             <button class="bouton bouton-fantome" id="bouton-retour-accueil">
@@ -429,66 +426,8 @@
 
 
 <!-- ==========================================================
-     FENETRES (résultat de chantier, règles, détail)
+     FENETRES (analyse et administration)
      ========================================================== -->
-
-<div class="voile" id="voile-resultat" role="dialog" aria-modal="true"
-     aria-labelledby="resultat-titre">
-
-    <div class="fenetre fenetre-resultat">
-
-        <p class="sur-titre" id="resultat-etiquette">Chantier terminé</p>
-        <h2 id="resultat-titre">Bravo !</h2>
-
-        <div class="etoiles" id="resultat-etoiles" aria-hidden="true"></div>
-
-        <canvas class="rendu-resultat" id="resultat-rendu"
-                aria-label="Vue aérienne de votre parking"></canvas>
-        <canvas class="rendu-resultat" id="resultat-rendu-pieton"
-                aria-label="Votre parking vu depuis l’accès"></canvas>
-
-        <p class="resultat-points">
-            <strong id="resultat-score">0</strong>
-            <span id="resultat-max">/ 5 000 points</span>
-        </p>
-
-        <div class="detail-plantes" id="resultat-detail"></div>
-
-        <p class="conseil" id="resultat-conseil"></p>
-
-        <button class="bouton bouton-fantome bouton-bloc" id="bouton-retour-resultat" type="button">
-            Voir mon bilan
-        </button>
-
-        <button class="bouton bouton-principal bouton-bloc" id="bouton-suite">
-            Voir mon bilan →
-        </button>
-
-    </div>
-
-</div>
-
-
-
-
-
-<div class="voile" id="voile-detail" role="dialog" aria-modal="true">
-
-    <div class="fenetre">
-
-        <p class="sur-titre">Détail de la partie</p>
-        <h2>Détail du chantier Parking</h2>
-
-        <div id="detail-partie"></div>
-
-        <button class="bouton bouton-principal bouton-bloc" id="bouton-fermer-detail">
-            Fermer
-        </button>
-
-    </div>
-
-</div>
-
 
 <!-- ==========================================================
      FENETRE — POINT D'ANALYSE

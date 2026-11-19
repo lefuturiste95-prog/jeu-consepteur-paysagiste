@@ -73,7 +73,7 @@ const brush = {
     arc() { tracked.fleurs++; },
     isPointInPath: (p, x, y) => dansPolygone(p.points, x, y)
 };
-for (const id of ["scene-rendu", "resultat-rendu", "resultat-rendu-pieton", "bilan-rendu-canvas", "bilan-rendu-pieton"]) {
+for (const id of ["scene-rendu", "bilan-rendu-canvas", "bilan-rendu-pieton"]) {
     $("#" + id).getContext = () => brush;
 }
 const context = vm.createContext({
