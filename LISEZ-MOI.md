@@ -13,7 +13,7 @@ Cette copie est une version locale. Elle ne modifie pas automatiquement le site 
 1. Cliquer sur Commencer une partie, puis lire Comment jouer et commencer l’analyse.
 2. Observer la vue aérienne et les vues piétonnes et découvrir les 5 indices.
 3. Consulter le plan QGIS et ouvrir le rendu interactif.
-4. Choisir les revêtements, les 7 arbres et les 5 secteurs de vivaces. Les deux derniers arbres sont dans la noue. Consulter les besoins et les données écologiques de chaque plante avant de planter.
+4. Choisir les revêtements, les 5 arbres et les 4 secteurs de vivaces. Les deux derniers arbres sont dans la noue. Consulter les besoins et les données écologiques de chaque plante avant de planter.
 5. Valider pour obtenir le bilan sur 5 000. Le retour aux choix permet de corriger la palette. Les deux vues du projet figurent au bilan.
 
 ## Notation et catalogue Excel
@@ -42,9 +42,9 @@ Trois graminées (miscanthus Gracillimus, calamagrostide Karl Foerster et herbe 
 
 Les plantes courantes suivent les mêmes critères que les autres. Leur nom ou leur popularité ne donne ni bonus ni malus. Les liens étrangers ont été remplacés par des versions françaises ou des fiches françaises sur la même plante.
 
-## Note sur 5 000 et cinq secteurs de vivaces
+## Note sur 5 000 et quatre secteurs de vivaces
 
-Le regroupement conserve toutes les surfaces plantées, avec trois secteurs en bordure et deux dans la noue. Trois étoiles à partir de 4 900 points, deux à 4 500 et une à 3 750. Le classement utilise une nouvelle version pour conserver les anciens scores séparément.
+Le regroupement conserve toutes les surfaces plantées, avec deux secteurs en bordure et deux dans la noue. Trois étoiles à partir de 4 900 points, deux à 4 500 et une à 3 750. Le classement utilise une nouvelle version pour conserver les anciens scores séparément.
 
 ## Parcours de lancement
 

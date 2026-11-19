@@ -903,11 +903,12 @@ function afficherBilan() {
         </tr>`).join("");
 
     const parking = partie.resultats.find(resultat => resultat.type === "amenagement-parking");
-    $("#bilan-rendu").classList.toggle("est-visible", Boolean(parking));
+    const renduCompatible = parking && typeof PLAN_PARKING !== "undefined" && parking.choix?.arbres?.length === PLAN_PARKING.emplacementsArbres.length && parking.choix?.vivaces?.length === PLAN_PARKING.emplacementsVivaces.length;
+    $("#bilan-rendu").classList.toggle("est-visible", Boolean(renduCompatible));
 
     $("#bilan-conseils-revetements").innerHTML = parking ? (parking.lignesRevetements || [])
         .filter(ligne => ligne.revetement).map(ligne => `<p><strong>${echapperConfigHTML(ligne.zone)} · ${echapperConfigHTML(ligne.revetement.nom)}</strong><br>${echapperConfigHTML(ligne.revetement.avis)}</p>`).join("") : "";
-    if (parking) {
+    if (renduCompatible) {
         copierRenduParking($("#bilan-rendu-canvas"), $("#bilan-rendu-pieton"), parking.choix);
     }
 

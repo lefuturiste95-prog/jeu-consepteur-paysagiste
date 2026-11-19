@@ -461,7 +461,7 @@ function evaluerParking() {
             piste: "Choisis des plantes capables de supporter les deux états du sol de leur zone." },
         { nom: "Diversité des espèces", famille: "vegetaux", maximum: BAREME_PARKING.diversite,
             points: plancher(BAREME_PARKING.diversite * diversite),
-            detail: "Les arbres comptent pour 70 % de la diversité et les cinq secteurs de vivaces pour 30 %. Toute répétition ou plantation incomplètement adaptée réduit ce critère.",
+            detail: "Les arbres comptent pour 70 % de la diversité et les quatre secteurs de vivaces pour 30 %. Toute répétition ou plantation incomplètement adaptée réduit ce critère.",
             piste: "Remplace les répétitions par d’autres espèces entièrement adaptées." },
         { nom: "Floraisons utiles étalées", famille: "vegetaux", maximum: BAREME_PARKING.floraisons,
             points: plancher(BAREME_PARKING.floraisons * moisCouverts / SAISON_POLLINISATEURS.length),
@@ -487,7 +487,7 @@ function evaluerParking() {
         .sort((a, b) => a.points / a.maximum - b.points / b.maximum).slice(0, 2).map(c => c.piste);
     const ratio = score / BAREME_PARKING.maximum;
     return {
-        type: "amenagement-parking", titre: "Parking — Bilan écologique", versionBareme: 6,
+        type: "amenagement-parking", titre: "Parking — Bilan écologique", versionBareme: 7,
         score, maximum: BAREME_PARKING.maximum, ratio,
         etoiles: ratio >= 0.98 ? 3 : ratio >= 0.90 ? 2 : ratio >= 0.75 ? 1 : 0,
         criteres, totaux, calendrier, lignesPlantations, lignesRevetements,

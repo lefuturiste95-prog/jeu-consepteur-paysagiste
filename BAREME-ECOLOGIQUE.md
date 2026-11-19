@@ -12,11 +12,11 @@ La note reste sur 5 000, dont 4 000 pour les végétaux et 1 000 pour les revêt
 | Revêtement des voies | 500 |
 | Revêtement des places | 500 |
 
-Les 7 arbres et les 5 secteurs de vivaces sont conservés. Trois secteurs sont en bordure et deux dans la noue, avec les mêmes 262 m² de surfaces plantées.
+Le parcours raccourci comporte 5 arbres (3 au centre et 2 dans la noue) et 4 secteurs de vivaces (2 en bordure et 2 dans la noue). Deux anciennes zones du haut sont regroupées ; les 262 m² de surfaces plantées sont conservés.
 
 ## Végétaux et précision
 
-Les arbres comptent pour 70 % de l’exposition, de l’adaptation au sol et de la diversité. Les vivaces comptent pour 30 %. Les moyennes sont calculées à l’intérieur de chaque groupe avant d’appliquer ces poids. Une erreur de même nature pèse ainsi davantage sur un arbre. Par exemple, tolérer un seul des deux états du sol au lieu des deux retire 70 points de sol pour un arbre, contre 42 pour une zone de vivaces, avant les effets sur les bonus écologiques.
+Les arbres comptent pour 70 % de l’exposition, de l’adaptation au sol et de la diversité. Les vivaces comptent pour 30 %. Les moyennes sont calculées à l’intérieur de chaque groupe avant d’appliquer ces poids. Une erreur de même nature pèse ainsi davantage sur un arbre. Par exemple, tolérer un seul des deux états du sol au lieu des deux retire 98 points de sol pour un arbre, contre 53 pour une zone de vivaces, avant les effets sur les bonus écologiques.
 
 Le sol du modèle alterne entre frais et sec au centre et en bordure, entre humide et très humide dans la noue. Les conditions sont indiquées au joueur. Une plante tolérant un état sur deux reçoit un crédit partiel pour le sol. Le mauvais groupe de végétal vaut zéro en exposition et en sol. Le bon type ne donne pas de points gratuits.
 
@@ -24,9 +24,9 @@ L’exposition doit être compatible avec au moins une des expositions annoncée
 
 Les bonus de diversité, de floraison et de ressources pour les pollinisateurs exigent le bon groupe, une exposition compatible et la tolérance aux deux états du sol. Une information manquante n’est pas remplacée par une capacité supposée. Le résultat reflète le catalogue et les hypothèses du jeu, pas une mesure écologique de terrain.
 
-La diversité de chaque groupe est `(n² − somme(effectifEspèce²)) / (N × (N − 1))`, avec N le nombre d’emplacements et n le nombre de plantes entièrement adaptées. La note vaut `plancher(1 000 × (0,7 × indiceArbres + 0,3 × indiceVivaces))`. Une seule répétition entre deux arbres adaptés retire 34 points. Les cultivars d’une même espèce restent une espèce. Un secteur de vivaces compte comme une unité, indépendamment de sa surface.
+La diversité de chaque groupe est `(n² − somme(effectifEspèce²)) / (N × (N − 1))`, avec N le nombre d’emplacements et n le nombre de plantes entièrement adaptées. La note vaut `plancher(1 000 × (0,7 × indiceArbres + 0,3 × indiceVivaces))`. Une seule répétition entre deux arbres adaptés retire 70 points. Les cultivars d’une même espèce restent une espèce. Un secteur de vivaces compte comme une unité, indépendamment de sa surface.
 
-Les floraisons utiles sont évaluées sur les 7 mois de mars à septembre. Les ressources pour les pollinisateurs ont un objectif de 7 plantations entièrement adaptées avec un intérêt documenté. Chaque critère vaut au maximum 500 points. Un intérêt non documenté ne signifie pas absence d’intérêt.
+Les floraisons utiles sont évaluées sur les 7 mois de mars à septembre. Les ressources pour les pollinisateurs ont un objectif de 5 plantations entièrement adaptées avec un intérêt documenté. Chaque critère vaut au maximum 500 points. Un intérêt non documenté ne signifie pas absence d’intérêt.
 
 Le maximum de diversité impose ici une espèce différente par emplacement pour l’exercice, sans constituer une prescription paysagère. Les volumes racinaires et les distances de visibilité ne sont pas mesurés automatiquement. Les fiches servent aussi à discuter ces limites.
 
@@ -54,7 +54,7 @@ Le bilan affiche les avantages et les limites des deux matériaux retenus. Le d�
 
 ### Aides au choix des plantes
 
-Les termes techniques sont conservés. Une aide explique leur sens et l’alternance saisonnière. La distance est calculée entre les coordonnées des troncs : 7,50 m pour les arbres centraux et 16 m pour les deux arbres de la noue. La fiche distingue cette distance du diamètre adulte du houppier. Ces informations sont des aides de lecture ; aucune nouvelle pénalité d’encombrement ou de tassement n’est déduite d’un texte libre non structuré.
+Les termes techniques sont conservés. Une aide explique leur sens et l’alternance saisonnière. La distance est calculée entre les coordonnées des troncs : 15 m pour les arbres centraux et 16 m pour les deux arbres de la noue. La fiche distingue cette distance du diamètre adulte du houppier. Ces informations sont des aides de lecture ; aucune nouvelle pénalité d’encombrement ou de tassement n’est déduite d’un texte libre non structuré.
 
 Le catalogue reste alphabétique, avec au plus 12 noms courants par page et une recherche sur les noms courants et scientifiques. Le nom scientifique reste dans la fiche complète. Les listes ne montrent ni note individuelle ni validation d’adaptation.
 
@@ -89,3 +89,7 @@ Le chemin par défaut vise le classeur livré à la racine du jeu. Le paramètre
 La synchronisation a été vérifiée avec PowerShell 7 dans l’environnement de développement. Windows PowerShell bloque actuellement les scripts sur cet ordinateur. Elle peut être refaite dans l’environnement de développement sans changer les règles de sécurité Windows. Il n’est pas nécessaire de la lancer pour jouer à la version fournie.
 
 Après synchronisation, republier les deux exports et les fichiers modifiés dans le dépôt du site pour actualiser le lien partagé.
+
+## Parcours raccourci du 19 novembre 2026
+
+Neuf choix de végétaux remplacent les douze précédents : 5 arbres et 4 secteurs de vivaces. Le maximum reste 5 000. Les moyennes et la diversité utilisent les nouveaux effectifs ; la cible des pollinisateurs devient 5 sur 9. Le résultat est marqué version 7. Les anciennes notes et listes sont conservées ; leur rendu est masqué si le nombre d’emplacements correspond au plan précédent, pour éviter une image trompeuse. Les anciennes tentatives ne sont pas déverrouillées.

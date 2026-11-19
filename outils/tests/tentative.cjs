@@ -109,8 +109,8 @@ async function verify(){
      run(`
         function choisir(nom){return plantes.find(p=>p.nomScientifique.startsWith(nom));}
         const paletteComplete={...nouveauChoixParking(),voie:'stabilise',places:'dalles-gazon',
-            arbres:['Acer campestre','Koelreuteria paniculata','Ostrya carpinifolia','Carpinus betulus','Corylus colurna','Prunus padus','Betula nigra'].map(choisir),
-            vivaces:['Salvia','Geranium sanguineum','Echinacea purpurea','Caltha palustris',"Carex elata 'Aurea'"].map(choisir)};
+            arbres:['Acer campestre','Koelreuteria paniculata','Corylus colurna','Prunus padus','Betula nigra'].map(choisir),
+            vivaces:['Salvia','Echinacea purpurea','Caltha palustris',"Carex elata 'Aurea'"].map(choisir)};
         partie.parking=paletteComplete;
     `);
 
@@ -128,7 +128,7 @@ async function verify(){
  run('partie.score=0; partie.resultats=[]');await run('restaurerBilanValide()');
  assert.equal(run('partie.score'),5000);
  const resume=run('resumerBilan(partie.resultats[0])');
- assert.equal(resume.plantations.length,12);assert.equal(resume.revetements.length,2);
+ assert.equal(resume.plantations.length,9);assert.equal(resume.revetements.length,2);
  assert(!JSON.stringify(resume).includes('image/'));
  run('window.TentativeLocale.actualiser({publie:true}); window.ScoresPartages={estConfigure:()=>true, statut:async()=>{throw Error("Hors ligne")},lire:async()=>[]}');
  await run('restaurerBilanValide()');assert(run('window.TentativeLocale.charger()'));

@@ -97,16 +97,13 @@ const PLAN_PARKING = {
 
     emplacementsArbres: [
         { id: "m1", milieu: "bande", u: 9.75,  v: 19.25 },
-        { id: "m2", milieu: "bande", u: 17.25, v: 19.25 },
         { id: "m3", milieu: "bande", u: 24.75, v: 19.25 },
-        { id: "m4", milieu: "bande", u: 32.25, v: 19.25 },
         { id: "m5", milieu: "bande", u: 39.75, v: 19.25 },
         { id: "n1", milieu: "noue", u: 16, v: 41.5 },
         { id: "n2", milieu: "noue", u: 32, v: 41.5 }
     ],
     emplacementsVivaces: [
-        secteurVivaces("v1", "lisiere", 6, 0, 25, 2),
-        secteurVivaces("v2", "lisiere", 25, 0, 44, 2),
+        secteurVivaces("v1", "lisiere", 6, 0, 44, 2),
         secteurVivaces("v3", "lisiere", 44, 0, 50, 7),
         secteurVivaces("v4", "noue", 0, 40, 24, 43),
         secteurVivaces("v5", "noue", 24, 40, 48, 43)
